@@ -3,30 +3,29 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Login page in HTML</title>
+        <title>Login page</title>
     </head>
     <body>
-        <h1>Login form</h1>
         <form action="">
             <!--heading for form-->
             <div class ="headings">
-                <h2>Login</h2>
+                <h1>Login</h1>
             </div>
             
             <!--inputs-->
             <div class="inputs">
-                <label for="username"> User:</label>
-                <input type="text" placeholder="i.e John@email.com" name="username" required>
+                <label for="username-input"> User:</label>
+                <input type="email" placeholder="i.e John@email.com" name="email" id="username-input" required>
                 <br><br>
                 <label for="pass"> Password:</label>
-                <input type="password" name ="pass" required>
+                <input type="password" name ="password" id="pass" required>
             </div>
             <br>
             <!--Login Button-->
             <button type="submit">Login</button>
 
             <!--sign up, rmb to fill up the link to the landing page-->
-            <p class ="register">New here?<a href="#"></a> Sign up here</p>
+            <p class ="register">New here?<a href="register.html"> Sign up here</a></p>
         </form>
     </body>
 </html>
