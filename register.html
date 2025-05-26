@@ -4,10 +4,15 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Register page</title>
+        <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js"></script>
+        <script type="module" src="./config.js"></script>
+        <script type="module" src="./script.js"></script>
     </head>
     <body>
         <h1>Create New Account</h1>
-        <form action ="">
+        <form id ="register-form">
             <!--inputs-->
             <div class="inputs">
                 <label for="username-input"> User:</label>
