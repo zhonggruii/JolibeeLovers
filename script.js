@@ -7,9 +7,12 @@ if (signupForm) {
     signupForm.addEventListener("submit", (eventAfterSubmit) => {
         eventAfterSubmit.preventDefault(); //stops page from submitting the form
         const email = document.getElementById("username-input").value;
-        const password = document.getElementById("cfmpass").value;
+        const cfmPassword = document.getElementById("cfmpass").value;
+        const password = document.getElementById("pass").value;
 
-        createUserWithEmailAndPassword(auth, email, password)
+        if (cfmPassword != password) alert("Passwords dont match!");
+
+        createUserWithEmailAndPassword(auth, email, cfmPassword)
         .then((userCredential) => {
             // Signed up 
             window.location.href = "login.html";
