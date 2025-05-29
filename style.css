@@ -1,9 +1,13 @@
-body {
-  font-family: sans-serif;
-  background-color: #fff8f0;
-  text-align: center;
+* {
+	box-sizing: border-box;
 }
 
-* {
-  box-sizing: border-box;
+body {
+	font-family: sans-serif;
+}
+
+.page {
+	background-color: rgb(249 250 251);
+	margin: 0px;
+	padding: 50px;
 }
