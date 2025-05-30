@@ -4,40 +4,64 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>GroupMeUp Login</title>
+        <title>Login Page</title>
+        <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/zhonggruii/JolibeeLovers/refs/heads/main/GroupMeUp%20Icon%20Transparent.png">
         <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js"></script>
         <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js"></script>
         <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js"></script>
         <script type="module" src="./config.js"></script>
         <script type="module" src="./script.js"></script>
-        <link
-            href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap"
-            rel="stylesheet"
-        />
+
+        <!--for css-->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="style.css"/>
     </head>
-    <body class="page">
-        <form id ="login-form">
-            <!--heading for form-->
-            <div class ="headings">
-                <h1>Login</h1>
-            </div>
-            
-            <!--inputs-->
-            <div class="inputs">
-                <label for="username-input"> User:</label>
-                <input type="email" placeholder="i.e John@email.com" name="email" id="username-input" required>
-                <br><br>
-                <label for="pass"> Password:</label>
-                <input type="password" name ="password" id="pass" required>
-            </div>
-            <br>
-            <!--Login Button-->
-            <button type="submit">Login</button>
 
-            <!--sign up, rmb to fill up the link to the landing page-->
-            <p class ="register">New here ? <a href="register.html">Sign up here</a></p>
-        </form>
+    <body>
+        <header class="header">
+            <!--TO FIX: CHANGE LINK WHEN HOMEPAGE UP-->
+            <a href="https://www.ite.edu.sg/">
+                <img class="image-logo" src="https://raw.githubusercontent.com/zhonggruii/JolibeeLovers/refs/heads/main/GroupMeUp%20Logo.jpg" alt="GroupMeUp Logo"/>
+            </a>        
+        </header>
+        
+        <main class="page">
+            <form class="content-container box-shadow" id="login-form">
+                <!--container heading-->
+                <div class="text-container">
+                    <h1 class="container-title">Log In</h1>
+                    <h2 class="container-sub-title">Great Things Start With The Right Group</h2>
+                </div>
+
+                <!--email input-->
+                <div class="input-group">
+                    <label class="input-label" for="username-input">E-Mail</label>
+                    <input class="input-box" type="email" name="email" id="username-input" required>
+                </div>
+
+                <!--password input-->
+                <div class="input-group">
+                    <label class="input-label" for="pass">Password</label>
+                    <input class="input-box" type="password" name ="password" id="pass" required>
+                </div>
+                
+                <!--button-->
+                <button class="button-box" type="submit">Continue</button>
+
+                <!--sign up-->
+                <p class ="container-text">
+                    Don't have an account?
+                    <a class="hyperlink" href="register.html">Sign Up</a>
+                </p>
+            </form>
+        </main>
+
+        <footer class="footer">
+            <h4 class="footer-text">Designed by JollibeeLovers</h4>
+            <h4 class="footer-text">© 2025 GroupMeUp. All rights reserved</h4>
+        </footer>
     </body>
 </html>
 
