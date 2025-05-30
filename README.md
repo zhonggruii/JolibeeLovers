@@ -12,11 +12,15 @@ This experience inspired us to create a solution that simplifies the creation of
 
 ## Lift-Off
 Project Poster Link: https://drive.google.com/file/d/15hvAExs9sDSsINDFI8qopD862kfzMI1J/view?usp=sharing
+
 Poster Video Link: https://drive.google.com/file/d/1hwY3SLPSzvIIm0tT36LCIyIV2bYf3g4A/view?usp=sharing
 
 
 ## Milestone 1
 Project Overview Link:
+
 Project Poster Link:
+
 Demo Video Link:
+
 Project Log Link:
