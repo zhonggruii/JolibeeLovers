@@ -2,13 +2,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JolibeeLovers</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JolibeeLovers</title>
+  <link rel="stylesheet" href="style.css" />
+  <script type="module" src="./forum.js"></script>
 </head>
 <body>
-    <h1>Welcome to JolibeeLovers!</h1>
-    <p>This is our awesome group project 🎉</p>
+  <h1>Group Forum</h1>
+
+  <p><a href ="index.html">Home</a></p>
+  <p><a href ="my-group.html">My Groups</a></p>
+  <p><a href ="profile.html">My Profile</a></p>
+  
+  <!-- Button to open the popup -->
+  <button id="openModalBtn">Create Group</button>
+
+  <!-- Container for group cards -->
+  <div id="group-list"></div>
+
+  <!-- Popup Modal -->
+  <div id="groupModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span id="closeModalBtn" class="close-btn">&times;</span>
+      <h2>Create a New Group</h2>
+      <form id="add-group-form">
+        <label>Title:</label><br>
+        <input type="text" id="group-title" required><br><br>
+
+        <label>Description:</label><br>
+        <textarea id="group-description" placeholder="e.g. Looking for 3 members" required></textarea><br><br>
+
+        <label>Tags (comma separated):</label><br>
+        <input type="text" id="group-tags"><br><br>
+
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
 </body>
 </html>
