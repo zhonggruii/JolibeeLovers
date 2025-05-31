@@ -1,9 +1,148 @@
-body {
-  font-family: sans-serif;
-  background-color: #fff8f0;
-  text-align: center;
-}
+/* GLOBAL CLASSES */
 
 * {
-  box-sizing: border-box;
+	box-sizing: border-box;
 }
+
+body {
+	font-family: "Inter", sans-serif;
+	margin: 0px
+}
+
+.header {
+	display: flex;
+	background-color: white;
+	border-bottom: solid gainsboro 1.5px;
+	height: 104px;
+	padding: 25px;
+}
+
+.image-logo {
+	width: 155px;
+}
+
+.page {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: rgb(249 250 251);
+	height: 80vh;
+	margin: 0px;
+	padding: 50px
+}
+
+.box-shadow {
+	box-shadow: 0 1px 3px 0 rgb(0 0 0 / .1);
+}
+
+.content-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
+	background-color: white;
+	border-radius: 10px;
+	padding: 50px;
+}
+
+.text-container {
+	display: block;
+}
+
+.container-title {
+	font-size: 32px;
+	text-align: center;
+	color: #012661;
+	margin: 0px;
+	padding-bottom: 5px;
+
+}
+
+.container-sub-title {
+	font-size: 15px;
+	color: #2d2d2d;
+	text-align: center;
+	margin: 0px;
+	padding-bottom: 30px;
+}
+
+.input-group {
+    display: inline-block;
+    position: relative;
+	width: 100%;
+    margin: 10px;
+}
+
+.input-label {
+    font-size: 12px;
+	color: #575757;
+    position: absolute;
+	background-color: white;
+    left: 20px;
+    top: -7px;
+    padding: 0 6px;
+}
+
+.input-box {
+    background: none;
+    border: solid #dbdbdb 2px;
+    border-radius: 5px;
+	width: 100%;
+    padding: 8px;
+}
+
+.input-box:hover {
+	border-color: #0061fe;
+}
+
+.input-box:focus {
+	outline: none;
+	border-color: #003d7c;
+}
+
+.button-box {
+	font-family: "Inter", sans-serif;
+	color: white;
+	background-color: #003d7c;
+	border: solid #003d7c 2px;
+	border-radius: 5px;
+	width: 100%;
+	margin: 14px;
+	padding: 8px;
+}
+
+.button-box:hover {
+	background-color: #0061fe;
+	border: solid #0061fe 2px;
+}
+
+.container-text {
+	font-size: 14px;
+}
+
+.hyperlink {
+	font-weight: bold;
+	text-decoration: none;
+	color: #012661;
+}
+
+.hyperlink:hover {
+	font-weight: bold;
+	text-decoration: underline;
+	color: #0061fe;
+}
+
+.footer {
+	background-color: #003d7c;
+	padding: 30px;
+}
+
+.footer-text {
+	font-size: 12px;
+	font-weight: normal;
+	color: whitesmoke;
+	margin: 5px;
+}
+
+
+/* LOGIN PAGE SPECIFIC */
