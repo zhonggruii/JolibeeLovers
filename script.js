@@ -11,15 +11,17 @@ if (signupForm) {
         const password = document.getElementById("pass").value;
 
         if (cfmPassword != password) alert("Passwords dont match!");
-
-        createUserWithEmailAndPassword(auth, email, cfmPassword)
-        .then((userCredential) => {
-            // Signed up 
-            window.location.href = "login.html";
-        })
-        .catch((error) => {
-            alert("Sign up failed: " + error.message);
-        });
+        
+        else {
+            createUserWithEmailAndPassword(auth, email, cfmPassword)
+            .then((userCredential) => {
+                // Signed up 
+                window.location.href = "login.html";
+            })
+            .catch((error) => {
+                alert("Sign up failed: " + error.message);
+            });
+        }
     })
 }
 
