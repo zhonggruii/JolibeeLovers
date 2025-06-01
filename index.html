@@ -1,44 +1,64 @@
-<!--this is for forum-->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>JolibeeLovers</title>
-  <link rel="stylesheet" href="style.css" />
-  <script type="module" src="./forum.js"></script>
-</head>
-<body>
-  <h1>Group Forum</h1>
+	<head>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>Forum Page</title>
+		<link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/zhonggruii/JolibeeLovers/refs/heads/main/GroupMeUp%20Icon%20Transparent.png">
+		<script type="module" src="./forum.js"></script>
+		
+		<!--for css-->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+		<link rel="stylesheet" href="style.css"/>
+	</head>
 
-  <p><a href ="index.html">Home</a></p>
-  <p><a href ="my-group.html">My Groups</a></p>
-  <p><a href ="profile.html">My Profile</a></p>
-  
-  <!-- Button to open the popup -->
-  <button id="openModalBtn">Create Group</button>
+	<body>
+        <header class="header">
+            <!--TO FIX: CHANGE LINK WHEN HOMEPAGE UP-->
+            <a href="https://www.ite.edu.sg/">
+                <img class="image-logo" src="https://raw.githubusercontent.com/zhonggruii/JolibeeLovers/refs/heads/main/GroupMeUp%20Logo.jpg" alt="GroupMeUp Logo"/>
+            </a>   
+        </header>
 
-  <!-- Container for group cards -->
-  <div id="group-list"></div>
+		<main class="page">
+			<h1>Group Forum</h1>
 
-  <!-- Popup Modal -->
-  <div id="groupModal" class="modal" style="display: none;">
-    <div class="modal-content">
-      <span id="closeModalBtn" class="close-btn">&times;</span>
-      <h2>Create a New Group</h2>
-      <form id="add-group-form">
-        <label>Title:</label><br>
-        <input type="text" id="group-title" required><br><br>
+			<p><a href ="index.html">Home</a></p>
+			<p><a href ="my-group.html">My Groups</a></p>
+			<p><a href ="profile.html">My Profile</a></p>
+			
+			<!-- Button to open the popup -->
+			<button id="openModalBtn">Create Group</button>
 
-        <label>Description:</label><br>
-        <textarea id="group-description" placeholder="e.g. Looking for 3 members" required></textarea><br><br>
+			<!-- Container for group cards -->
+			<div id="group-list"></div>
 
-        <label>Tags (comma separated):</label><br>
-        <input type="text" id="group-tags"><br><br>
+			<!-- Popup Modal -->
+			<div id="groupModal" class="modal" style="display: none;">
+				<div class="modal-content">
+					<span id="closeModalBtn" class="close-btn">&times;</span>
+					<h2>Create a New Group</h2>
+					<form id="add-group-form">
+						<label>Title:</label><br>
+						<input type="text" id="group-title" required><br><br>
 
-        <button type="submit">Submit</button>
-      </form>
-    </div>
-  </div>
-</body>
+						<label>Description:</label><br>
+						<textarea id="group-description" placeholder="e.g. Looking for 3 members" required></textarea><br><br>
+
+						<label>Tags (comma separated):</label><br>
+						<input type="text" id="group-tags"><br><br>
+
+						<button type="submit">Submit</button>
+					</form>
+				</div>
+			</div>
+		</main>
+
+        <footer class="footer">
+            <h4 class="footer-text">Designed by JollibeeLovers</h4>
+            <h4 class="footer-text">© 2025 GroupMeUp. All rights reserved</h4>
+        </footer>
+	</body>
 </html>
