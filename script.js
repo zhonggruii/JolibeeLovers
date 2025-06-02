@@ -1,4 +1,4 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
 import { auth } from './config.js';
 
 //creating account
@@ -11,7 +11,7 @@ if (signupForm) {
         const password = document.getElementById("pass").value;
 
         if (cfmPassword != password) alert("Passwords dont match!");
-        
+
         else {
             createUserWithEmailAndPassword(auth, email, cfmPassword)
             .then((userCredential) => {
@@ -43,3 +43,22 @@ if (loginForm) {
         });
     })
 } 
+
+//reset password
+const resetForm = document.getElementById("reset-form");
+const resetMsg = document.getElementById("reset-message");
+if (resetMsg) {
+    resetForm.addEventListener("submit", async (eventAfterSubmit) => {
+        eventAfterSubmit.preventDefault();
+        const email = document.getElementById("reset-email").value;
+        sendPasswordResetEmail(auth, email)
+        .then((userCredential) => {
+            alert("Email succesffuly sent! Check your inbox!");
+            window.location.href = "login.html";
+        })
+        .catch((error) => {
+            alert("Error with resetting password: " + error.message);
+        }
+    );
+    })
+}

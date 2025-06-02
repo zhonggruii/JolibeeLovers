@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password | GroupMeUp</title>
+    <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/zhonggruii/JolibeeLovers/refs/heads/main/GroupMeUp%20Icon%20Transparent.png">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js"></script>
+    <script type="module" src="./config.js"></script>
+    <script type="module" src="./script.js"></script>
+
+    <!-- CSS (reusing your existing styles) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"/>
+</head>
+
+<body>
+    <header class="header">
+        <a href="https://www.ite.edu.sg/">
+            <img class="image-logo" src="https://raw.githubusercontent.com/zhonggruii/JolibeeLovers/refs/heads/main/GroupMeUp%20Logo.jpg" alt="GroupMeUp Logo"/>
+        </a>        
+    </header>
+    
+    <main class="login-register-page">
+        <form class="content-container box-shadow" id="reset-form">
+            <div class="text-container">
+                <h1 class="container-title">Reset Password</h1>
+                <h2 class="container-sub-title">Enter your email to receive a reset link</h2>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" for="reset-email">E-Mail</label>
+                <input class="input-box" type="email" id="reset-email" required>
+            </div>
+            
+            <button class="button-box" type="submit">Send Reset Link</button>
+
+            <div id="reset-message" style="display: none; margin-top: 20px; padding: 10px; border-radius: 5px;"></div>
+
+            <p class="container-text">
+                Remember your password?
+                <a class="hyperlink" href="login.html">Log In</a>
+            </p>
+        </form>
+    </main>
+
+    <footer class="footer">
+        <h4 class="footer-text">Designed by JollibeeLovers</h4>
+        <h4 class="footer-text">© 2025 GroupMeUp. All rights reserved</h4>
+    </footer>
+</body>
+</html>
