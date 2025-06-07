@@ -1,5 +1,6 @@
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
-import { auth } from './config.js';
+import { setDoc, doc } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js"
+import { auth, db } from './config.js';
 
 //creating account
 const signupForm = document.getElementById("register-form"); //look for html id
@@ -14,8 +15,17 @@ if (signupForm) {
 
         else {
             createUserWithEmailAndPassword(auth, email, cfmPassword)
-            .then((userCredential) => {
-                // Signed up 
+            .then(async (userCredential) => {
+                // setting up user db
+                const user = userCredential.user;
+                await setDoc(doc(db, "users", user.uid), {
+                    email: user.email,
+                    name: "",
+                    aboutMe:"",
+                    photoURL: "",
+                    ratings: "", 
+                    modulesTaken: ""
+                });
                 window.location.href = "login.html";
             })
             .catch((error) => {

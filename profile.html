@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>My Profile - GroupMeUp</title>
+    <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/zhonggruii/JolibeeLovers/refs/heads/main/GroupMeUp%20Icon%20Transparent.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+
+    <script type="module" src = "./profile.js"></script>
+    
+    <link rel="stylesheet" href="style.css"/>
+</head>
+
+<body>
+    <header class="header">
+        <a href="index.html">
+            <img class="image-logo" src="https://raw.githubusercontent.com/zhonggruii/JolibeeLovers/refs/heads/main/GroupMeUp%20Logo.jpg" alt="GroupMeUp Logo"/>
+        </a>
+        <nav class="nav-menu">
+            <a href="index.html">Home</a>
+            <a href="my-group.html">My Groups</a>
+            <a href="profile.html" class="active">My Profile</a>
+        </nav>
+        <button id="signOutBtn" class="sign-out-btn">Sign Out</button>
+    </header>
+
+    <main class="profile-page">
+        <div class="profile-header">
+            <div class="profile-picture">
+                <img id="profileImage" src="https://cornhub.com" alt="Profile Picture">
+                <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+                <button id="uploadBtn" class="uploadBtn">Change Photo</button>
+                <button id="removePhotoBtn" class="uploadBtn">Remove Photo</button>
+            </div>
+            <div class="profile-info">
+                <div class="name-edit-container">
+                    <input type="text" id="userNameInput" class="nameInput" placeholder="Enter Username">
+                    <button id="saveNameBtn" class="saveNameBtn">Save</button>
+                </div>
+                <p id="userEmail">Email: loading...</p>
+                <label>Modules Taken:</label><br>
+                <input type="text" id="modulesInput" placeholder="e.g. CS1101S"/><br><br>
+                <button id="saveProfileBtn">Save Changes</button>
+
+            </div>
+        </div>
+
+        <div class="profile-content">
+            <section class="about-section">
+                <h2>About Me</h2>
+                <textarea id="aboutMeText" class="about-me-text" placeholder="Tell others about yourself..."></textarea>
+                <button id="saveAboutMe" class="save-btn">Save</button>
+            </section>
+
+            <div class="profile-sidebar">
+                <section class="rating-section">
+                    <h2>Rating</h2>
+                    <div class="stars" id="ratingStars">
+                        <span data-rating="1">☆</span>
+                        <span data-rating="2">☆</span>
+                        <span data-rating="3">☆</span>
+                        <span data-rating="4">☆</span>
+                        <span data-rating="5">☆</span>
+                    </div>
+                    <p>Current Rating: <span id="averageRating">0</span>/5 (<span id="ratingCount">0</span> ratings)</p>
+                    <p class="rating-instruction">Click stars to rate this user</p>
+                </section>
+
+                <section class="calendar-section">
+                    <h2>Calendar</h2>
+                    <div id="calendar"></div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <h4 class="footer-text">Designed by JollibeeLovers</h4>
+        <h4 class="footer-text">© 2025 GroupMeUp. All rights reserved</h4>
+    </footer>
+
+    <script src="profile.js"></script>
+</body>
+</html>
