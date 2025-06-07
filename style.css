@@ -10,7 +10,10 @@ body {
 }
 
 .header {
-	display: flex;
+	display: grid;
+	grid-template-areas: 
+		"logo nav options";
+	grid-template-columns: 1fr 1fr 1fr;
 	background-color: white;
 	border-bottom: solid gainsboro 1.5px;
 	height: 104px;
@@ -19,6 +22,35 @@ body {
 
 .image-logo {
 	width: 155px;
+}
+
+.logo-area-header {
+	grid-area: logo;
+}
+
+.nav-area-header {
+	grid-area: nav;
+}
+
+.options-area-header {
+	grid-area: options;
+}
+
+.nav-header {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+}
+
+.options-header {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+.material-symbols-outlined {
+	font-variation-settings: '
+		'FILL' 0, 'wght' 100, 'GRAD' 0, 'opsz' 48;
 }
 
 .page {
@@ -117,6 +149,7 @@ body {
 }
 
 .container-text {
+	text-align: center;
 	font-size: 14px;
 }
 
@@ -146,6 +179,15 @@ body {
 
 
 /* LOGIN PAGE SPECIFIC */
+.login-register-header {
+	display: flex;
+	background-color: white;
+	border-bottom: solid gainsboro 1.5px;
+	height: 104px;
+	padding: 25px;
+}
+
+
 .login-register-page {
 	display: flex;
 	justify-content: center;
@@ -155,3 +197,6 @@ body {
 	margin: 0px;
 	padding: 50px
 }
+
+
+/* FORUM PAGE SPECIFC */ 
