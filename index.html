@@ -11,7 +11,7 @@
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
-		<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
 		<link rel="stylesheet" href="style.css"/>
 	</head>
 
@@ -25,13 +25,13 @@
 			<!--navigation icons for user-->
 			<nav class="nav-area-header nav-header">
 				<a href="index.html">
-					<span class="material-symbols-outlined">home</span>
+					<span class="current-page-icon material-symbols-outlined">home</span>
 				</a>
 				<a href="my-group.html">
-					<span class="material-symbols-outlined">group</span>
+					<span class="icons material-symbols-outlined">group</span>
 				</a>
 				<a class="active" href="profile.html">
-					<span class="material-symbols-outlined">account_circle</span>
+					<span class="icons material-symbols-outlined">account_circle</span>
 				</a>
         	</nav>  
 
@@ -43,31 +43,61 @@
         </header>
 
 		<main class="page">
-			<h1>Group Forum</h1>
-		
-			<!-- Button to open the popup -->
-			<button id="openModalBtn">Create Group</button>
-
-			<!-- Container for group cards -->
+			<!--search & create group button container-->
+			<div class="content-container box-shadow">
+				<!--search box-->
+				<input class="search-box" placeholder="search"/>
+				
+				<!--divider-->
+				<hr class="solid-line"/>
+				
+				<!--button to open the popup-->
+				<button class="button-box" id="openModalBtn">
+					<span class="button-icon material-symbols-outlined">group_add</span>
+					Create Group
+				</button>		
+			</div>	
+	
+			<!--container for group cards-->
 			<div id="group-list"></div>
 
-			<!-- Popup Modal -->
-			<div id="groupModal" class="modal" style="display: none;">
-				<div class="modal-content">
-					<span id="closeModalBtn" class="close-btn">&times;</span>
-					<h2>Create a New Group</h2>
-					<form id="add-group-form">
-						<label>Title:</label><br>
-						<input type="text" id="group-title" required><br><br>
+			<!--popup modal-->
+			<div class="modal" id="groupModal">
+				<div class="modal-container">
+					<div class="modal-header">
+						<div class="modal-title-container modal-title-area">
+							<h2 class="modal-title">Create New Group</h2>
+						</div>
 
-						<label>Description:</label><br>
-						<textarea id="group-description" placeholder="e.g. Looking for 3 members" required></textarea><br><br>
+						<div class="modal-exit modal-exit-area">
+							<span class="modal-icon material-symbols-outlined" id="closeModalBtn">close</span>
+						</div>
+					</div>
+					
+					<form class="modal-body" id="add-group-form">
+						<div class="modal-subtitle-container">
+							<h3 class="modal-subtitle">* Indicates required</h3>
+						</div>
 
-						<label>Tags (comma separated):</label><br>
-						<input type="text" id="group-tags"><br><br>
+						<div class="modal-input-group">
+							<label class="modal-input-label">Group Title*</label>
+							<input class="modal-input" type="text" id="group-title" required>
+						</div>
 
-						<button type="submit">Submit</button>
+						<div class="modal-input-group">
+							<label class="modal-input-label">Description*</label>
+							<textarea class="modal-textarea modal-input" id="group-description" placeholder="e.g. Looking for 3 members" required></textarea>
+						</div>
+
+						<div class="modal-input-group">
+							<label class="modal-input-label">Tags (Separate w/ Commas)</label>
+							<input class="modal-input" type="text" id="group-tags">
+						</div>
 					</form>
+
+					<div class="modal-footer">
+						<button class="round-button-box" type="submit" form="add-group-form">Save</button>
+					</div>
 				</div>
 			</div>
 		</main>
