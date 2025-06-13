@@ -1,5 +1,16 @@
-/* GLOBAL CLASSES */
+/* COLOUR DICTIONARY 
 
+Container Title: #012661
+Container Sub-Title: #2d2d2d
+
+Input Label: #575757
+Input Box: #dbdbdb
+
+Hyperlink-Hover: #0061fe
+*/
+
+
+/* GLOBAL CLASSES */
 * {
 	box-sizing: border-box;
 }
@@ -9,6 +20,12 @@ body {
 	margin: 0px
 }
 
+textarea {
+	resize: vertical;
+}
+
+
+/* GLOBAL HEADER */
 .header {
 	display: grid;
 	grid-template-areas: 
@@ -49,22 +66,73 @@ body {
 }
 
 .material-symbols-outlined {
-	font-variation-settings: '
-		'FILL' 0, 'wght' 100, 'GRAD' 0, 'opsz' 48;
+	font-family: 'Material Symbols Outlined';
+	font-weight: normal;
+	font-style: normal;
+	font-size: 24px;  /* Preferred icon size */
+	color: #565656;
+	display: inline-block;
+	line-height: 1;
+	text-transform: none;
+	letter-spacing: normal;
+	word-wrap: normal;
+	white-space: nowrap;
+	direction: ltr;
 }
 
+.current-page-icon {
+	font-size: 32px;
+	color: #0061fe;
+	font-variation-settings:
+		'FILL' 1,
+		'wght' 280,
+		'GRAD' 0,
+		'opsz' 24;
+	border-bottom: 3px solid #0061fe;
+	padding: 15px 30px;
+}
+
+.icons {
+	font-size: 32px;
+	font-variation-settings:
+		'FILL' 0,
+		'wght' 280,
+		'GRAD' 0,
+		'opsz' 24;
+	padding: 15px 30px;
+}
+
+.icons:hover {
+	background-color: #f0f2f5;
+	border-radius: 10px;
+}
+
+/* not in use yet */
+.icon-label {
+	width: 12px;
+	border-radius: 10px;
+	background-color: #2d2d2d;
+}
+
+
+/* GLOBAL MAIN */
 .page {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	background-color: rgb(249 250 251);
-	height: 80vh;
+	min-height: 80vh;
 	margin: 0px;
 	padding: 50px
 }
 
 .box-shadow {
 	box-shadow: 0 1px 3px 0 rgb(0 0 0 / .1);
+}
+
+.solid-line {
+	border: solid #e2e5e9 1px;
+	width: 100%;
 }
 
 .content-container {
@@ -74,7 +142,9 @@ body {
 	align-items: center;
 	background-color: white;
 	border-radius: 10px;
-	padding: 50px;
+	width: 35lh;
+	padding: 20px 34px;
+	margin-bottom: 16px;
 }
 
 .text-container {
@@ -87,7 +157,6 @@ body {
 	color: #012661;
 	margin: 0px;
 	padding-bottom: 5px;
-
 }
 
 .container-sub-title {
@@ -96,6 +165,36 @@ body {
 	text-align: center;
 	margin: 0px;
 	padding-bottom: 30px;
+}
+
+.container-text {
+	text-align: center;
+	font-size: 14px;
+}
+
+input::-webkit-input-placeholder {
+	position: relative;
+	font-family: 'Material Symbols Outlined';
+	font-size: 26px;
+	top: 8px;
+}
+
+.search-box {
+    background: none;
+    border: solid #dbdbdb 2px;
+    border-radius: 20px;
+	width: 80%;
+	padding: 10px;
+	margin: 10px;
+}
+
+.search-box:hover {
+	border-color: #0061fe;
+}
+
+.search-box:focus {
+	outline: none;
+	border-color: #003d7c;
 }
 
 .input-group {
@@ -133,14 +232,15 @@ body {
 }
 
 .button-box {
+	display: flex;
+	justify-content: center;
 	font-family: "Inter", sans-serif;
 	color: white;
 	background-color: #003d7c;
 	border: solid #003d7c 2px;
 	border-radius: 5px;
-	width: 100%;
-	margin: 14px;
-	padding: 8px;
+	padding: 8px 18px;
+	margin: 10px;
 }
 
 .button-box:hover {
@@ -148,9 +248,31 @@ body {
 	border: solid #0061fe 2px;
 }
 
-.container-text {
-	text-align: center;
-	font-size: 14px;
+.round-button-box {
+	display: flex;
+	justify-content: center;
+	font-family: "Inter", sans-serif;
+	color: white;
+	background-color: #003d7c;
+	border: solid #003d7c 2px;
+	border-radius: 20px;
+	padding: 8px 14px;
+}
+
+.round-button-box:hover {
+	background-color: #0061fe;
+	border: solid #0061fe 2px;
+}
+
+.button-icon {
+	font-size: 16px;
+	color: white;
+	font-variation-settings:
+		'FILL' 1,
+		'wght' 280,
+		'GRAD' 0,
+		'opsz' 24;
+	padding-right: 6px;
 }
 
 .hyperlink {
@@ -165,6 +287,145 @@ body {
 	color: #0061fe;
 }
 
+
+/* GLOBAL POP UP MODAL */
+.modal {
+	background-color: rgb(0, 0, 0, 0.5);
+	opacity: 0;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	transition: all 0.3s ease-in-out;
+	z-index: -1;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.modal.open {
+	opacity: 1;
+	z-index: 999;
+}
+
+.modal-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
+	background-color: white;
+	border-radius: 10px;
+	width: 35lh;
+	/* padding: 20px 34px; */
+}
+
+/* MODAL HEADER */
+.modal-header {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-areas: "modal-title modal-exit";
+	border-bottom: solid gainsboro 1.5px;
+	width: 100%;
+	padding: 10px;
+}
+
+.modal-title-area {
+	grid-area: modal-title;
+}
+
+.modal-exit-area {
+	grid-area: modal-exit;
+}
+
+.modal-title-container {
+	display: flex;
+	align-items: center;
+	padding: 10px;
+}
+
+.modal-title {
+	font-size: 24px;
+	color: #012661;
+	margin: 0px;
+}
+
+.modal-exit {
+	display: flex;
+	align-items: center;
+	justify-content: end;
+}
+
+.modal-icon {
+	padding: 8px;	
+}
+
+.modal-icon:hover {
+	background-color: #f0f2f5;
+	border-radius: 20px;
+}
+
+/* MODAL BODY */
+.modal-body {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	width: 100%;
+	padding: 20px;
+	margin: 5px 0px;
+}
+
+.modal-subtitle-container {
+	margin: 16px 0px;
+}
+
+.modal-subtitle {
+	margin: 0px;
+}
+
+.modal-input-group {
+	margin: 10px 0px; 
+}
+
+.modal-input-label {
+	font-size: 14px;
+	margin: 3px;
+}
+
+.modal-input {
+    background: none;
+    border: solid #000000 1px;
+    border-radius: 3px;
+	width: 100%;
+	height: 33px;
+    padding: 8px;
+}
+
+.modal-input:hover {
+	border-color: #0061fe;
+}
+
+.modal-input:focus {
+	outline: none;
+	border: solid #003d7c 2px;
+}
+
+.modal-textarea {
+	height: 10vh;
+}
+
+/* MODAL FOOTER */
+.modal-footer {
+	display: flex;
+	justify-content: flex-end;
+	border-top: solid gainsboro 1.5px;
+	width: 100%;
+	padding: 10px 20px;
+}
+
+
+/* GLOBAL FOOTER */
 .footer {
 	background-color: #003d7c;
 	padding: 30px;
@@ -178,7 +439,7 @@ body {
 }
 
 
-/* LOGIN PAGE SPECIFIC */
+/* LOGIN, REGISTER & RESET PAGE SPECIFIC */
 .login-register-header {
 	display: flex;
 	background-color: white;
@@ -186,7 +447,6 @@ body {
 	height: 104px;
 	padding: 25px;
 }
-
 
 .login-register-page {
 	display: flex;
@@ -198,5 +458,30 @@ body {
 	padding: 50px
 }
 
+.login-register-content-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
+	background-color: white;
+	border-radius: 10px;
+	padding: 50px;
+}
+
+.login-button-box {
+	font-family: "Inter", sans-serif;
+	color: white;
+	background-color: #003d7c;
+	border: solid #003d7c 2px;
+	border-radius: 5px;
+	width: 100%;
+	margin: 14px;
+	padding: 8px;
+}
+
+.login-button-box:hover {
+	background-color: #0061fe;
+	border: solid #0061fe 2px;
+}
 
 /* FORUM PAGE SPECIFC */ 
