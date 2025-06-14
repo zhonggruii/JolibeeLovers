@@ -107,13 +107,42 @@ textarea {
 	border-radius: 10px;
 }
 
-/* not in use yet */
-.icon-label {
-	width: 12px;
-	border-radius: 10px;
-	background-color: #2d2d2d;
+.tooltip {
+	position: relative;
 }
 
+.tooltip .tooltip-text {
+	font-size: 12px;
+	text-align: center;
+	color: white;
+	background-color: black;
+	border-radius: 16px;
+	padding: 8px 10px;
+
+	position: absolute;
+	z-index: 1;
+	visibility: hidden;
+	top: 82px;
+
+	transition-delay: 0.4s;
+	transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 0.5);
+}
+
+.home-spacing {
+	left: 20.5px;
+}
+
+.group-spacing {
+	left: 15.5px;
+}
+
+.profile-spacing {
+	left: 18.5px;
+}
+
+.tooltip:hover .tooltip-text {
+  	visibility: visible;
+}
 
 /* GLOBAL MAIN */
 .page {
