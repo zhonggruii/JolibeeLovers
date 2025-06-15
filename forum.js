@@ -3,47 +3,56 @@ import { collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
 
 // Load and display groups
-async function loadGroups() {
+async function loadGroups(groups = null) {
 	const groupList = document.getElementById("group-list");
-	groupList.innerHTML = ""; // clear before loading
+  groupList.innerHTML = ""; // clear before loading
 
-	const querySnapshot = await getDocs(collection(db, "groups"));
+  // If groups array is provided, use that (for search results)
+  // Otherwise load all groups from Firestore
+  const groupsToDisplay = groups || await getAllGroups();
 
-	if (querySnapshot.empty) {
-		groupList.innerHTML = "<p>No groups have been created yet.</p>";
-		return;
-	}
+  if (!groupsToDisplay || groupsToDisplay.length === 0) {
+    groupList.innerHTML = groups 
+      ? "<p>No groups found with that tag.</p>"
+      : "<p>No groups have been created yet.</p>";
+    return;
+  }
 
-	querySnapshot.forEach((doc) => {
-		const group = doc.data();
+  groupsToDisplay.forEach(group => {
+    // Skip if title is missing
+    if (!group.title) return;
 
-		// Skip if title is missing
-		if (!group.title) return;
+    const div = document.createElement("div");
+    div.classList.add("content-container", "box-shadow");
 
-		const div = document.createElement("div");
-		div.classList.add("content-container");
-		div.classList.add("box-shadow");
+    let content = `<h3>${group.title}</h3>`;
 
-		let content = `<h3>${group.title}</h3>`;
+    if (group.creator) {
+      content += `<p><strong>Created by:</strong> ${group.creator}</p>`;
+    }
 
-		if (group.creator) {
-			content += `<p><strong>Created by:</strong> ${group.creator}</p>`;
-		}
+    if (group.description) {
+      content += `<p><strong>Description:</strong> ${group.description}</p>`;
+    }
 
-		if (group.description) {
-			content += `<p><strong>Description:</strong> ${group.description}</p>`;
-		}
+    if (group.tags && group.tags.length > 0) {
+      content += `<p><strong>Tags:</strong> ${group.tags.join(", ")}</p>`;
+    }
 
-		if (group.tags && group.tags.length > 0) {
-			content += `<p><strong>Tags:</strong> ${group.tags.join(", ")}</p>`;
-		}
+    content += `<button onclick="requestToJoin('${group.id}')">Request To Join</button>`;
 
-		content += `<button onclick="requestToJoin('${doc.id}')">Request To Join</button>`;
-
-		div.innerHTML = content;
-		groupList.appendChild(div);
-	});
+    div.innerHTML = content;
+    groupList.appendChild(div);
+  });
 }
+
+// Helper function to get all groups
+async function getAllGroups() {
+  const querySnapshot = await getDocs(collection(db, "groups"));
+  return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}
+
+
 loadGroups();
 
 // Modal controls
@@ -59,7 +68,7 @@ const closeBtn = document.getElementById("closeModalBtn");
 
 openBtn.addEventListener("click", () => {
 	modal.classList.add("open");
-});
+})
 
 closeBtn.addEventListener("click", () => {
 	modal.classList.remove("open");
@@ -105,3 +114,43 @@ onAuthStateChanged(getAuth(), (user) => {
 window.requestToJoin = function (groupId) {
 	alert("Request sent for group: " + groupId);
 };
+
+//search bar function
+async function searchGroupsByTag(searchTerm) {
+  try {
+    searchTerm = searchTerm.trim().toLowerCase();
+    if (!searchTerm) return getAllGroups();
+
+    const allGroups = await getAllGroups();
+    
+    return allGroups.filter(group => 
+      group.tags?.some(tag => 
+        tag.toLowerCase().includes(searchTerm)
+      )
+    );
+    
+  } catch (error) {
+    console.error("Search error:", error);
+    return [];
+  }
+}
+
+document.getElementById("searchBar").addEventListener("input", async (e) => {
+  const results = await searchGroupsByTag(e.target.value);
+  displayGroups(results);
+});
+
+//connecting it to the searchGroup function to a search bar so when enter is clicked
+//the search will query
+document.getElementById("searchBar").addEventListener("keyup", async (event) => {
+  if (event.key === "Enter") {
+    const searchTerm = event.target.value.trim();
+    if (searchTerm) {
+      const filteredGroups = await searchGroupsByTag(searchTerm);
+      loadGroups(filteredGroups);
+    } else {
+      // If search is empty, show all groups
+      loadGroups();
+    }
+  }
+});
