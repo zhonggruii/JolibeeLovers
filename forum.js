@@ -2,155 +2,182 @@ import { db } from "./config.js";
 import { collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
 
-// Load and display groups
-async function loadGroups(groups = null) {
-	const groupList = document.getElementById("group-list");
-  	groupList.innerHTML = ""; // clear before loading
-
-	// If groups array is provided, use that (for search results)
-	// Otherwise load all groups from Firestore
-	const groupsToDisplay = groups || await getAllGroups();
-
-	if (!groupsToDisplay || groupsToDisplay.length === 0) {
-		groupList.innerHTML = groups 
-		? "<p>No groups found with that tag.</p>"
-		: "<p>No groups have been created yet.</p>";
-		return;
-	}
-
-	groupsToDisplay.forEach(group => {
-		// Skip if title is missing
-		if (!group.title) return;
-
-		const div = document.createElement("div");
-		div.classList.add("content-container", "box-shadow");
-
-		let content = `<h3>${group.title}</h3>`;
-
-		if (group.creator) {
-		content += `<p><strong>Created by:</strong> ${group.creator}</p>`;
-		}
-
-		if (group.description) {
-		content += `<p><strong>Description:</strong> ${group.description}</p>`;
-		}
-
-		if (group.tags && group.tags.length > 0) {
-		content += `<p><strong>Tags:</strong> ${group.tags.join(", ")}</p>`;
-		}
-
-		content += `<button onclick="requestToJoin('${group.id}')">Request To Join</button>`;
-
-		div.innerHTML = content;
-		groupList.appendChild(div);
-	});
-}
-
-// Helper function to get all groups
-async function getAllGroups() {
-	const querySnapshot = await getDocs(collection(db, "groups"));
-	return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-}
-
-
-loadGroups();
-
-// Modal controls
-/*
-const modal = document.getElementById("groupModal");
-document.getElementById("openModalBtn").onclick = () => modal.style.display = "flex";
-document.getElementById("closeModalBtn").onclick = () => modal.style.display = "none";
-*/
-
+// DOM Elements
+const groupList = document.getElementById("group-list");
+const searchBar = document.getElementById("searchBar");
 const modal = document.getElementById("groupModal");
 const openBtn = document.getElementById("openModalBtn");
 const closeBtn = document.getElementById("closeModalBtn");
-
-openBtn.addEventListener("click", () => {
-	modal.classList.add("open");
-})
-
-closeBtn.addEventListener("click", () => {
-	modal.classList.remove("open");
-});
-
-// Handle form submission
 const form = document.getElementById("add-group-form");
 
-onAuthStateChanged(getAuth(), (user) => {
-	if (!user) {
-		alert("You must be logged in to create a group.");
-		return;
-	}
+// Cache
+let cachedGroups = [];
+let searchTimeout;
 
-	form.addEventListener("submit", async (e) => {
-		e.preventDefault();
-
-		const title = document.getElementById("group-title").value.trim();
-		const description = document.getElementById("group-description").value.trim();
-		const tagString = document.getElementById("group-tags").value;
-		const tags = tagString.split(",").map(tag => tag.trim()).filter(tag => tag.length > 0);
-		const creator = user.displayName || user.email;
-
-		try {
-			await addDoc(collection(db, "groups"), {
-				title,
-				description,
-				tags,
-				creator
-			});
-
-			alert("Group created!");
-			form.reset();
-			modal.style.display = "none";
-			loadGroups(); // reload list without full page refresh
-		} catch (err) {
-			alert("Error: " + err.message);
-		}
-	});
-});
-
-// Placeholder function
-window.requestToJoin = function (groupId) {
-	alert("Request sent for group: " + groupId);
-};
-
-//search bar function
-async function searchGroupsByTag(searchTerm) {
-  	try {
-			searchTerm = searchTerm.trim().toLowerCase();
-		if (!searchTerm) return getAllGroups();
-
-		const allGroups = await getAllGroups();
-		
-		return allGroups.filter(group => 
-			group.tags?.some(tag => 
-			tag.toLowerCase().includes(searchTerm)
-			)
-		);
+// Core Functions
+async function getAllGroups() {
+  try {
+    if (cachedGroups.length) return cachedGroups;
     
-	} catch (error) {
-		console.error("Search error:", error);
-		return [];
-	}
+    const snapshot = await getDocs(collection(db, "groups"));
+    cachedGroups = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    return cachedGroups;
+  } catch (error) {
+    console.error("Error fetching groups:", error);
+    return [];
+  }
 }
 
-document.getElementById("searchBar").addEventListener("input", async (e) => {
-	const results = await searchGroupsByTag(e.target.value);
-	displayGroups(results);
+async function loadGroups(groups = null) {
+  try {
+    groupList.innerHTML = "<p>Loading groups...</p>";
+    
+    const groupsToDisplay = groups || await getAllGroups();
+    const usersSnapshot = await getDocs(collection(db, "users"));
+    
+    const usersMap = {};
+    usersSnapshot.forEach(doc => {
+      const user = doc.data();
+      usersMap[user.email] = user;
+    });
+
+    groupList.innerHTML = "";
+    
+    if (!groupsToDisplay.length) {
+      groupList.innerHTML = "<p>No groups found</p>";
+      return;
+    }
+
+    groupsToDisplay.forEach(group => {
+      const creator = usersMap[group.creator] || {};
+      
+      const card = document.createElement("div");
+      card.className = "content-container box-shadow p2034";
+      card.innerHTML = `
+        <div class="content-header">
+          <h2 class="container-title m10-0">${group.title}</h2>
+          <div class="m10-0">
+            <a class="user-group" href="/profile.html?email=${encodeURIComponent(group.creator)}">
+              <img class="avatar-icons" 
+                   src="${creator.photoURL || 'https://www.w3schools.com/howto/img_avatar.png'}" 
+                   alt="Profile">
+              <div class="userinfo-container">
+                <h3 class="username-text">${creator.name || group.creator?.split('@')[0] || "User"}</h3>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="content-body">
+          <p class="content-text">${group.description || "No description"}</p>
+          <div class="content-taglist">
+            <p class="content-text">Tags: ${group.tags?.join(", ") || "No tags"}</p>
+          </div>
+        </div>
+        <hr class="solid-line" />
+        <button class="button-box m10-0" data-group-id="${group.id}">
+          <span class="button-icon material-symbols-outlined">add_circle</span>
+          Request to Join
+        </button>
+      `;
+      
+      card.querySelector(".button-box").addEventListener("click", () => {
+        requestToJoin(group.id);
+      });
+      
+      groupList.appendChild(card);
+    });
+
+  } catch (error) {
+    console.error("Error:", error);
+    groupList.innerHTML = `
+      <div class="error">
+        <p>Failed to load groups</p>
+        <button onclick="loadGroups()">Retry</button>
+      </div>
+    `;
+  }
+}
+
+async function searchGroupsByTag(searchTerm) {
+  try {
+    searchTerm = searchTerm.trim().toLowerCase();
+    if (!searchTerm) return await getAllGroups();
+
+    const allGroups = await getAllGroups();
+    return allGroups.filter(group => {
+      const searchContent = [
+        group.title,
+        group.description,
+        ...(group.tags || [])
+      ].join(" ").toLowerCase();
+      
+      return searchContent.includes(searchTerm);
+    });
+  } catch (error) {
+    console.error("Search error:", error);
+    return [];
+  }
+}
+
+// Event Handlers
+function handleSearch(event) {
+  if (event.type === "keyup" && event.key !== "Enter") return;
+  
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(async () => {
+    const results = await searchGroupsByTag(event.target.value);
+    loadGroups(results);
+  }, event.type === "keyup" ? 0 : 300);
+}
+
+// Initialize
+document.addEventListener("DOMContentLoaded", () => {
+  loadGroups();
+  
+  if (searchBar) {
+    searchBar.addEventListener("input", handleSearch);
+    searchBar.addEventListener("keyup", handleSearch);
+  }
+
+  if (openBtn && closeBtn && modal) {
+    openBtn.addEventListener("click", () => modal.classList.add("open"));
+    closeBtn.addEventListener("click", () => modal.classList.remove("open"));
+  }
+
+  onAuthStateChanged(getAuth(), (user) => {
+    if (!user) return;
+    
+    form?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      try {
+        await addDoc(collection(db, "groups"), {
+          title: document.getElementById("group-title").value.trim(),
+          description: document.getElementById("group-description").value.trim(),
+          tags: document.getElementById("group-tags").value
+            .split(",")
+            .map(tag => tag.trim())
+            .filter(tag => tag),
+          creator: user.email,
+          createdAt: new Date()
+        });
+        
+        alert("Group created!");
+        form.reset();
+        modal.classList.remove("open");
+        cachedGroups = []; // Reset cache
+        loadGroups();
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    });
+  });
 });
 
-//connecting it to the searchGroup function to a search bar so when enter is clicked
-//the search will query
-document.getElementById("searchBar").addEventListener("keyup", async (event) => {
-  	if (event.key === "Enter") {
-		const searchTerm = event.target.value.trim();
-		if (searchTerm) {
-			const filteredGroups = await searchGroupsByTag(searchTerm);
-			loadGroups(filteredGroups);
-		} else {
-			// If search is empty, show all groups
-			loadGroups();
-		}
-  	}
-});
+// Global Functions
+window.requestToJoin = function(groupId) {
+  alert("Request to join group: " + groupId);
+};
