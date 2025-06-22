@@ -3,6 +3,14 @@ import { doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.5.
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-storage.js';
 import { signOut, updateProfile } from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js';
 
+// DOM Elements
+const introModal = document.getElementById("introModal");
+const openBtn = document.getElementById("openModalBtn");
+const closeBtn = document.getElementById("closeModalBtn");
+
+// Modal Pop Up
+openBtn.addEventListener("click", () => introModal.classList.add("open"));
+closeBtn.addEventListener("click", () => introModal.classList.remove("open"));
 
 // Load and Display User Profile
 async function loadUserProfile(user) {
@@ -18,7 +26,7 @@ async function loadUserProfile(user) {
         if (data.photoURL) {
             document.getElementById('profileImage').src = data.photoURL;
         } else {
-            document.getElementById('profileImage').src = "defaultPFPImage.png";
+            document.getElementById('profileImage').src = "https://www.w3schools.com/howto/img_avatar.png";
         }
     }
 }
