@@ -1,94 +1,303 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>My Profile - GroupMeUp</title>
-    <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/zhonggruii/JolibeeLovers/refs/heads/main/GroupMeUp%20Icon%20Transparent.png">
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-    
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Profile Page</title>
+        <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/zhonggruii/JolibeeLovers/refs/heads/main/GroupMeUp%20Icon%20Transparent.png">
+        
+        <!--firebase SDK-->
+        <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+        <script type="module" src = "./profile.js"></script>
+        
+		<!--for css-->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+		<link rel="stylesheet" href="style.css"/>
+    </head>
 
-    <script type="module" src = "./profile.js"></script>
-    
-    <link rel="stylesheet" href="style.css"/>
-</head>
+    <body>
+        <header class="header">
+            <!--GroupMeUp logo-->
+            <a class="logo-area-header" href="index.html">
+                <img class="image-logo" src="https://raw.githubusercontent.com/zhonggruii/JolibeeLovers/refs/heads/main/GroupMeUp%20Logo.jpg" alt="GroupMeUp Logo"/>
+            </a>
 
-<body>
-    <header class="header">
-        <a href="index.html">
-            <img class="image-logo" src="https://raw.githubusercontent.com/zhonggruii/JolibeeLovers/refs/heads/main/GroupMeUp%20Logo.jpg" alt="GroupMeUp Logo"/>
-        </a>
-        <nav class="nav-menu">
-            <a href="index.html">Home</a>
-            <a href="my-group.html">My Groups</a>
-            <a href="profile.html" class="active">My Profile</a>
-        </nav>
-        <button id="signOutBtn" class="sign-out-btn">Sign Out</button>
-    </header>
+			<!--navigation icons for user-->
+			<nav class="nav-area-header nav-header">
+				<a class="tooltip" href="index.html">
+					<span class="icons material-symbols-outlined">home</span>
+					<span class="tooltip-text home-spacing">Home</span>
+				</a>
+				<a class="tooltip" href="my-group.html">
+					<span class="icons material-symbols-outlined">group</span>
+					<span class="tooltip-text group-spacing">Groups</span>
+				</a>
+				<a class="tooltip" href="profile.html">
+					<span class="current-page-icon material-symbols-outlined">account_circle</span>
+					<span class="tooltip-text profile-spacing">Profile</span>
+				</a>
+        	</nav>  
 
-    <main class="profile-page">
-        <div class="profile-header">
-            <div class="profile-picture">
-                <img id="profileImage" src="https://cornhub.com" alt="Profile Picture">
-                <input type="file" id="imageUpload" accept="image/*" style="display: none;">
-                <button id="uploadBtn" class="uploadBtn">Change Photo</button>
-                <button id="removePhotoBtn" class="uploadBtn">Remove Photo</button>
-            </div>
-            <div class="profile-info">
-                <div class="name-edit-container">
-                    <input type="text" id="userNameInput" class="nameInput" placeholder="Enter Username">
-                    <button id="saveNameBtn" class="saveNameBtn">Save</button>
+			<!--logout & other options-->
+			<div class="options-area-header options-header">
+				<div class="dropdown">
+					<span class="material-symbols-outlined">menu</span>
+					<!--dropdown content (modular)-->
+					<div class="dropdown-container box-shadow">
+						<!--logout option-->
+						<button class="dropdown-button" id="signOutBtn">
+							<span class="dropdown-icon material-symbols-outlined">logout</span>
+							Log Out
+						</button>
+					</div>
+				</div>
+			</div>
+        </header>
+
+        <main class="page">
+            <div class="intro-container box-shadow p2034 mb16">
+                <!--FIX PROFILE PIC: SYNC w/ JS-->
+                <img class="profile-icon" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />
+                
+                <!--FIX USERNAME: SYNC w/ JS-->
+                <div class="intro-username m0-15">
+                    <h2 class="container-title">martin rosales</h2>
                 </div>
-                <p id="userEmail">Email: loading...</p>
-                <label>Modules Taken:</label><br>
-                <input type="text" id="modulesInput" placeholder="e.g. CS1101S"/><br><br>
-                <button id="saveProfileBtn">Save Changes</button>
 
+                <div class="intro-button-group">  
+                    <!--FIX BUTTON: DISAPPEAR IF VISITOR-->               
+                    <button class="button-box-orange m10" id="openModalBtn">
+                        <span class="button-icon material-symbols-outlined">edit</span>
+                        Edit Intro
+				    </button>
+
+                    <!--CALENDAR WIP-->
+                    <button class="button-box m10">
+                        <span class="button-icon material-symbols-outlined">calendar_today</span>
+                        View Calendar
+				    </button>                       
+                </div>
             </div>
-        </div>
 
-        <div class="profile-content">
-            <section class="about-section">
-                <h2>About Me</h2>
-                <textarea id="aboutMeText" class="about-me-text" placeholder="Tell others about yourself..."></textarea>
-                <button id="saveAboutMe" class="save-btn">Save</button>
-            </section>
+            <div class="profile-body w50lh">
+                <!--body left column-->
+                <div class="profile-left-group mr5 w42pct">
+                    <!--about section-->
+                    <div class="profile-container box-shadow mb10 w100pct">
+                        <div class="profile-container-header p20-10-0-30 w100pct">
+                            <div class="element-subtitle-container">
+                                <h3 class="content-subtitle">About</h3>
+                            </div>
 
-            <div class="profile-sidebar">
-                <section class="rating-section">
-                    <h2>Rating</h2>
-                    <div class="stars" id="ratingStars">
-                        <span data-rating="1">☆</span>
-                        <span data-rating="2">☆</span>
-                        <span data-rating="3">☆</span>
-                        <span data-rating="4">☆</span>
-                        <span data-rating="5">☆</span>
+                            <div class="element-edit-container w100pct">
+                                <span class="modal-icon material-symbols-outlined">edit</span>
+                            </div>
+                        </div> 
+
+                        <div class="profile-container-body p0-34-20-34 w100pct">
+                            <p class="content-text">Hitler is the greatest artist of the 20th Century!</p>
+                        </div>
                     </div>
-                    <p>Current Rating: <span id="averageRating">0</span>/5 (<span id="ratingCount">0</span> ratings)</p>
-                    <p class="rating-instruction">Click stars to rate this user</p>
-                </section>
 
-                <section class="calendar-section">
-                    <h2>Calendar</h2>
-                    <div id="calendar"></div>
-                </section>
+                    <!--rating section (WIP)-->
+                    <div class="profile-container box-shadow mb10 w100pct">
+                        <div class="profile-container-header p20-10-0-30 w100pct">
+                            <div class="element-subtitle-container">
+                                <h3 class="content-subtitle">Rating</h3>
+                            </div>
+
+                            <div class="element-edit-container w100pct">
+                                <span class="modal-icon material-symbols-outlined">edit</span>
+                            </div>
+                        </div> 
+
+                        <div class="profile-container-body p0-34-20-34 w100pct">
+                            <div class="stars-container" id="ratingStars">
+                                <span data-rating="1">☆</span>
+                                <span data-rating="2">☆</span>
+                                <span data-rating="3">☆</span>
+                                <span data-rating="4">☆</span>
+                                <span data-rating="5">☆</span>
+                            </div>
+                            <p>Current Rating: <span id="averageRating">0</span>/5 (<span id="ratingCount">0</span> ratings)</p>
+                            <p class="rating-instruction">Click stars to rate this user</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!--body right column-->
+                <div class="profile-right-group ml5 w58pct">
+                    <!--activity section-->
+                    <div class="profile-container box-shadow mb10 w100pct">
+                        <div class="profile-container-header p20-10-0-30 w100pct">
+                            <div class="element-subtitle-container">
+                                <h3 class="content-subtitle">Activity</h3>
+                            </div>
+
+                            <div class="element-edit-container w100pct">
+                                <span class="modal-icon material-symbols-outlined">edit</span>
+                            </div>
+                        </div> 
+
+                        <div class="profile-container-body p0-34-20-34 w100pct">
+                            <p class="content-text">- CS1010J</p>
+                            <p class="content-text">- BT1101</p>
+                            <p class="content-text">- IS1108</p>
+                        </div>
+                    </div>
+
+                    <!--skills section-->
+                    <div class="profile-container box-shadow mb10 w100pct">
+                        <div class="profile-container-header p20-10-0-30 w100pct">
+                            <div class="element-subtitle-container">
+                                <h3 class="content-subtitle">Skills</h3>
+                            </div>
+
+                            <div class="element-edit-container w100pct">
+                                <span class="modal-icon material-symbols-outlined">edit</span>
+                            </div>
+                        </div> 
+
+                        <div class="profile-container-body p0-34-20-34 w100pct">
+                            <p class="content-text">- Python</p>
+                            <p class="content-text">- Java</p>
+                            <p class="content-text">- HTML & CSS</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </main>
 
-    <footer class="footer">
-        <h4 class="footer-text">Designed by JollibeeLovers</h4>
-        <h4 class="footer-text">© 2025 GroupMeUp. All rights reserved</h4>
-    </footer>
+            <!--spacing (remove ltr)-->
+            <hr />
 
-    <script src="profile.js"></script>
-</body>
+            <!--EDIT INTRO POP UP MODAL-->
+			<div class="modal" id="introModal">
+				<div class="modal-container">
+                    <!--modal header-->
+					<div class="modal-header">
+						<div class="modal-title-container modal-title-area">
+							<h2 class="modal-title">Edit Intro</h2>
+						</div>
+
+						<div class="modal-exit modal-exit-area">
+							<span class="modal-icon material-symbols-outlined" id="closeModalBtn">close</span>
+						</div>
+					</div>
+					
+                    <!--FIX ID: SYNC W/ JS-->
+					<form class="modal-body" id="add-group-form">
+                        <!--change profile picture section-->
+                        <div class="modal-element-group mb15">
+                            <!--element header-->
+                            <div class="modal-element-header mb-10-0 w100pct">
+                                <div class="element-subtitle-container">
+                                    <h3 class="modal-subtitle nowrap">Change Profile Picture</h3>
+                                </div>
+                                
+                                <div class="element-edit-container w100pct">
+                                    <span class="modal-icon material-symbols-outlined m0-5" id="uploadBtn">edit</span>
+                                    <span class="modal-icon material-symbols-outlined red m0-5" id="removePhotoBtn">delete</span>
+                                </div>
+                            </div>
+
+                            <!--profile picture area-->
+                            <div class="modal-element-body w100pct">
+                                <img class="modal-picture-image" id="profileImage" src="https://www.w3schools.com/howto/img_avatar.png" alt="Profile Picture"/>
+                            </div>
+                        </div>
+
+                        <!--change user details section-->
+                        <div class="modal-element-group m15-0">
+                            <!--element header-->
+                            <div class="modal-element-header w100pct">
+                                <div class="element-subtitle-container">
+                                    <h3 class="modal-subtitle nowrap">Change User Details</h3>
+                                </div>
+                            </div>
+
+                            <!--user detail area (modular)-->                   
+                            <div class="modal-element-body w100pct">
+                                <!--username input--> 
+                                <div class="modal-input-group w100pct">
+                                    <label class="modal-input-label">Username</label>
+                                    <input class="modal-input" type="text" id="userNameInput">
+                                </div>   
+                            </div>
+                        </div>                        
+					</form>
+
+					<div class="modal-footer">
+						<button class="round-button-box" type="submit" id="saveNameBtn">Save</button>
+					</div>
+				</div>
+			</div>
+
+            <!--FIX: INCORPORATE WITH POP UP MODAL-->
+            <div class="profile-header">
+                <!--PROFILE PICTURE-->
+                <div class="profile-picture">
+                    <img id="profileImage" src="https://cornhub.com" alt="Profile Picture">
+                    <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+                    <button id="uploadBtn" class="uploadBtn">Change Photo</button>
+                    <button id="removePhotoBtn" class="uploadBtn">Remove Photo</button>
+                </div>
+
+                <div class="profile-info">
+                    <!--USERNAME-->
+                    <div class="name-edit-container">
+                        <input type="text" id="userNameInput" class="nameInput" placeholder="Enter Username">
+                        <button id="saveNameBtn" class="saveNameBtn">Save</button>
+                    </div>
+
+                    <!--EMAIL -->
+                    <p id="userEmail">Email: loading...</p>
+                    <label>Modules Taken:</label><br>
+                    <input type="text" id="modulesInput" placeholder="e.g. CS1101S"/><br><br>
+                    <button id="saveProfileBtn">Save Changes</button>
+
+                </div>
+            </div>
+
+            <div class="profile-content">
+                <section class="about-section">
+                    <h2>About Me</h2>
+                    <textarea id="aboutMeText" class="about-me-text" placeholder="Tell others about yourself..."></textarea>
+                    <button id="saveAboutMe" class="save-btn">Save</button>
+                </section>
+
+                <div class="profile-sidebar">
+                    <section class="rating-section">
+                        <h2>Rating</h2>
+                        <div class="stars" id="ratingStars">
+                            <span data-rating="1">☆</span>
+                            <span data-rating="2">☆</span>
+                            <span data-rating="3">☆</span>
+                            <span data-rating="4">☆</span>
+                            <span data-rating="5">☆</span>
+                        </div>
+                        <p>Current Rating: <span id="averageRating">0</span>/5 (<span id="ratingCount">0</span> ratings)</p>
+                        <p class="rating-instruction">Click stars to rate this user</p>
+                    </section>
+
+                    <section class="calendar-section">
+                        <h2>Calendar</h2>
+                        <div id="calendar"></div>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <h4 class="footer-text">Designed by JollibeeLovers</h4>
+            <h4 class="footer-text">© 2025 GroupMeUp. All rights reserved</h4>
+        </footer>
+
+        <!--TO FIX: ADD LOADING SCREEN WHILE WAITING FOR SCRIPT-->
+        <script src="profile.js"></script>
+    </body>
 </html>
