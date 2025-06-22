@@ -40,46 +40,49 @@ async function loadGroups(groups = null) {
     
     const usersMap = {};
     usersSnapshot.forEach(doc => {
-      const user = doc.data();
-      usersMap[user.email] = user;
+		const user = doc.data();
+		usersMap[user.email] = user;
     });
 
     groupList.innerHTML = "";
     
     if (!groupsToDisplay.length) {
-      groupList.innerHTML = "<p>No groups found</p>";
-      return;
+		groupList.innerHTML = "<p>No groups found</p>";
+		return;
     }
 
     groupsToDisplay.forEach(group => {
       const creator = usersMap[group.creator] || {};
       
       const card = document.createElement("div");
-      card.className = "content-container box-shadow p2034";
+      card.className = "content-container box-shadow p2034 m10-0";
       card.innerHTML = `
         <div class="content-header">
-          <h2 class="container-title m10-0">${group.title}</h2>
-          <div class="m10-0">
-            <a class="user-group" href="/profile.html?email=${encodeURIComponent(group.creator)}">
-              <img class="avatar-icons" 
-                   src="${creator.photoURL || 'https://www.w3schools.com/howto/img_avatar.png'}" 
-                   alt="Profile">
-              <div class="userinfo-container">
-                <h3 class="username-text">${creator.name || group.creator?.split('@')[0] || "User"}</h3>
-              </div>
-            </a>
-          </div>
+          	<h2 class="container-title m10-0">${group.title}</h2>
+          	<div class="user-group m10-0">
+				<a class="avatar-container" href="/profile.html?email=${encodeURIComponent(group.creator)}">
+					<img class="avatar-icons" 
+						src="${creator.photoURL || 'https://www.w3schools.com/howto/img_avatar.png'}" 
+						alt="Profile Picture">
+				</a>
+				<a class="userinfo-container" href="/profile.html?email=${encodeURIComponent(group.creator)}">
+					<div>
+						<h3 class="username-text">${creator.name || group.creator?.split('@')[0] || "User"}</h3>
+					</div>	
+				</a>
+          	</div>
         </div>
+		
         <div class="content-body">
-          <p class="content-text">${group.description || "No description"}</p>
-          <div class="content-taglist">
-            <p class="content-text">Tags: ${group.tags?.join(", ") || "No tags"}</p>
-          </div>
+          	<p class="content-text">${group.description || "No description"}</p>
+          	<div class="content-taglist">
+            	<p class="content-text">Tags: ${group.tags?.join(", ") || "No tags"}</p>
+          	</div>
         </div>
         <hr class="solid-line" />
         <button class="button-box m10-0" data-group-id="${group.id}">
-          <span class="button-icon material-symbols-outlined">add_circle</span>
-          Request to Join
+			<span class="button-icon material-symbols-outlined">add_circle</span>
+			Request to Join
         </button>
       `;
       
