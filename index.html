@@ -18,7 +18,7 @@
 	<body>
         <header class="header">
             <!--TO FIX: CHANGE LINK WHEN HOMEPAGE UP-->
-            <a class="logo-area-header" href="https://www.ite.edu.sg/">
+            <a class="logo-area-header" href="index.html">
                 <img class="image-logo" src="https://raw.githubusercontent.com/zhonggruii/JolibeeLovers/refs/heads/main/GroupMeUp%20Logo.jpg" alt="GroupMeUp Logo"/>
             </a>
 			
@@ -45,7 +45,7 @@
 					<!--dropdown content (modular)-->
 					<div class="dropdown-container box-shadow">
 						<!--logout option-->
-						<button class="dropdown-button" id="signOutBtn">
+						<button class="dropdown-button" id="signOutBtn" onclick="window.location.href='login.html'">
 							<span class="dropdown-icon material-symbols-outlined">logout</span>
 							Log Out
 						</button>
@@ -73,25 +73,27 @@
 			<!--container for group cards-->
 			<div id="group-list">
 				<!--group card template-->
-				<div class="content-container box-shadow p2034">
+				<div class="content-container box-shadow p2034 m10-0">
 					<div class="content-header">
 						<h2 class="container-title m10-0">Join My Team!</h2>
 
 						<!--TO FIX: NEED TO FIX HREF TO USER PROFILE-->
-						<div class="m10-0">
-							<a class="user-group" href="/profile.html">
-								<!--avatar-->
-								<img class="avatar-icons" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />
-								
-								<!--usernames container-->
-								<div class="userinfo-container">
-									<!--replace with userName-->
-									<h3 class="username-text">martin rosales</h3>
+						<div class="user-group m10-0">
+								<a class="avatar-container" href="profile.html">
+									<!--avatar-->
+									<img class="avatar-icons" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />		
+								</a>
+							
+								<a class="userinfo-container" href="profile.html">
+									<!--usernames container-->
+									<div>
+										<!--replace with userName-->
+										<h3 class="username-text">martin rosales</h3>
 
-									<!--replace with userEmail-->
-									<h3 class="email-text">j.martin3537@gmail.com</h3>
-								</div>
-							</a>	
+										<!--replace with userEmail-->
+										<h3 class="email-text">j.martin3537@gmail.com</h3>
+									</div>
+								</a>
 						</div>
 					</div>
 
@@ -137,7 +139,7 @@
 					</div>
 					
 					<form class="modal-body" id="add-group-form">
-						<div class="modal-subtitle-container">
+						<div class="m16-0">
 							<h3 class="modal-subtitle">* Indicates required</h3>
 						</div>
 
