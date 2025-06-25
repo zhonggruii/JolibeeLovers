@@ -585,6 +585,10 @@ input::-webkit-input-placeholder {
 	margin: 10px 0px; 
 }
 
+.modal-input-group2 {
+	margin: 0px;
+}
+
 .modal-input-label {
 	font-size: 14px;
 	margin: 3px;
@@ -733,6 +737,7 @@ input::-webkit-input-placeholder {
 
 .modal-element-body {
 	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 }
@@ -776,6 +781,39 @@ input::-webkit-input-placeholder {
 .profile-container-body {
 	display: flex;
 	flex-direction: column;
+}
+
+.profile-element-group {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.profile-subelement {
+	display: flex;
+	align-items: center;
+}
+
+.profile-subelement-flexcolumn {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.profile-text-group {
+	display: flex;
+	flex-direction: column;
+}
+
+.profile-element-icon {
+	font-size: 22px;
+	color: #003d7c;
+	font-variation-settings:
+		'FILL' 1,
+		'wght' 280,
+		'GRAD' 0,
+		'opsz' 24;
+	padding-right: 6px;
 }
 
 .stars-container {
@@ -824,6 +862,10 @@ input::-webkit-input-placeholder {
 
 .m10-0 {
 	margin: 10px 0px;
+}
+
+.mt10 {
+	margin-top: 10px;
 }
 
 .mb10 {
