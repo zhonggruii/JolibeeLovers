@@ -8,9 +8,41 @@ const introModal = document.getElementById("introModal");
 const openBtn = document.getElementById("openModalBtn");
 const closeBtn = document.getElementById("closeModalBtn");
 
-// Modal Pop Up
+// Intro Modal Pop Up
 openBtn.addEventListener("click", () => introModal.classList.add("open"));
 closeBtn.addEventListener("click", () => introModal.classList.remove("open"));
+
+// Calendar Modal Pop Up
+const calendarModal = document.getElementById("calendarModal");
+const openCalendarBtn = document.getElementById("openCalendarModalBtn");
+const closeCalendarBtn = document.getElementById("closeCalendarModalBtn");
+
+openCalendarBtn.addEventListener("click", () => calendarModal.classList.add("open"));
+closeCalendarBtn.addEventListener("click", () => calendarModal.classList.remove("open"));
+
+// About Modal Pop Up
+const aboutModal = document.getElementById("aboutModal");
+const openAboutBtn = document.getElementById("openAboutModalBtn");
+const closeAboutBtn = document.getElementById("closeAboutModalBtn");
+
+openAboutBtn.addEventListener("click", () => aboutModal.classList.add("open"));
+closeAboutBtn.addEventListener("click", () => aboutModal.classList.remove("open"));
+
+// Activity Modal Pop Up
+const activityModal = document.getElementById("activityModal");
+const openActivityBtn = document.getElementById("openActivityModalBtn");
+const closeActivityBtn = document.getElementById("closeActivityModalBtn");
+
+openActivityBtn.addEventListener("click", () => activityModal.classList.add("open"));
+closeActivityBtn.addEventListener("click", () => activityModal.classList.remove("open"));
+
+// Skills Modal Pop Up
+const skillsModal = document.getElementById("skillsModal");
+const openSkillsBtn = document.getElementById("openSkillsModalBtn");
+const closeSkillsBtn = document.getElementById("closeSkillsModalBtn");
+
+openSkillsBtn.addEventListener("click", () => skillsModal.classList.add("open"));
+closeSkillsBtn.addEventListener("click", () => skillsModal.classList.remove("open"));
 
 // Load and Display User Profile
 async function loadUserProfile(user) {
@@ -19,7 +51,7 @@ async function loadUserProfile(user) {
 
     if (userSnap.exists()) {
         const data = userSnap.data();
-        document.getElementById('userEmail').textContent = `Email: ${user.email}`;
+        document.getElementById('userEmail').textContent = `${user.email}`;
         document.getElementById('userNameInput').value = data.name || '';
         document.getElementById('aboutMeText').value = data.aboutMe || '';
         document.getElementById('modulesInput').value = data.modulesTaken || '';
