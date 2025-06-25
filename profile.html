@@ -60,6 +60,7 @@
         </header>
 
         <main class="page">
+            <!--intro container-->
             <div class="intro-container box-shadow p2034 mb16">
                 <!--FIX PROFILE PIC: SYNC w/ JS-->
                 <img class="profile-icon" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />
@@ -77,13 +78,14 @@
 				    </button>
 
                     <!--CALENDAR WIP-->
-                    <button class="button-box m10">
+                    <button class="button-box m10" id="openCalendarModalBtn">
                         <span class="button-icon material-symbols-outlined">calendar_today</span>
                         View Calendar
 				    </button>                       
                 </div>
             </div>
 
+            <!--profile body-->
             <div class="profile-body w50lh">
                 <!--body left column-->
                 <div class="profile-left-group mr5 w42pct">
@@ -94,13 +96,33 @@
                                 <h3 class="content-subtitle">About</h3>
                             </div>
 
-                            <div class="element-edit-container w100pct">
+                            <div class="element-edit-container w100pct" id="openAboutModalBtn">
                                 <span class="modal-icon material-symbols-outlined">edit</span>
                             </div>
                         </div> 
 
+                        <!--about content-->
                         <div class="profile-container-body p0-34-20-34 w100pct">
-                            <p class="content-text">Hitler is the greatest artist of the 20th Century!</p>
+                            <!--TO FIX (SYNC W/ JS & MODAL): user description-->
+                            <div class="profile-text-group">
+                                <p class="content-text">I don't wanna code anymore</p>
+                            </div>
+
+                            <!--user contact information (modular)-->
+                            <div class="profile-element-group">
+                                <!--email contact-->
+                                <div class="profile-subelement w100pct">
+                                    <span class="profile-element-icon material-symbols-outlined">email</span>
+                                    <p class="content-text" id="userEmail">loading...</p>
+                                </div>
+
+                                <!--FIX: ADD TELEGRAM CONTACT OPTION
+                                    <div class="profile-subelement w100pct">
+                                        <span class="profile-element-icon material-symbols-outlined">call</span>
+                                        <p class="content-text" id="blank"></p>
+                                    </div>
+                                -->
+                            </div>
                         </div>
                     </div>
 
@@ -110,22 +132,18 @@
                             <div class="element-subtitle-container">
                                 <h3 class="content-subtitle">Rating</h3>
                             </div>
-
-                            <div class="element-edit-container w100pct">
-                                <span class="modal-icon material-symbols-outlined">edit</span>
-                            </div>
                         </div> 
 
                         <div class="profile-container-body p0-34-20-34 w100pct">
-                            <div class="stars-container" id="ratingStars">
+                            <div class="stars-container mt10" id="ratingStars">
                                 <span data-rating="1">☆</span>
                                 <span data-rating="2">☆</span>
                                 <span data-rating="3">☆</span>
                                 <span data-rating="4">☆</span>
                                 <span data-rating="5">☆</span>
                             </div>
-                            <p>Current Rating: <span id="averageRating">0</span>/5 (<span id="ratingCount">0</span> ratings)</p>
-                            <p class="rating-instruction">Click stars to rate this user</p>
+                            <p class="content-text">Current Rating: <span id="averageRating">0</span>/5 (<span id="ratingCount">0</span> ratings)</p>
+                            <p class="content-text">Click stars to rate this user</p>
                         </div>
                     </div>
                 </div>
@@ -139,15 +157,15 @@
                                 <h3 class="content-subtitle">Activity</h3>
                             </div>
 
-                            <div class="element-edit-container w100pct">
+                            <div class="element-edit-container w100pct" id="openActivityModalBtn">
                                 <span class="modal-icon material-symbols-outlined">edit</span>
                             </div>
                         </div> 
 
                         <div class="profile-container-body p0-34-20-34 w100pct">
-                            <p class="content-text">- CS1010J</p>
-                            <p class="content-text">- BT1101</p>
-                            <p class="content-text">- IS1108</p>
+                            <p class="content-text">- Project X</p>
+                            <p class="content-text">- BT2102 Project</p>
+                            <p class="content-text">- IS1108 Project</p>
                         </div>
                     </div>
 
@@ -158,7 +176,7 @@
                                 <h3 class="content-subtitle">Skills</h3>
                             </div>
 
-                            <div class="element-edit-container w100pct">
+                            <div class="element-edit-container w100pct" id="openSkillsModalBtn">
                                 <span class="modal-icon material-symbols-outlined">edit</span>
                             </div>
                         </div> 
@@ -237,9 +255,148 @@
 				</div>
 			</div>
 
+            <!--ABOUT POP UP MODAL-->
+            <div class="modal" id="aboutModal">
+				<div class="modal-container">
+                    <!--modal header-->
+					<div class="modal-header">
+						<div class="modal-title-container modal-title-area">
+							<h2 class="modal-title">Edit About</h2>
+						</div>
+
+						<div class="modal-exit modal-exit-area">
+							<span class="modal-icon material-symbols-outlined" id="closeAboutModalBtn">close</span>
+						</div>
+					</div>
+					
+                    <!--TO FIX (SYNC ID w/ JS): modal body-->
+					<form class="modal-body" id="blank">
+                        <!--FIX ID: about description-->
+						<div class="modal-input-group2 mb15">
+                            <label class="modal-input-label">Write anything about yourself here</label>
+							<textarea class="modal-textarea modal-input" id="blank"></textarea>
+						</div>
+
+                        <hr class="solid-line" />
+
+                        <!--change user details section-->
+                        <div class="modal-element-group m15-0">
+                            <!--element header-->
+                            <div class="modal-element-header w100pct">
+                                <div class="element-subtitle-container">
+                                    <h3 class="modal-subtitle nowrap">Personal Contact</h3>
+                                </div>
+                            </div>
+
+                            <!--personal contact area (modular)-->                   
+                            <div class="modal-element-body w100pct">
+                                <!--email input--> 
+                                <div class="modal-input-group w100pct">
+                                    <label class="modal-input-label">Email</label>
+                                    <input class="modal-input" type="text" id="blank">
+                                </div>
+
+                                <!--telegram handle input--> 
+                                <div class="modal-input-group w100pct">
+                                    <label class="modal-input-label">Telegram Handle</label>
+                                    <input class="modal-input" type="text" id="blank">
+                                </div>  
+                            </div>
+                        </div>   
+					</form>
+
+					<div class="modal-footer">
+						<button class="round-button-box" type="submit" form="add-group-form">Save</button>
+					</div>
+				</div>
+			</div>
+
+            <!--ACTIVITY POP UP MODAL-->
+            <div class="modal" id="activityModal">
+				<div class="modal-container">
+                    <!--modal header-->
+					<div class="modal-header">
+						<div class="modal-title-container modal-title-area">
+							<h2 class="modal-title">Edit Activity</h2>
+						</div>
+
+						<div class="modal-exit modal-exit-area">
+							<span class="modal-icon material-symbols-outlined" id="closeActivityModalBtn">close</span>
+						</div>
+					</div>
+					
+                    <!--TO FIX (SYNC ID w/ JS): modal body-->
+					<form class="modal-body" id="blank">
+                        <!--FIX ID: activity description-->
+						<div class="modal-input-group2 mb15">
+                            <label class="modal-input-label">Projects Involved With</label>
+							<textarea class="modal-textarea modal-input" id="blank"></textarea>
+						</div>
+					</form>
+
+					<div class="modal-footer">
+						<button class="round-button-box" type="submit" form="add-group-form">Save</button>
+					</div>
+				</div>
+			</div>
+
+            <!--SKILLS POP UP MODAL-->
+            <div class="modal" id="skillsModal">
+				<div class="modal-container">
+                    <!--modal header-->
+					<div class="modal-header">
+						<div class="modal-title-container modal-title-area">
+							<h2 class="modal-title">Edit Skills</h2>
+						</div>
+
+						<div class="modal-exit modal-exit-area">
+							<span class="modal-icon material-symbols-outlined" id="closeSkillsModalBtn">close</span>
+						</div>
+					</div>
+					
+                    <!--TO FIX (SYNC ID w/ JS): modal body-->
+					<form class="modal-body" id="blank">
+                        <!--FIX ID: skills dropdown-->
+						<div class="modal-input-group2 mb15">
+                            <label class="modal-input-label">Skills</label>
+							<textarea class="modal-textarea modal-input" id="blank"></textarea>
+						</div>
+					</form>
+
+					<div class="modal-footer">
+						<button class="round-button-box" type="submit" form="add-group-form">Save</button>
+					</div>
+				</div>
+			</div>
+
+            <!--CALENDAR POP UP MODAL-->
+            <div class="modal" id="calendarModal">
+				<div class="modal-container">
+                    <!--modal header-->
+					<div class="modal-header">
+						<div class="modal-title-container modal-title-area">
+							<h2 class="modal-title">View Calendar</h2>
+						</div>
+
+						<div class="modal-exit modal-exit-area">
+							<span class="modal-icon material-symbols-outlined" id="closeCalendarModalBtn">close</span>
+						</div>
+					</div>
+					
+                    <!--TO FIX (SYNC ID w/ JS): modal body-->
+					<form class="modal-body" id="blank">
+                        <!--calendar-->
+					</form>
+
+					<div class="modal-footer">
+						<button class="round-button-box" type="submit" form="add-group-form">Save</button>
+					</div>
+				</div>
+			</div>
+
             <!--FIX: INCORPORATE WITH POP UP MODAL-->
             <div class="profile-header">
-                <!--PROFILE PICTURE-->
+                <!--DONE: PROFILE PICTURE-->
                 <div class="profile-picture">
                     <img id="profileImage" src="https://cornhub.com" alt="Profile Picture">
                     <input type="file" id="imageUpload" accept="image/*" style="display: none;">
@@ -248,7 +405,7 @@
                 </div>
 
                 <div class="profile-info">
-                    <!--USERNAME-->
+                    <!--DONE: USERNAME-->
                     <div class="name-edit-container">
                         <input type="text" id="userNameInput" class="nameInput" placeholder="Enter Username">
                         <button id="saveNameBtn" class="saveNameBtn">Save</button>
