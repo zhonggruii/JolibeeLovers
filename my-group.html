@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>Forum Page</title>
+		<link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/zhonggruii/JolibeeLovers/refs/heads/main/GroupMeUp%20Icon%20Transparent.png">
+		<script type="module" src="./my-group.js"></script>
+		
+		<!--for css-->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+		<link rel="stylesheet" href="style.css"/>
+	</head>
+
+	<body>
+        <header class="header">
+            <!--TO FIX: CHANGE LINK WHEN HOMEPAGE UP-->
+            <a class="logo-area-header" href="https://www.ite.edu.sg/">
+                <img class="image-logo" src="https://raw.githubusercontent.com/zhonggruii/JolibeeLovers/refs/heads/main/GroupMeUp%20Logo.jpg" alt="GroupMeUp Logo"/>
+            </a>
+			
+			<!--navigation icons for user-->
+			<nav class="nav-area-header nav-header">
+				<a class="tooltip" href="index.html">
+					<span class="current-page-icon material-symbols-outlined">home</span>
+					<span class="tooltip-text home-spacing">Home</span>
+				</a>
+				<a class="tooltip" href="my-group.html">
+					<span class="icons material-symbols-outlined">group</span>
+					<span class="tooltip-text group-spacing">Groups</span>
+				</a>
+				<a class="tooltip" href="profile.html">
+					<span class="icons material-symbols-outlined">account_circle</span>
+					<span class="tooltip-text profile-spacing">Profile</span>
+				</a>
+        	</nav>
+			
+			<!--notification for group requests-->
+			<div class="notification-icon" id = "notificationBell">
+				<span class="material-symbols-outlined">notifications</span>
+				<span class="notification-badge" id="notificationBadge"></span>
+			</div>
+
+			<!--logout & other options-->
+			<div class="options-area-header options-header">
+				<div class="dropdown">
+					<span class="material-symbols-outlined">menu</span>
+					<!--dropdown content (modular)-->
+					<div class="dropdown-container box-shadow">
+						<!--logout option-->
+						<button class="dropdown-button" id="signOutBtn" onclick="window.location.href='login.html'">
+							<span class="dropdown-icon material-symbols-outlined">logout</span>
+							Log Out
+						</button>
+					</div>
+				</div>
+			</div>
+        </header>
+
+		<main class="page">
+			<!--search & create group button container-->
+			<div class="content-container box-shadow mb16 p2034">
+				<!--search box-->
+				<input class="search-box" id = 'searchBar' placeholder="search"/>
+				
+				<!--divider-->
+				<hr class="solid-line"/>
+				
+				<!--button to open the popup-->
+				<button class="button-box-green m10-0" id="openNotificationsBtn">
+  					<span class="button-icon material-symbols-outlined">notifications</span>
+  					View Notifications
+				</button>	
+			</div>	
+	
+			<!--container for group cards-->
+			<div id="group-list">
+				<!--group card template-->
+				<div class="content-container box-shadow p2034">
+					<div class="content-header">
+						<h2 class="container-title m10-0">Join My Team!</h2>
+
+						<!--TO FIX: NEED TO FIX HREF TO USER PROFILE-->
+						<div class="m10-0">
+							<a class="user-group" href="/profile.html">
+								<!--avatar-->
+								<img class="avatar-icons" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />
+								
+								<!--usernames container-->
+								<div class="userinfo-container">
+									<!--replace with userName-->
+									<h3 class="username-text">martin rosales</h3>
+
+									<!--replace with userEmail-->
+									<h3 class="email-text">j.martin3537@gmail.com</h3>
+								</div>
+							</a>	
+						</div>
+					</div>
+
+					<div class="content-body">
+						<!--replace with description-->
+						<p class="content-text">
+							Looking for passionate people to join our dynamic group! 
+							Collaborate, share ideas, and grow together in a supportive and friendly 
+							environment. Whether for work, hobbies, or learning, we'd love to have you. 
+							Let's connect, inspire, and achieve great things as a team—join us today!
+						</p>
+
+						<!--WIP-->
+						<div class="content-taglist">
+							<p class="content-text">
+								BT2102, Y1, BZA, IS
+							</p>
+						</div>
+					</div>
+
+					<!--divider-->
+					<hr class="solid-line" />
+									
+					<!--group card management features-->
+					<hr class="solid-line" />
+						<div class="flex-space-between">
+						<button class="button-box m10-0" onclick="manageGroup('${group.id}')">
+							<span class="button-icon material-symbols-outlined">group</span>
+							Manage Group
+						</button>
+						${group.creatorUid === currentUser?.uid ? `
+							<button class="button-box-red m10-0" onclick="deleteGroup('${group.id}')">
+							<span class="button-icon material-symbols-outlined">delete</span>
+							Delete
+							</button>
+						` : `
+							<button class="button-box-red m10-0" onclick="leaveGroup('${group.id}')">
+							<span class="button-icon material-symbols-outlined">exit_to_app</span>
+							Leave
+							</button>
+						`}
+						</div>
+				</div>
+			</div>
+
+			<div class="modal" id="notificationsModal">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h2>Join Requests</h2>
+						<span class="close-btn" id="closeNotificationsBtn">&times;</span>
+					</div>
+					<div class="modal-body" id="notificationList">
+						<p>Loading notifications...</p>
+					</div>
+				</div>
+			</div>
+			
+		</main>
+
+        <footer class="footer">
+            <h4 class="footer-text">Designed by JollibeeLovers</h4>
+            <h4 class="footer-text">© 2025 GroupMeUp. All rights reserved</h4>
+        </footer>
+	</body>
+</html>
