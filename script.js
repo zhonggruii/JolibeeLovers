@@ -20,6 +20,7 @@ if (signupForm) {
                 const user = userCredential.user;
                 await setDoc(doc(db, "users", user.uid), {
                     email: user.email,
+                    telegram: "", 
                     name: "",
                     aboutMe:"",
                     photoURL: "",
