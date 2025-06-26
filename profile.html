@@ -62,16 +62,17 @@
         <main class="page">
             <!--intro container-->
             <div class="intro-container box-shadow p2034 mb16">
-                <!--FIX PROFILE PIC: SYNC w/ JS-->
-                <img class="profile-icon" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />
+                <!--intro profile pic-->
+                <img class="profile-icon" id="introProfileImage" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />
                 
-                <!--FIX USERNAME: SYNC w/ JS-->
-                <div class="intro-username m0-15">
-                    <h2 class="container-title">martin rosales</h2>
+                <!--intro username display-->
+                <div class="intro-username m0-15 w100pct">
+                    <h2 class="container-title-left" id="displayUserName">username</h2>
                 </div>
 
+                <!--intro buttons (edit intro & view calendar)-->
                 <div class="intro-button-group">  
-                    <!--FIX BUTTON: DISAPPEAR IF VISITOR-->               
+                    <!--TO FIX: MAKE "EDIT INTRO" DISAPPEAR IF VISITOR-->               
                     <button class="button-box-orange m10" id="openModalBtn">
                         <span class="button-icon material-symbols-outlined">edit</span>
                         Edit Intro
@@ -84,114 +85,6 @@
 				    </button>                       
                 </div>
             </div>
-
-            <!--profile body-->
-            <div class="profile-body w50lh">
-                <!--body left column-->
-                <div class="profile-left-group mr5 w42pct">
-                    <!--about section-->
-                    <div class="profile-container box-shadow mb10 w100pct">
-                        <div class="profile-container-header p20-10-0-30 w100pct">
-                            <div class="element-subtitle-container">
-                                <h3 class="content-subtitle">About</h3>
-                            </div>
-
-                            <div class="element-edit-container w100pct" id="openAboutModalBtn">
-                                <span class="modal-icon material-symbols-outlined">edit</span>
-                            </div>
-                        </div> 
-
-                        <!--about content-->
-                        <div class="profile-container-body p0-34-20-34 w100pct">
-                            <!--TO FIX (SYNC W/ JS & MODAL): user description-->
-                            <div class="profile-text-group">
-                                <p class="content-text">I don't wanna code anymore</p>
-                            </div>
-
-                            <!--user contact information (modular)-->
-                            <div class="profile-element-group">
-                                <!--email contact-->
-                                <div class="profile-subelement w100pct">
-                                    <span class="profile-element-icon material-symbols-outlined">email</span>
-                                    <p class="content-text" id="userEmail">loading...</p>
-                                </div>
-
-                                <!--FIX: ADD TELEGRAM CONTACT OPTION
-                                    <div class="profile-subelement w100pct">
-                                        <span class="profile-element-icon material-symbols-outlined">call</span>
-                                        <p class="content-text" id="blank"></p>
-                                    </div>
-                                -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <!--rating section (WIP)-->
-                    <div class="profile-container box-shadow mb10 w100pct">
-                        <div class="profile-container-header p20-10-0-30 w100pct">
-                            <div class="element-subtitle-container">
-                                <h3 class="content-subtitle">Rating</h3>
-                            </div>
-                        </div> 
-
-                        <div class="profile-container-body p0-34-20-34 w100pct">
-                            <div class="stars-container mt10" id="ratingStars">
-                                <span data-rating="1">☆</span>
-                                <span data-rating="2">☆</span>
-                                <span data-rating="3">☆</span>
-                                <span data-rating="4">☆</span>
-                                <span data-rating="5">☆</span>
-                            </div>
-                            <p class="content-text">Current Rating: <span id="averageRating">0</span>/5 (<span id="ratingCount">0</span> ratings)</p>
-                            <p class="content-text">Click stars to rate this user</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!--body right column-->
-                <div class="profile-right-group ml5 w58pct">
-                    <!--activity section-->
-                    <div class="profile-container box-shadow mb10 w100pct">
-                        <div class="profile-container-header p20-10-0-30 w100pct">
-                            <div class="element-subtitle-container">
-                                <h3 class="content-subtitle">Activity</h3>
-                            </div>
-
-                            <div class="element-edit-container w100pct" id="openActivityModalBtn">
-                                <span class="modal-icon material-symbols-outlined">edit</span>
-                            </div>
-                        </div> 
-
-                        <div class="profile-container-body p0-34-20-34 w100pct">
-                            <p class="content-text">- Project X</p>
-                            <p class="content-text">- BT2102 Project</p>
-                            <p class="content-text">- IS1108 Project</p>
-                        </div>
-                    </div>
-
-                    <!--skills section-->
-                    <div class="profile-container box-shadow mb10 w100pct">
-                        <div class="profile-container-header p20-10-0-30 w100pct">
-                            <div class="element-subtitle-container">
-                                <h3 class="content-subtitle">Skills</h3>
-                            </div>
-
-                            <div class="element-edit-container w100pct" id="openSkillsModalBtn">
-                                <span class="modal-icon material-symbols-outlined">edit</span>
-                            </div>
-                        </div> 
-
-                        <div class="profile-container-body p0-34-20-34 w100pct">
-                            <p class="content-text">- Python</p>
-                            <p class="content-text">- Java</p>
-                            <p class="content-text">- HTML & CSS</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!--spacing (remove ltr)-->
-            <hr />
 
             <!--EDIT INTRO POP UP MODAL-->
 			<div class="modal" id="introModal">
@@ -207,12 +100,12 @@
 						</div>
 					</div>
 					
-                    <!--FIX ID: SYNC W/ JS-->
-					<form class="modal-body" id="add-group-form">
-                        <!--change profile picture section-->
+                    <!--modal body-->
+					<form class="modal-body">
+                        <!--profile picture section-->
                         <div class="modal-element-group mb15">
-                            <!--element header-->
-                            <div class="modal-element-header mb-10-0 w100pct">
+                            <!--picture header-->
+                            <div class="modal-element-header mb10 w100pct">
                                 <div class="element-subtitle-container">
                                     <h3 class="modal-subtitle nowrap">Change Profile Picture</h3>
                                 </div>
@@ -223,7 +116,7 @@
                                 </div>
                             </div>
 
-                            <!--profile picture area-->
+                            <!--picture body-->
                             <div class="modal-element-body w100pct">
                                 <img class="modal-picture-image" id="profileImage" src="https://www.w3schools.com/howto/img_avatar.png" alt="Profile Picture"/>
                             </div>
@@ -231,14 +124,14 @@
 
                         <!--change user details section-->
                         <div class="modal-element-group m15-0">
-                            <!--element header-->
+                            <!--user details header-->
                             <div class="modal-element-header w100pct">
                                 <div class="element-subtitle-container">
                                     <h3 class="modal-subtitle nowrap">Change User Details</h3>
                                 </div>
                             </div>
 
-                            <!--user detail area (modular)-->                   
+                            <!--user detail body (modular)-->                   
                             <div class="modal-element-body w100pct">
                                 <!--username input--> 
                                 <div class="modal-input-group w100pct">
@@ -255,10 +148,159 @@
 				</div>
 			</div>
 
+            <!--WIP: CALENDAR POP UP MODAL-->
+            <div class="modal" id="calendarModal">
+				<div class="modal-container">
+                    <!--modal header-->
+					<div class="modal-header">
+						<div class="modal-title-container modal-title-area">
+							<h2 class="modal-title">View Calendar</h2>
+						</div>
+
+						<div class="modal-exit modal-exit-area">
+							<span class="modal-icon material-symbols-outlined" id="closeCalendarModalBtn">close</span>
+						</div>
+					</div>
+					
+                    <!--TO FIX (SYNC ID w/ JS): modal body-->
+					<form class="modal-body" id="blank">
+                        <!--calendar-->
+					</form>
+
+					<div class="modal-footer">
+						<button class="round-button-box" type="submit" form="add-group-form">Save</button>
+					</div>
+				</div>
+			</div>
+
+            <!--profile body-->
+            <div class="profile-body w50lh">
+                <!--body left column-->
+                <div class="profile-left-group mr5 w42pct">
+                    <!--about container-->
+                    <div class="profile-container box-shadow mb10 w100pct">
+                        <!--about header section-->
+                        <div class="profile-container-header p20-10-0-30 w100pct">
+                            <div class="element-subtitle-container">
+                                <h3 class="content-subtitle">About</h3>
+                            </div>
+                            
+                            <div class="element-edit-container w100pct" id="openAboutModalBtn">
+                                <span class="modal-icon material-symbols-outlined">edit</span>
+                            </div>
+                        </div> 
+
+                        <!--about body section-->
+                        <div class="profile-container-body p0-34-20-34 w100pct">
+                            <!--about me description-->
+                            <p class="content-text" id="displayAboutText"></p>
+
+                            <!--email contact-->
+                            <div class="element-group-row">
+                                <span class="profile-element-icon material-symbols-outlined">email</span>
+                                <p class="content-text" id="displayUserEmail">email loading...</p>
+                            </div>
+                            
+                            <!--telegram contact-->
+                            <div class="element-group-row">
+                                <span class="profile-element-icon material-symbols-outlined">send</span>
+                                <p class="content-text" id="displayTelegram">telegram loading...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--rating section (WIP)-->
+                    <div class="profile-container box-shadow mb10 w100pct">
+                        <!--rating header section-->
+                        <div class="profile-container-header p20-10-0-30 w100pct">
+                            <h3 class="content-subtitle">Rating</h3>
+                        </div> 
+
+                        <!--rating body section-->
+                        <div class="profile-container-body p0-34-20-34 w100pct">
+                            <div class="element-group-row-mid mt10" id="ratingStars">
+                                <span data-rating="1">☆</span>
+                                <span data-rating="2">☆</span>
+                                <span data-rating="3">☆</span>
+                                <span data-rating="4">☆</span>
+                                <span data-rating="5">☆</span>
+                            </div>
+                            <p class="content-text">Current Rating: <span id="averageRating">0</span>/5 (<span id="ratingCount">0</span> ratings)</p>
+                            <p class="content-text">Click stars to rate this user</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!--body right column-->
+                <div class="profile-right-group ml5 w58pct">
+                    <!--activity section-->
+                    <div class="profile-container box-shadow mb10 w100pct">
+                        <!--activity header section-->
+                        <div class="profile-container-header p20-10-0-30 w100pct">
+                            <div class="element-subtitle-container">
+                                <h3 class="content-subtitle">Activity</h3>
+                            </div>
+
+                            <div class="element-edit-container w100pct" id="openActivityModalBtn">
+                                <span class="modal-icon material-symbols-outlined">edit</span>
+                            </div>
+                        </div> 
+
+                        <!--activity body section-->
+                        <div class="profile-container-body p0-34-20-34 w100pct">
+                            <p class="content-text">- Project X</p>
+                            <p class="content-text">- BT2102 Project</p>
+                            <p class="content-text">- IS1108 Project</p>
+                        </div>
+                    </div>
+
+                    <!--skills section-->
+                    <div class="profile-container box-shadow mb10 w100pct">
+                        <!--skills header section-->
+                        <div class="profile-container-header p20-10-0-30 w100pct">
+                            <div class="element-subtitle-container">
+                                <h3 class="content-subtitle">Skills</h3>
+                            </div>
+
+                            <div class="element-edit-container w100pct" id="openSkillsModalBtn">
+                                <span class="modal-icon material-symbols-outlined">edit</span>
+                            </div>
+                        </div> 
+
+                        <!--skills body section-->
+                        <div class="profile-container-body p0-34-20-34 w100pct">
+                            <p class="content-text">- Python</p>
+                            <p class="content-text">- Java</p>
+                            <p class="content-text">- HTML & CSS</p>
+                        </div>
+                    </div>
+
+                    <!--experience section-->
+                    <div class="profile-container box-shadow mb10 w100pct">
+                        <!--experience header section-->
+                        <div class="profile-container-header p20-10-0-30 w100pct">
+                            <div class="element-subtitle-container">
+                                <h3 class="content-subtitle">Experience</h3>
+                            </div>
+
+                            <div class="element-edit-container w100pct" id="openExpModalBtn">
+                                <span class="modal-icon material-symbols-outlined">edit</span>
+                            </div>
+                        </div> 
+
+                        <!--experience body section-->
+                        <div class="profile-container-body p0-34-20-34 w100pct">
+                            <p class="content-text">- CS1010J</p>
+                            <p class="content-text">- BT1101</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!--ABOUT POP UP MODAL-->
             <div class="modal" id="aboutModal">
 				<div class="modal-container">
-                    <!--modal header-->
+                    <!--about modal header-->
 					<div class="modal-header">
 						<div class="modal-title-container modal-title-area">
 							<h2 class="modal-title">Edit About</h2>
@@ -269,44 +311,44 @@
 						</div>
 					</div>
 					
-                    <!--TO FIX (SYNC ID w/ JS): modal body-->
-					<form class="modal-body" id="blank">
-                        <!--FIX ID: about description-->
+                    <!--about modal body-->
+					<form class="modal-body">
+                        <!--about input section-->
 						<div class="modal-input-group2 mb15">
                             <label class="modal-input-label">Write anything about yourself here</label>
-							<textarea class="modal-textarea modal-input" id="blank"></textarea>
+							<textarea class="modal-textarea modal-input" id="aboutMeText"></textarea>
 						</div>
 
                         <hr class="solid-line" />
 
-                        <!--change user details section-->
+                        <!--personal contact section-->
                         <div class="modal-element-group m15-0">
-                            <!--element header-->
+                            <!--personal contact header-->
                             <div class="modal-element-header w100pct">
                                 <div class="element-subtitle-container">
                                     <h3 class="modal-subtitle nowrap">Personal Contact</h3>
                                 </div>
                             </div>
 
-                            <!--personal contact area (modular)-->                   
+                            <!--personal contact body-->                   
                             <div class="modal-element-body w100pct">
                                 <!--email input--> 
                                 <div class="modal-input-group w100pct">
-                                    <label class="modal-input-label">Email</label>
-                                    <input class="modal-input" type="text" id="blank">
+                                    <label class="modal-input-label" id="aboutMeText">Email</label>
+                                    <input class="modal-input" type="text" id="userEmailInput" disabled>
                                 </div>
 
                                 <!--telegram handle input--> 
                                 <div class="modal-input-group w100pct">
-                                    <label class="modal-input-label">Telegram Handle</label>
-                                    <input class="modal-input" type="text" id="blank">
+                                    <label class="modal-input-label">Telegram Handle (e.g. @GroupMeUp)</label>
+                                    <input class="modal-input" type="text" id="telegramInput">
                                 </div>  
                             </div>
                         </div>   
 					</form>
 
 					<div class="modal-footer">
-						<button class="round-button-box" type="submit" form="add-group-form">Save</button>
+						<button class="round-button-box" type="submit" id="saveAboutBtn">Save</button>
 					</div>
 				</div>
 			</div>
@@ -343,7 +385,7 @@
             <!--SKILLS POP UP MODAL-->
             <div class="modal" id="skillsModal">
 				<div class="modal-container">
-                    <!--modal header-->
+                    <!--skills modal header-->
 					<div class="modal-header">
 						<div class="modal-title-container modal-title-area">
 							<h2 class="modal-title">Edit Skills</h2>
@@ -354,11 +396,58 @@
 						</div>
 					</div>
 					
-                    <!--TO FIX (SYNC ID w/ JS): modal body-->
+                    <!--skills modal body-->
 					<form class="modal-body" id="blank">
                         <!--FIX ID: skills dropdown-->
 						<div class="modal-input-group2 mb15">
                             <label class="modal-input-label">Skills</label>
+							<textarea class="modal-textarea modal-input" id="blank"></textarea>
+						</div>
+
+                        <div class="multi-select">
+                            <div class="selected-items"></div>
+                            <div class="dropdown-arrow"></div>
+                            <div class="skills-dropdown">
+                                <div data-value="HTML & CSS">HTML & CSS</div>
+                                <div data-value="Java">Java</div>
+                                <div data-value="Javascript">Javascript</div>
+                                <div data-value="Python">Python</div>
+                                <div data-value="C">C</div>
+                                <div data-value="C++">C++</div>
+                                <div data-value="C#">C#</div>
+                                <div data-value="SQL">SQL</div>
+                                <div data-value="Swift">Swift</div>
+                            </div>
+                        </div>
+
+                        <div id="output">Selected Items...</div>
+					</form>
+
+					<div class="modal-footer">
+						<button class="round-button-box" type="submit" id="showBtn">Save</button>
+					</div>
+				</div>
+			</div>
+
+            <!--EXPERIENCE POP UP MODAL-->
+            <div class="modal" id="expModal">
+				<div class="modal-container">
+                    <!--experience modal header-->
+					<div class="modal-header">
+						<div class="modal-title-container modal-title-area">
+							<h2 class="modal-title">Edit Experience</h2>
+						</div>
+
+						<div class="modal-exit modal-exit-area">
+							<span class="modal-icon material-symbols-outlined" id="closeExpModalBtn">close</span>
+						</div>
+					</div>
+					
+                    <!--experience modal body-->
+					<form class="modal-body" id="blank">
+                        <!--FIX ID: module dropdown-->
+						<div class="modal-input-group2 mb15">
+                            <label class="modal-input-label">Modules</label>
 							<textarea class="modal-textarea modal-input" id="blank"></textarea>
 						</div>
 					</form>
@@ -369,83 +458,15 @@
 				</div>
 			</div>
 
-            <!--CALENDAR POP UP MODAL-->
-            <div class="modal" id="calendarModal">
-				<div class="modal-container">
-                    <!--modal header-->
-					<div class="modal-header">
-						<div class="modal-title-container modal-title-area">
-							<h2 class="modal-title">View Calendar</h2>
-						</div>
-
-						<div class="modal-exit modal-exit-area">
-							<span class="modal-icon material-symbols-outlined" id="closeCalendarModalBtn">close</span>
-						</div>
-					</div>
-					
-                    <!--TO FIX (SYNC ID w/ JS): modal body-->
-					<form class="modal-body" id="blank">
-                        <!--calendar-->
-					</form>
-
-					<div class="modal-footer">
-						<button class="round-button-box" type="submit" form="add-group-form">Save</button>
-					</div>
-				</div>
-			</div>
+            <!--spacing (remove ltr)-->
+            <hr />            
 
             <!--FIX: INCORPORATE WITH POP UP MODAL-->
-            <div class="profile-header">
-                <!--DONE: PROFILE PICTURE-->
-                <div class="profile-picture">
-                    <img id="profileImage" src="https://cornhub.com" alt="Profile Picture">
-                    <input type="file" id="imageUpload" accept="image/*" style="display: none;">
-                    <button id="uploadBtn" class="uploadBtn">Change Photo</button>
-                    <button id="removePhotoBtn" class="uploadBtn">Remove Photo</button>
-                </div>
-
-                <div class="profile-info">
-                    <!--DONE: USERNAME-->
-                    <div class="name-edit-container">
-                        <input type="text" id="userNameInput" class="nameInput" placeholder="Enter Username">
-                        <button id="saveNameBtn" class="saveNameBtn">Save</button>
-                    </div>
-
-                    <!--EMAIL -->
-                    <p id="userEmail">Email: loading...</p>
-                    <label>Modules Taken:</label><br>
-                    <input type="text" id="modulesInput" placeholder="e.g. CS1101S"/><br><br>
-                    <button id="saveProfileBtn">Save Changes</button>
-
-                </div>
-            </div>
-
-            <div class="profile-content">
-                <section class="about-section">
-                    <h2>About Me</h2>
-                    <textarea id="aboutMeText" class="about-me-text" placeholder="Tell others about yourself..."></textarea>
-                    <button id="saveAboutMe" class="save-btn">Save</button>
-                </section>
-
-                <div class="profile-sidebar">
-                    <section class="rating-section">
-                        <h2>Rating</h2>
-                        <div class="stars" id="ratingStars">
-                            <span data-rating="1">☆</span>
-                            <span data-rating="2">☆</span>
-                            <span data-rating="3">☆</span>
-                            <span data-rating="4">☆</span>
-                            <span data-rating="5">☆</span>
-                        </div>
-                        <p>Current Rating: <span id="averageRating">0</span>/5 (<span id="ratingCount">0</span> ratings)</p>
-                        <p class="rating-instruction">Click stars to rate this user</p>
-                    </section>
-
-                    <section class="calendar-section">
-                        <h2>Calendar</h2>
-                        <div id="calendar"></div>
-                    </section>
-                </div>
+            <div>
+                <!--modules taken-->
+                <label>Modules Taken:</label><br>
+                <input type="text" id="modulesInput" placeholder="e.g. CS1101S"/><br><br>
+                <button id="saveProfileBtn">Save Changes</button>
             </div>
         </main>
 
@@ -454,7 +475,7 @@
             <h4 class="footer-text">© 2025 GroupMeUp. All rights reserved</h4>
         </footer>
 
-        <!--TO FIX: ADD LOADING SCREEN WHILE WAITING FOR SCRIPT-->
-        <script src="profile.js"></script>
+        <div class="loader">
+        </div>
     </body>
 </html>
