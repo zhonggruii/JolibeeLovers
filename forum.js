@@ -1,5 +1,5 @@
 import { db } from "./config.js";
-import { collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
+import { collection, getDocs, addDoc, getDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
 
 // DOM Elements
@@ -13,6 +13,14 @@ const form = document.getElementById("add-group-form");
 // Cache
 let cachedGroups = [];
 let searchTimeout;
+
+const auth = getAuth();
+let currentUser = null;
+
+onAuthStateChanged(auth, (user) => {
+  currentUser = user;
+  console.log('Auth State Changed:', user ? user.uid : 'Logged out');
+});
 
 // Core Functions
 async function getAllGroups() {
@@ -31,6 +39,35 @@ async function getAllGroups() {
   }
 }
 
+function handleSearch() {
+  clearTimeout(searchTimeout);
+
+  searchTimeout = setTimeout(async () => {
+    const searchTerm = searchBar.value.trim().toLowerCase();
+
+    const allGroups = await getAllGroups();
+    if (!searchTerm) {
+      loadGroups(allGroups); // If empty, show all
+      return;
+    }
+
+    const filteredGroups = allGroups.filter(group => {
+      const title = group.title?.toLowerCase() || "";
+      const description = group.description?.toLowerCase() || "";
+      const tags = group.tags?.join(", ").toLowerCase() || "";
+
+      return (
+        title.includes(searchTerm) ||
+        description.includes(searchTerm) ||
+        tags.includes(searchTerm)
+      );
+    });
+
+    loadGroups(filteredGroups);
+  }, 300); // Debounce delay (optional)
+}
+
+
 async function loadGroups(groups = null) {
   try {
     groupList.innerHTML = "<p>Loading groups...</p>";
@@ -40,15 +77,15 @@ async function loadGroups(groups = null) {
     
     const usersMap = {};
     usersSnapshot.forEach(doc => {
-		const user = doc.data();
-		usersMap[user.email] = user;
+      const user = doc.data();
+      usersMap[user.email] = user;
     });
 
     groupList.innerHTML = "";
     
     if (!groupsToDisplay.length) {
-		groupList.innerHTML = "<p>No groups found</p>";
-		return;
+      groupList.innerHTML = "<p>No groups found</p>";
+      return;
     }
 
     groupsToDisplay.forEach(group => {
@@ -58,31 +95,31 @@ async function loadGroups(groups = null) {
       card.className = "content-container box-shadow p2034 m10-0";
       card.innerHTML = `
         <div class="content-header">
-          	<h2 class="container-title m10-0">${group.title}</h2>
-          	<div class="user-group m10-0">
-				<a class="avatar-container" href="/profile.html?email=${encodeURIComponent(group.creator)}">
-					<img class="avatar-icons" 
-						src="${creator.photoURL || 'https://www.w3schools.com/howto/img_avatar.png'}" 
-						alt="Profile Picture">
-				</a>
-				<a class="userinfo-container" href="/profile.html?email=${encodeURIComponent(group.creator)}">
-					<div>
-						<h3 class="username-text">${creator.name || group.creator?.split('@')[0] || "User"}</h3>
-					</div>	
-				</a>
-          	</div>
+          <h2 class="container-title m10-0">${group.title}</h2>
+          <div class="user-group m10-0">
+            <a class="avatar-container" href="/profile.html?email=${encodeURIComponent(group.creator)}">
+              <img class="avatar-icons" 
+                src="${creator.photoURL || 'https://www.w3schools.com/howto/img_avatar.png'}" 
+                alt="Profile Picture">
+            </a>
+            <a class="userinfo-container" href="/profile.html?email=${encodeURIComponent(group.creator)}">
+              <div>
+                <h3 class="username-text">${creator.name || group.creator?.split('@')[0] || "User"}</h3>
+              </div>  
+            </a>
+          </div>
         </div>
-		
+        
         <div class="content-body">
-          	<p class="content-text">${group.description || "No description"}</p>
-          	<div class="content-taglist">
-            	<p class="content-text">Tags: ${group.tags?.join(", ") || "No tags"}</p>
-          	</div>
+          <p class="content-text">${group.description || "No description"}</p>
+          <div class="content-taglist">
+            <p class="content-text">Tags: ${group.tags?.join(", ") || "No tags"}</p>
+          </div>
         </div>
         <hr class="solid-line" />
         <button class="button-box m10-0" data-group-id="${group.id}">
-			<span class="button-icon material-symbols-outlined">add_circle</span>
-			Request to Join
+          <span class="button-icon material-symbols-outlined">add_circle</span>
+          Request to Join
         </button>
       `;
       
@@ -102,38 +139,6 @@ async function loadGroups(groups = null) {
       </div>
     `;
   }
-}
-
-async function searchGroupsByTag(searchTerm) {
-  try {
-    searchTerm = searchTerm.trim().toLowerCase();
-    if (!searchTerm) return await getAllGroups();
-
-    const allGroups = await getAllGroups();
-    return allGroups.filter(group => {
-      const searchContent = [
-        group.title,
-        group.description,
-        ...(group.tags || [])
-      ].join(" ").toLowerCase();
-      
-      return searchContent.includes(searchTerm);
-    });
-  } catch (error) {
-    console.error("Search error:", error);
-    return [];
-  }
-}
-
-// Event Handlers
-function handleSearch(event) {
-  if (event.type === "keyup" && event.key !== "Enter") return;
-  
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(async () => {
-    const results = await searchGroupsByTag(event.target.value);
-    loadGroups(results);
-  }, event.type === "keyup" ? 0 : 300);
 }
 
 // Initialize
@@ -165,13 +170,16 @@ document.addEventListener("DOMContentLoaded", () => {
             .map(tag => tag.trim())
             .filter(tag => tag),
           creator: user.email,
+          creatorUid: user.uid, 
+          creatorName: user.name || user.email.split('@')[0],
+          members: [user.email],
           createdAt: new Date()
         });
         
         alert("Group created!");
         form.reset();
         modal.classList.remove("open");
-        cachedGroups = []; // Reset cache
+        cachedGroups = [];
         loadGroups();
       } catch (err) {
         alert("Error: " + err.message);
@@ -180,7 +188,60 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Global Functions
-window.requestToJoin = function(groupId) {
-  alert("Request to join group: " + groupId);
+window.requestToJoin = async function(groupId) {
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    
+    if (!user) {
+      alert("Please log in to join groups");
+      return;
+    }
+
+    const groupDoc = await getDoc(doc(db, "groups", groupId));
+    if (!groupDoc.exists()) {
+      alert("Group not found");
+      return;
+    }
+    
+    const group = groupDoc.data();
+    
+    if (!group.creatorUid) {
+      alert("This group cannot accept join requests");
+      return;
+    }
+
+    // Get user data - use the UID as document ID instead of email
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    let userData = {
+      name: user.email.split('@')[0], // default to email prefix if no name
+      photoURL: 'https://www.w3schools.com/howto/img_avatar.png'
+    };
+    
+    if (userDoc.exists()) {
+      userData = {
+        name: userDoc.data().name || user.email.split('@')[0],
+        photoURL: userDoc.data().photoURL || userData.photoURL
+      };
+    }
+
+    // Create the join request
+    await addDoc(collection(db, "joinRequests"), {
+      groupId: groupId,
+      groupName: group.title,
+      creatorId: group.creatorUid,
+      creatorEmail: group.creator,
+      requesterId: user.uid,
+      requesterEmail: user.email, 
+      requesterName: userData.name, // Use the proper name field
+      requesterPhoto: userData.photoURL, // Use the proper photoURL
+      status: "pending",
+      createdAt: new Date()
+    });
+
+    alert("Join request sent successfully!");
+  } catch (error) {
+    console.error("Error sending request:", error);
+    alert("Failed to send join request: " + error.message);
+  }
 };
