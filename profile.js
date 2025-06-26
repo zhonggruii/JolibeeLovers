@@ -3,14 +3,14 @@ import { doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.5.
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-storage.js';
 import { signOut, updateProfile } from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js';
 
-// DOM Elements
+// Intro Modal Pop Up
 const introModal = document.getElementById("introModal");
 const openBtn = document.getElementById("openModalBtn");
 const closeBtn = document.getElementById("closeModalBtn");
 
-// Intro Modal Pop Up
 openBtn.addEventListener("click", () => introModal.classList.add("open"));
 closeBtn.addEventListener("click", () => introModal.classList.remove("open"));
+
 
 // Calendar Modal Pop Up
 const calendarModal = document.getElementById("calendarModal");
@@ -20,6 +20,7 @@ const closeCalendarBtn = document.getElementById("closeCalendarModalBtn");
 openCalendarBtn.addEventListener("click", () => calendarModal.classList.add("open"));
 closeCalendarBtn.addEventListener("click", () => calendarModal.classList.remove("open"));
 
+
 // About Modal Pop Up
 const aboutModal = document.getElementById("aboutModal");
 const openAboutBtn = document.getElementById("openAboutModalBtn");
@@ -27,6 +28,7 @@ const closeAboutBtn = document.getElementById("closeAboutModalBtn");
 
 openAboutBtn.addEventListener("click", () => aboutModal.classList.add("open"));
 closeAboutBtn.addEventListener("click", () => aboutModal.classList.remove("open"));
+
 
 // Activity Modal Pop Up
 const activityModal = document.getElementById("activityModal");
@@ -36,6 +38,7 @@ const closeActivityBtn = document.getElementById("closeActivityModalBtn");
 openActivityBtn.addEventListener("click", () => activityModal.classList.add("open"));
 closeActivityBtn.addEventListener("click", () => activityModal.classList.remove("open"));
 
+
 // Skills Modal Pop Up
 const skillsModal = document.getElementById("skillsModal");
 const openSkillsBtn = document.getElementById("openSkillsModalBtn");
@@ -44,6 +47,16 @@ const closeSkillsBtn = document.getElementById("closeSkillsModalBtn");
 openSkillsBtn.addEventListener("click", () => skillsModal.classList.add("open"));
 closeSkillsBtn.addEventListener("click", () => skillsModal.classList.remove("open"));
 
+
+// Experience Modal Pop Up
+const expModal = document.getElementById("expModal");
+const openExpBtn = document.getElementById("openExpModalBtn");
+const closeExpBtn = document.getElementById("closeExpModalBtn");
+
+openExpBtn.addEventListener("click", () => expModal.classList.add("open"));
+closeExpBtn.addEventListener("click", () => expModal.classList.remove("open"));
+
+
 // Load and Display User Profile
 async function loadUserProfile(user) {
     const userRef = doc(db, 'users', user.uid);
@@ -51,12 +64,28 @@ async function loadUserProfile(user) {
 
     if (userSnap.exists()) {
         const data = userSnap.data();
-        document.getElementById('userEmail').textContent = `${user.email}`;
+        // Email
+        document.getElementById('userEmailInput').value = user.email;
+        document.getElementById('displayUserEmail').textContent = user.email;
+        
+        // Username
         document.getElementById('userNameInput').value = data.name || '';
+        document.getElementById('displayUserName').textContent = data.name || `${user.email?.split('@')[0]}`;
+        
+        // About
         document.getElementById('aboutMeText').value = data.aboutMe || '';
+        document.getElementById('displayAboutText').textContent = data.aboutMe || '';
+
+        // Modules
         document.getElementById('modulesInput').value = data.modulesTaken || '';
+        
+        // Telegram
+        document.getElementById('telegramInput').value = data.telegram || '';
+        document.getElementById('displayTelegram').textContent = data.telegram || 'N/A';
+
         if (data.photoURL) {
             document.getElementById('profileImage').src = data.photoURL;
+            document.getElementById('introProfileImage').src = data.photoURL;
         } else {
             document.getElementById('profileImage').src = "https://www.w3schools.com/howto/img_avatar.png";
         }
@@ -66,21 +95,33 @@ async function loadUserProfile(user) {
 // Save Display Name and Bio
 function setupProfileEditing(user) {
     const nameInput = document.getElementById('userNameInput');
-    const aboutInput = document.getElementById('aboutMeText');
+    // const aboutInput = document.getElementById('aboutMeText');
     const saveNameBtn = document.getElementById('saveNameBtn');
-    const saveAboutMeBtn = document.getElementById('saveAboutMe');
+    const saveAboutMeBtn = document.getElementById('saveAboutBtn');
     const moduleTakenBtn = document.getElementById('saveProfileBtn');
 
     saveNameBtn.addEventListener('click', async () => {
         const newName = nameInput.value.trim();
         await updateDoc(doc(db, 'users', user.uid), { name: newName });
-        alert('Name updated!');
+        displayUserName.textContent = newName || `${user.email?.split('@')[0]}`;
+        alert('Intro updated!');
+        document.getElementById('introModal').classList.remove('open');
     });
 
     saveAboutMeBtn.addEventListener('click', async () => {
-        const newAbout = aboutInput.value.trim();
-        await updateDoc(doc(db, 'users', user.uid), { aboutMe: newAbout });
-        alert('About Me updated!');
+        const newAboutText = document.getElementById('aboutMeText').value.trim();
+        const newTelegram = document.getElementById('telegramInput').value.trim();
+
+        await updateDoc(doc(db, 'users', user.uid), { 
+            aboutMe: newAboutText, 
+            telegram: newTelegram
+        });
+        
+        displayAboutText.textContent = newAboutText;
+        displayTelegram.textContent = newTelegram || 'N/A';
+
+        alert('About Section updated!');
+        document.getElementById('aboutModal').classList.remove('open');
     });
 
     moduleTakenBtn.addEventListener('click', async () => {
@@ -173,7 +214,6 @@ function setupSignOut() {
 // when user firsts login
 auth.onAuthStateChanged(user => {
     if (user) {
-        document.getElementById("userEmail").textContent = `Email: ${user.email}`;
         loadUserProfile(user);
         setupProfileEditing(user);
         setupPhotoUpload(user);
@@ -184,3 +224,14 @@ auth.onAuthStateChanged(user => {
         window.location.href = 'login.html';
     }
 });
+
+// Loader
+window.addEventListener("load", () => {
+    const loader = document.querySelector(".loader")
+
+    loader.classList.add("loader-hidden");
+
+    loader.addEventListener("transitionend", () => {
+        document.body.removeChild("loader");
+    });
+})
