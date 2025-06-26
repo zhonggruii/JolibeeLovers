@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>Group Management</title>
+		<link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/zhonggruii/JolibeeLovers/refs/heads/main/GroupMeUp%20Icon%20Transparent.png">
+		<script type="module" src="./group-management.js"></script>
+		
+		<!--for css-->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+		<link rel="stylesheet" href="style.css"/>
+	</head>
+
+	<body>
+        <header class="header">
+            <a class="logo-area-header" href="index.html">
+                <img class="image-logo" src="https://raw.githubusercontent.com/zhonggruii/JolibeeLovers/refs/heads/main/GroupMeUp%20Logo.jpg" alt="GroupMeUp Logo"/>
+            </a>
+			
+			<nav class="nav-area-header nav-header">
+				<a class="tooltip" href="index.html">
+					<span class="current-page-icon material-symbols-outlined">home</span>
+					<span class="tooltip-text home-spacing">Home</span>
+				</a>
+				<a class="tooltip" href="my-group.html">
+					<span class="icons material-symbols-outlined">group</span>
+					<span class="tooltip-text group-spacing">Groups</span>
+				</a>
+				<a class="tooltip" href="profile.html">
+					<span class="icons material-symbols-outlined">account_circle</span>
+					<span class="tooltip-text profile-spacing">Profile</span>
+				</a>
+        	</nav>
+
+			<div class="options-area-header options-header">
+				<div class="dropdown">
+					<span class="material-symbols-outlined">menu</span>
+					<div class="dropdown-container box-shadow">
+						<button class="dropdown-button" id="signOutBtn" onclick="window.location.href='login.html'">
+							<span class="dropdown-icon material-symbols-outlined">logout</span>
+							Log Out
+						</button>
+					</div>
+				</div>
+			</div>
+        </header>
+
+		<main class="page">
+			<div class="content-container box-shadow mb16 p2034">
+				<h1 id="group-management-title">Group Management</h1>
+				<hr class="solid-line"/>
+				
+				<div class="flex-space-between">
+					<button class="button-box m10-0" id="back-to-groups">
+						<span class="button-icon material-symbols-outlined">arrow_back</span>
+						Back to Groups
+					</button>
+				</div>
+			</div>	
+	
+			<div class="content-container box-shadow p2034">
+				<div class="content-header">
+					<h2 class="container-title m10-0" id="group-title">Group Name</h2>
+					<div id="group-creator" class="m10-0"></div>
+				</div>
+
+				<div class="content-body">
+					<p class="content-text" id="group-description">Loading description...</p>
+					<div class="content-taglist">
+						<p class="content-text" id="group-tags">Tags: Loading...</p>
+					</div>
+				</div>
+
+				<hr class="solid-line" />
+				
+				<h3>Members</h3>
+				<div id="members-list" class="members-grid">
+					<!-- Members will be loaded here -->
+				</div>
+				
+				<hr class="solid-line" />
+				
+				<h3>Group Discussion</h3>
+				<div id="group-chat" class="chat-container">
+					<!-- Chat messages will appear here -->
+				</div>
+				<div class="message-input">
+					<input type="text" id="message-input" placeholder="Type your message...">
+					<button id="send-message">
+						<span class="material-symbols-outlined">send</span>
+					</button>
+				</div>
+			</div>
+		</main>
+
+        <footer class="footer">
+            <h4 class="footer-text">Designed by JollibeeLovers</h4>
+            <h4 class="footer-text">© 2025 GroupMeUp. All rights reserved</h4>
+        </footer>
+	</body>
+</html>
