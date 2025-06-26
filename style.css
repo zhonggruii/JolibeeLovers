@@ -11,9 +11,13 @@ Icon Background: #e2e5e9
 Hyperlink-Hover: #0061fe
 
 Blue Button-Box: #003d7c
-Blue Button-Hover: 0061fe
+Blue Button-Hover: #0061fe
 
-Green Button-Box: 
+Green Button-Box: #04aa6dea
+Green Button-Hover: #00d390
+
+Orange Button-Box: #D27D2D
+Orange Button-Hover: #F28C28
 
 Red: #D2042D
 
@@ -30,8 +34,56 @@ body {
 	margin: 0px
 }
 
+input {
+	font-family: "Inter", sans-serif;
+}
+
 textarea {
+	font-family: "Inter", sans-serif;
+	white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    min-height: 100px;
+    line-height: 1.5;
 	resize: vertical;
+}
+
+.loader {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: rgb(249 250 251);
+	transition: opacity 5s, visibility 0.75s;
+}
+
+.loader-hidden {
+	opacity: 0;
+	visibility: hidden;
+}
+
+.loader::after {
+	content: "";
+	width: 75px;
+	height: 75px;
+	border: 15px solid #dddddd;
+	border-top-color: #003d7c;
+	border-bottom-color: #D27D2D;
+	border-radius: 50%;
+	animation: loading 0.75s ease infinite;
+}
+
+@keyframes loading {
+	from  {
+		transform: rotate(0turn);
+	}
+	to {
+		transform: rotate(1turn);
+	}
 }
 
 
@@ -302,6 +354,20 @@ textarea {
 	text-align: center;
 	color: #012661;
 	margin: 0px;
+	white-space: pre-wrap; /* Preserves line breaks and spaces */
+    word-wrap: break-word; /* Breaks long words if needed */
+    overflow-wrap: break-word; /* Alternative to word-wrap */
+    line-height: 1.5; /* Add some spacing between lines */
+}
+
+.container-title-left {
+	font-size: 32px;
+	color: #012661;
+	margin: 0px;
+	white-space: pre-wrap; /* Preserves line breaks and spaces */
+    word-wrap: break-word; /* Breaks long words if needed */
+    overflow-wrap: break-word; /* Alternative to word-wrap */
+    line-height: 1.5; /* Add some spacing between lines */
 }
 
 .container-sub-title {
@@ -326,6 +392,10 @@ textarea {
 .content-text {
 	font-size: 14px;
 	line-height: 1.5;
+	white-space: pre-wrap; /* preserves line breaks & spaces */
+    word-wrap: break-word; /* breaks long words if needed */
+    overflow-wrap: break-word; /* alternative to word-wrap */
+    margin-bottom: 1em; /* adds space between paragraphs */
 }
 
 .content-taglist {
@@ -696,7 +766,7 @@ input::-webkit-input-placeholder {
 	width: 50lh;
 }
 
-/* U?. Intro Section */
+/* U1. Intro Section */
 .profile-icon {
 	width: 110px;
 	border-radius: 60px;
@@ -712,18 +782,6 @@ input::-webkit-input-placeholder {
 	width: 100%;
 }
 
-/* U?. Intro Modal Pop Up */
-.modal-element-group {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-
-.modal-element-header {
-	display: flex;
-	align-items: center;
-}
-
 .element-subtitle-container {
 	display: flex;
 	align-items: center;
@@ -733,6 +791,18 @@ input::-webkit-input-placeholder {
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
+}
+
+/* U1a. Profile Modal Pop Up */
+.modal-element-group {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.modal-element-header {
+	display: flex;
+	align-items: center;
 }
 
 .modal-element-body {
@@ -748,7 +818,11 @@ input::-webkit-input-placeholder {
 	border-radius: 100px;
 }
 
-/* U?. Profile Body */
+/* U1b. Multi-Select Dropdown */
+
+
+
+/* U2. Profile Body */
 .profile-body {
 	display: flex;
 }
@@ -765,6 +839,12 @@ input::-webkit-input-placeholder {
 	align-items: center;
 }
 
+#displayAboutText:empty {
+    display: none; /* Optional: hides completely when empty */
+	margin: 0;
+}
+
+/* U2a. Profile Containers */
 .profile-container {
 	display: flex;
 	flex-direction: column;
@@ -783,26 +863,21 @@ input::-webkit-input-placeholder {
 	flex-direction: column;
 }
 
-.profile-element-group {
+.element-group-col {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 }
 
-.profile-subelement {
+.element-group-row {
 	display: flex;
 	align-items: center;
 }
 
-.profile-subelement-flexcolumn {
+.element-group-row-mid {
 	display: flex;
-	flex-direction: column;
+	align-items: center;
 	justify-content: center;
-}
-
-.profile-text-group {
-	display: flex;
-	flex-direction: column;
 }
 
 .profile-element-icon {
@@ -814,11 +889,6 @@ input::-webkit-input-placeholder {
 		'GRAD' 0,
 		'opsz' 24;
 	padding-right: 6px;
-}
-
-.stars-container {
-	display: flex;
-	justify-content: center;
 }
 
 /* PADDING SPACING */
@@ -844,6 +914,10 @@ input::-webkit-input-placeholder {
 
 
 /* MARGIN SPACING */
+.m0 {
+	margin: 0px;
+}
+
 .m0-5 {
 	margin: 0px 5px;
 }
