@@ -84,14 +84,9 @@
 									<img class="avatar-icons" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />		
 								</a>
 							
-								<a class="userinfo-container" href="profile.html">
-									<!--usernames container-->
+								<a class="userinfo-container" href="/profile.html?email=${encodeURIComponent(group.creator)}">
 									<div>
-										<!--replace with userName-->
-										<h3 class="username-text">martin rosales</h3>
-
-										<!--replace with userEmail-->
-										<h3 class="email-text">j.martin3537@gmail.com</h3>
+										<h3 class="username-text">${creator.name || group.creator?.split('@')[0] || "User"}</h3>
 									</div>
 								</a>
 						</div>

@@ -64,7 +64,7 @@ function handleSearch() {
     });
 
     loadGroups(filteredGroups);
-  }, 300); // Debounce delay (optional)
+  }, 300); 
 }
 
 

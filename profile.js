@@ -1,5 +1,5 @@
 import { auth, db, storage } from './config.js';
-import { doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js';
+import { doc, getDoc, updateDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-storage.js';
 import { signOut, updateProfile } from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js';
 
@@ -58,44 +58,124 @@ closeExpBtn.addEventListener("click", () => expModal.classList.remove("open"));
 
 
 // Load and Display User Profile
-async function loadUserProfile(user) {
-    const userRef = doc(db, 'users', user.uid);
-    const userSnap = await getDoc(userRef);
+async function loadUserProfile() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const profileEmail = urlParams.get('email');
+    const currentUser = auth.currentUser;
 
-    if (userSnap.exists()) {
-        const data = userSnap.data();
-        // Email
-        document.getElementById('userEmailInput').value = user.email;
-        document.getElementById('displayUserEmail').textContent = user.email;
-        
-        // Username
-        document.getElementById('userNameInput').value = data.name || '';
-        document.getElementById('displayUserName').textContent = data.name || `${user.email?.split('@')[0]}`;
-        
-        // About
-        document.getElementById('aboutMeText').value = data.aboutMe || '';
-        document.getElementById('displayAboutText').textContent = data.aboutMe || '';
+    // Check if this is the owner's profile
+    const isOwner = !profileEmail || (currentUser && profileEmail === currentUser.email);
+    
+    // Get the main profile container
+    const profileContainer = document.querySelector('.profile-body') || document.body;
+    
+    // Toggle owner class
+    if (isOwner) {
+        profileContainer.classList.add('is-owner');
+    } else {
+        profileContainer.classList.remove('is-owner');
+    }
+    
+    let userToDisplay;
+    let isCurrentUser = false;
 
-        // Modules
-        document.getElementById('modulesInput').value = data.modulesTaken || '';
-        
-        // Telegram
-        document.getElementById('telegramInput').value = data.telegram || '';
-        document.getElementById('displayTelegram').textContent = data.telegram || 'N/A';
-
-        if (data.photoURL) {
-            document.getElementById('profileImage').src = data.photoURL;
-            document.getElementById('introProfileImage').src = data.photoURL;
+    try {
+        if (profileEmail) {
+            // Fetch the requested user's profile
+            const usersRef = collection(db, 'users');
+            const q = query(usersRef, where('email', '==', profileEmail));
+            const querySnapshot = await getDocs(q); // Make sure this is defined
+            
+            if (!querySnapshot.empty) {
+                userToDisplay = {
+                    uid: querySnapshot.docs[0].id,
+                    ...querySnapshot.docs[0].data()
+                };
+            } else {
+                // If user not found in 'users' collection, create basic info
+                userToDisplay = {
+                    email: profileEmail,
+                    name: profileEmail.split('@')[0],
+                    photoURL: 'https://www.w3schools.com/howto/img_avatar.png'
+                };
+            }
+            
+            // Check if this is the current user's profile
+            if (currentUser && currentUser.email === profileEmail) {
+                isCurrentUser = true;
+            }
+        } else if (currentUser) {
+            // No email parameter, show current user's profile
+            const userRef = doc(db, 'users', currentUser.uid);
+            const userSnap = await getDoc(userRef);
+            
+            userToDisplay = {
+                uid: currentUser.uid,
+                email: currentUser.email,
+                ...(userSnap.exists() ? userSnap.data() : {})
+            };
+            isCurrentUser = true;
         } else {
-            document.getElementById('profileImage').src = "https://www.w3schools.com/howto/img_avatar.png";
+            window.location.href = 'login.html';
+            return;
         }
+
+        // Update the UI
+        updateProfileUI(userToDisplay, isCurrentUser);
+    } catch (error) {
+        console.error("Error loading profile:", error);
+        // Fallback to showing basic info
+        updateProfileUI({
+            name: profileEmail ? profileEmail.split('@')[0] : "User",
+            email: profileEmail || "No email",
+            photoURL: 'https://www.w3schools.com/howto/img_avatar.png'
+        }, false);
     }
 }
 
-// Save Display Name and Bio
+function updateProfileUI(userData, isCurrentUser) {
+    // Email
+    document.getElementById('userEmailInput').value = userData.email || '';
+    document.getElementById('displayUserEmail').textContent = userData.email || '';
+    
+    // Username
+    document.getElementById('userNameInput').value = userData.name || '';
+    document.getElementById('displayUserName').textContent = userData.name || `${userData.email?.split('@')[0]}`;
+    
+    // About
+    document.getElementById('aboutMeText').value = userData.aboutMe || '';
+    document.getElementById('displayAboutText').textContent = userData.aboutMe || '';
+
+    // Modules
+    document.getElementById('modulesInput').value = userData.modulesTaken || '';
+    
+    // Telegram
+    document.getElementById('telegramInput').value = userData.telegram || '';
+    document.getElementById('displayTelegram').textContent = userData.telegram || 'N/A';
+
+    // Profile Image
+    document.getElementById('profileImage').src = userData.photoURL || 'https://www.w3schools.com/howto/img_avatar.png';
+    document.getElementById('introProfileImage').src = userData.photoURL || 'https://www.w3schools.com/howto/img_avatar.png';
+
+    // Show/hide edit controls based on ownership
+    const editControls = document.querySelectorAll('.edit-control');
+    editControls.forEach(control => {
+        control.style.display = isCurrentUser ? 'block' : 'none';
+    });
+
+    // Disable form elements if not current user
+    const formElements = document.querySelectorAll('input, textarea, button');
+    formElements.forEach(element => {
+        if (!element.classList.contains('view-only')) {
+            element.disabled = !isCurrentUser;
+        }
+    });
+}
+
 function setupProfileEditing(user) {
+    if (!user) return;
+
     const nameInput = document.getElementById('userNameInput');
-    // const aboutInput = document.getElementById('aboutMeText');
     const saveNameBtn = document.getElementById('saveNameBtn');
     const saveAboutMeBtn = document.getElementById('saveAboutBtn');
     const moduleTakenBtn = document.getElementById('saveProfileBtn');
@@ -103,7 +183,7 @@ function setupProfileEditing(user) {
     saveNameBtn.addEventListener('click', async () => {
         const newName = nameInput.value.trim();
         await updateDoc(doc(db, 'users', user.uid), { name: newName });
-        displayUserName.textContent = newName || `${user.email?.split('@')[0]}`;
+        document.getElementById('displayUserName').textContent = newName || `${user.email?.split('@')[0]}`;
         alert('Intro updated!');
         document.getElementById('introModal').classList.remove('open');
     });
@@ -117,8 +197,8 @@ function setupProfileEditing(user) {
             telegram: newTelegram
         });
         
-        displayAboutText.textContent = newAboutText;
-        displayTelegram.textContent = newTelegram || 'N/A';
+        document.getElementById('displayAboutText').textContent = newAboutText;
+        document.getElementById('displayTelegram').textContent = newTelegram || 'N/A';
 
         alert('About Section updated!');
         document.getElementById('aboutModal').classList.remove('open');
@@ -128,8 +208,7 @@ function setupProfileEditing(user) {
         const newMod = modulesInput.value.trim();
         await updateDoc(doc(db, 'users', user.uid), { modulesTaken: newMod});
         alert('Modules Updated!');
-    })
-    loadUserProfile(user);
+    });
 }
 
 // Profile Photo Upload
@@ -138,34 +217,47 @@ function setupPhotoUpload(user) {
     const uploadBtn = document.getElementById('uploadBtn');
     const profileImage = document.getElementById('profileImage');
 
+    // Add null checks
+    if (!uploadBtn || !imageUpload || !profileImage) {
+        console.warn("Photo upload elements not found");
+        return;
+    }
+
     uploadBtn.addEventListener('click', () => {
         imageUpload.click();
     });
 
     imageUpload.addEventListener('change', async (event) => {
-        //take the first file
         const file = event.target.files[0];
         if (!file) return;
 
-        const maxSize = 100 * 1024;
-        if (file.size > maxSize) {
-            return alert("file size too large!");
-        }
-        //get the reference path to img before uploading it
-        const imageRef = ref(storage, `profileImages/${user.uid}`);
-        await uploadBytes(imageRef, file);
-
-        //get the download URL of it to put on db
-        const downloadURL = await getDownloadURL(imageRef);
-        await updateDoc(doc(db, 'users', user.uid), { photoURL: downloadURL });
-        profileImage.src = downloadURL;
-
-        //ensures that photoURL is directly modified on auth user profile
-        //allows us to change photo multiple times
-        await updateProfile(user, {
+        try {
+            const maxSize = 100 * 1024; // 100KB
+            if (file.size > maxSize) {
+                alert("File size too large! Max 100KB allowed.");
+                return;
+            }
+            
+            const imageRef = ref(storage, `profileImages/${user.uid}`);
+            await uploadBytes(imageRef, file);
+            const downloadURL = await getDownloadURL(imageRef);
+            
+            await updateDoc(doc(db, 'users', user.uid), { 
+                photoURL: downloadURL 
+            });
+            
+            profileImage.src = downloadURL;
+            document.getElementById('introProfileImage').src = downloadURL;
+            
+            await updateProfile(user, {
                 photoURL: downloadURL
-        });
-        alert('Profile photo updated!');
+            });
+            
+            alert('Profile photo updated!');
+        } catch (error) {
+            console.error("Upload failed:", error);
+            alert("Failed to upload photo: " + error.message);
+        }
     });
 }
 
@@ -214,7 +306,7 @@ function setupSignOut() {
 // when user firsts login
 auth.onAuthStateChanged(user => {
     if (user) {
-        loadUserProfile(user);
+        loadUserProfile();
         setupProfileEditing(user);
         setupPhotoUpload(user);
         setupRatingSystem(user);
@@ -227,11 +319,13 @@ auth.onAuthStateChanged(user => {
 
 // Loader
 window.addEventListener("load", () => {
-    const loader = document.querySelector(".loader")
-
-    loader.classList.add("loader-hidden");
-
-    loader.addEventListener("transitionend", () => {
-        document.body.removeChild("loader");
-    });
-})
+    const loader = document.querySelector(".loader");
+    if (loader) {
+        loader.classList.add("loader-hidden");
+        loader.addEventListener("transitionend", () => {
+            if (loader.parentNode) {
+                loader.parentNode.removeChild(loader);
+            }
+        });
+    }
+});
