@@ -1006,3 +1006,17 @@ input::-webkit-input-placeholder {
 .red {
 	color: #D2042D;
 }
+
+/* preventing others from editing your profile*/
+
+.is-owner .edit-control {
+  display: block !important; 
+}
+
+.button-box-orange.edit-control {
+  display: none; 
+}
+
+.is-owner .button-box-orange.edit-control {
+  display: inline-flex !important; 
+}
