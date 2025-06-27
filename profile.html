@@ -63,10 +63,12 @@
             <!--intro container-->
             <div class="intro-container box-shadow p2034 mb16">
                 <!--intro profile pic-->
-                <img class="profile-icon" id="introProfileImage" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />
+                <div class="element-group-row">
+                    <img class="profile-icon" id="introProfileImage" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />
+                </div>
                 
                 <!--intro username display-->
-                <div class="intro-username m0-15 w100pct">
+                <div class="intro-username m0-20 w100pct">
                     <h2 class="container-title-left" id="displayUserName">username</h2>
                 </div>
 
@@ -79,7 +81,7 @@
 				    </button>
 
                     <!--CALENDAR WIP-->
-                    <button class="button-box m10 edit-control" id="openCalendarModalBtn">
+                    <button class="button-box m10" id="openCalendarModalBtn">
                         <span class="button-icon material-symbols-outlined">calendar_today</span>
                         View Calendar
 				    </button>                       
@@ -370,9 +372,9 @@
                     <!--TO FIX (SYNC ID w/ JS): modal body-->
 					<form class="modal-body" id="blank">
                         <!--FIX ID: activity description-->
-						<div class="modal-input-group2 mb15">
+						<div class="modal-input-group2 mb15 h100pct">
                             <label class="modal-input-label">Projects Involved With</label>
-							<textarea class="modal-textarea modal-input" id="blank"></textarea>
+							<textarea class="modal-textarea modal-input" id="activityInput"></textarea>
 						</div>
 					</form>
 
@@ -398,43 +400,42 @@
 					
                     <!--skills modal body-->
 					<form class="modal-body" id="blank">
-                        <!--FIX ID: skills dropdown-->
+                        <!--current skills display-->
 						<div class="modal-input-group2 mb15">
-                            <label class="modal-input-label">Skills</label>
-							<textarea class="modal-textarea modal-input" id="blank"></textarea>
+                            <label class="modal-input-label">Current Skills</label>
+							<div class="multi-dropdown-output">
+                                <div class="content-text" id="skillsOutput">None Selected</div>
+                            </div>
 						</div>
 
-                        <!--sample only-->
-                        <div class="modal-input-group w100pct">
-                            <label class="modal-input-label">sample</label>
-                            <input class="modal-input" type="text">
-                        </div>
-
-                        <div class="multi-select w100pct" id="skillsMultiSelect">
-                            <div class="selected-items" id="skillsSelectedItems"></div>
-
-                            <div class="dropdown-arrow">
-                                <span class="profile-element-icon material-symbols-outlined">arrow_drop_down</span>
-                            </div>
+                        <!--skills custom multi-select dropdown-->
+                        <div class="modal-input-group2 m15-0">
+                            <label class="modal-input-label">Add New Skills</label>
+							<div class="multi-select w100pct p6" id="skillsMultiSelect">
                             
-                            <div class="multi-dropdown p10-40-10-10 w100pct" id="skillsDropdown">
-                                <div data-value="HTML & CSS">HTML & CSS</div>
-                                <div data-value="Java">Java</div>
-                                <div data-value="Javascript">Javascript</div>
-                                <div data-value="Python">Python</div>
-                                <div data-value="C">C</div>
-                                <div data-value="C++">C++</div>
-                                <div data-value="C#">C#</div>
-                                <div data-value="SQL">SQL</div>
-                                <div data-value="Swift">Swift</div>
-                            </div>
-                        </div>
+                                <div class="selected-items w100pct" id="skillsSelectedItems"></div>
 
-                        <div id="output">Selected Items...</div>
+                                <div class="multi-dropdown-arrow">
+                                    <span class="profile-element-icon material-symbols-outlined">arrow_drop_down</span>
+                                </div>
+                                
+                                <div class="multi-dropdown w100pct" id="skillsDropdown">
+                                    <div data-value="HTML & CSS">HTML & CSS</div>
+                                    <div data-value="Java">Java</div>
+                                    <div data-value="Javascript">Javascript</div>
+                                    <div data-value="Python">Python</div>
+                                    <div data-value="C">C</div>
+                                    <div data-value="C++">C++</div>
+                                    <div data-value="C#">C#</div>
+                                    <div data-value="SQL">SQL</div>
+                                    <div data-value="Swift">Swift</div>
+                                </div>
+                            </div>
+						</div>
 					</form>
 
 					<div class="modal-footer">
-						<button class="round-button-box" type="submit" id="showBtn">Save</button>
+						<button class="round-button-box" type="submit" id="skillsShowBtn">Save</button>
 					</div>
 				</div>
 			</div>
