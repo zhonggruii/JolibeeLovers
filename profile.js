@@ -160,7 +160,11 @@ function updateProfileUI(userData, isCurrentUser) {
     // Show/hide edit controls based on ownership
     const editControls = document.querySelectorAll('.edit-control');
     editControls.forEach(control => {
-        control.style.display = isCurrentUser ? 'block' : 'none';
+        if (isCurrentUser) {
+            control.classList.remove('hidden'); // Show if owner
+        } else {
+            control.classList.add('hidden');    // Hide if visitor
+        }
     });
 
     // Disable form elements if not current user
@@ -327,5 +331,57 @@ window.addEventListener("load", () => {
                 loader.parentNode.removeChild(loader);
             }
         });
+    }
+});
+
+// Custom Multi-Select Dropdown
+const skillsMultiSelect = document.getElementById('skillsMultiSelect');
+const skillsDropdown = document.getElementById('skillsDropdown');
+const skillsSelectedItems = document.getElementById('skillsSelectedItems');
+const skillsOutput = document.getElementById('skillsOutput');
+const skillsShowBtn = document.getElementById('skillsShowBtn');
+
+const selectedValues = new Set();
+
+skillsMultiSelect.addEventListener('click', () => {
+    skillsMultiSelect.classList.toggle('active');
+});
+
+// tags
+skillsDropdown.addEventListener('click', (e) => {
+    const value = e.target.getAttribute('data-value');
+    const label = e.target.textContent;
+
+    if (!selectedValues.has(value)) {
+        selectedValues.add(value);
+
+        const tag = document.createElement('span');
+        tag.innerHTML = `${label} <i class="multi-dropdown-icon material-symbols-outlined" data-remove="${value}">close_small</i>`;
+        skillsSelectedItems.appendChild(tag);
+    }
+});
+
+// tags unselected when pressing 'x'
+skillsSelectedItems.addEventListener('click', (e) => {
+    if (e.target.dataset.remove) {
+        const valueToRemove = e.target.dataset.remove;
+        selectedValues.delete(valueToRemove);
+        e.target.parentElement.remove();
+    }
+});
+
+// dropdown closes when clicking outside
+document.addEventListener('click', (e) => {
+    if (!skillsMultiSelect.contains(e.target)) {
+        skillsMultiSelect.classList.remove('active');
+    }
+});
+
+// save button function
+skillsShowBtn.addEventListener('click', () => {
+    if (selectedValues.size === 0) {
+        skillsOutput.textContent = 'No items selected.';
+    } else {
+        skillsOutput.textContent = Array.from(selectedValues).join(', ');
     }
 });
