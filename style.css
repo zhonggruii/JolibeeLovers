@@ -186,8 +186,18 @@ textarea {
 	visibility: hidden;
 	top: 82px;
 
-	transition-delay: 0.4s;
-	transition-timing-function: cubic-bezier(.08, .52, .52, 1);
+	transition: 
+		visibility 0s linear 0.3s, 
+		opacity 0.2s ease 0.3s;
+}
+
+.tooltip:hover .tooltip-text {
+  	visibility: visible;
+	transition-delay: 0.5s;
+}
+
+.tooltip:not(:hover) .tooltip-text {
+  	transition-delay: 0s;
 }
 
 .home-spacing {
@@ -200,10 +210,6 @@ textarea {
 
 .profile-spacing {
 	left: 18.5px;
-}
-
-.tooltip:hover .tooltip-text {
-  	visibility: visible;
 }
 
 /* H4. Option Related */
@@ -230,11 +236,17 @@ textarea {
 	padding: 4px;
 	z-index: 1;
 	right: 0%;
+	
+	transition: 
+		visibility 0s linear 0.3s,
+		opacity 0.2s ease;
 }
 
 .dropdown:hover .dropdown-container {
   	display: block;
 	visibility: visible;
+	pointer-events: auto;
+	transition-delay: 0s;
 }
 
 .dropdown-button {
@@ -635,7 +647,7 @@ input::-webkit-input-placeholder {
 .modal-body {
 	display: flex;
 	flex-direction: column;
-	height: 376.5px; /* TO BE MODIFIEDf */
+	height: 376.5px; /* TO BE MODIFIED */
 	width: 100%;
 	padding: 20px;
 	margin: 5px 0px;
@@ -819,8 +831,34 @@ input::-webkit-input-placeholder {
 }
 
 /* U1b. Multi-Select Dropdown */
+.multi-select {
+	border: solid #000000 1px;
+    border-radius: 3px;
+	position: relative;
+	cursor: pointer;
+}
 
+.multi-dropdown {
+	display: none;
+	background: white;
+	border: solid #ccc 1px;
+	max-height: 150px;
 
+	position: absolute;
+	top: 100%;
+	left: 0;
+	right: 0;
+	overflow-y: auto;
+	z-index: 100;
+}
+
+.multi-dropdown div:hover {
+	background-color: #f0f2f5;
+}
+
+.multi-select.active .multi-dropdown {
+	display: block;
+}
 
 /* U2. Profile Body */
 .profile-body {
@@ -894,6 +932,10 @@ input::-webkit-input-placeholder {
 /* PADDING SPACING */
 .pb5 {
 	padding-bottom: 5px;
+}
+
+.p10-40-10-10 {
+	padding: 10px 40px 10px 10px;
 }
 
 .p20-10-0-30 {
@@ -1005,4 +1047,18 @@ input::-webkit-input-placeholder {
 /* COLOUR CLASSES */
 .red {
 	color: #D2042D;
+}
+
+/* preventing others from editing your profile*/
+
+.is-owner .edit-control {
+  display: block !important; 
+}
+
+.button-box-orange.edit-control {
+  display: none;
+}
+
+.is-owner .button-box-orange.edit-control {
+  display: inline-flex !important; 
 }
