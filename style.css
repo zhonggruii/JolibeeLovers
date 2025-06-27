@@ -407,7 +407,7 @@ textarea {
 	white-space: pre-wrap; /* preserves line breaks & spaces */
     word-wrap: break-word; /* breaks long words if needed */
     overflow-wrap: break-word; /* alternative to word-wrap */
-    margin-bottom: 1em; /* adds space between paragraphs */
+    /* margin-bottom: 1em; adds space between paragraphs */
 }
 
 .content-taglist {
@@ -647,7 +647,8 @@ input::-webkit-input-placeholder {
 .modal-body {
 	display: flex;
 	flex-direction: column;
-	height: 376.5px; /* TO BE MODIFIED */
+	min-height: 300px;
+	max-height: 376.5px; /* TO BE MODIFIED */
 	width: 100%;
 	padding: 20px;
 	margin: 5px 0px;
@@ -780,8 +781,11 @@ input::-webkit-input-placeholder {
 
 /* U1. Intro Section */
 .profile-icon {
+	height: 110px;
 	width: 110px;
-	border-radius: 60px;
+	border-radius: 50%;
+	object-fit: cover; /* Ensures image covers the space without distortion */
+    object-position: center; /* Centers the image */
 }
 
 .intro-username {
@@ -838,6 +842,15 @@ input::-webkit-input-placeholder {
 	cursor: pointer;
 }
 
+.multi-select:hover {
+	border-color: #0061fe;
+}
+
+.multi-select:focus {
+	outline: none;
+	border-color: #003d7c;
+}
+
 .multi-dropdown {
 	display: none;
 	background: white;
@@ -852,6 +865,11 @@ input::-webkit-input-placeholder {
 	z-index: 100;
 }
 
+.multi-dropdown div {
+	padding: 10px;
+	cursor: pointer;
+}
+
 .multi-dropdown div:hover {
 	background-color: #f0f2f5;
 }
@@ -859,6 +877,63 @@ input::-webkit-input-placeholder {
 .multi-select.active .multi-dropdown {
 	display: block;
 }
+
+.selected-items {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px;
+	min-height: 30px;
+}
+
+.selected-items span {
+	font-size: 12px;
+	color: white;
+	display: flex;
+	align-items: center;
+	background-color: #003d7c;
+	border-radius: 5px;
+	padding: 5px 6px 5px 10px;
+	gap: 5px;
+}
+
+.selected-items i {
+	cursor: pointer;
+}
+
+.multi-dropdown-icon {
+	font-size: 18px;
+	color: white;
+	font-variation-settings:
+		'FILL' 1,
+		'wght' 280,
+		'GRAD' 0,
+		'opsz' 24;
+}
+
+.multi-dropdown-arrow {
+	position: absolute;
+	right: 1px;
+	top: 50%;
+	transform: translateY(-50%);
+	pointer-events: none;
+
+	transition: transform 0.3s ease;
+}
+
+.multi-select.active .multi-dropdown-arrow {
+	transform: translateX(-20%) translateY(-60%) rotate(180deg);
+}
+
+.multi-dropdown-output {
+	display: flex;
+	align-items: center;
+	background: none;
+    border: solid #000000 1px;
+    border-radius: 3px;
+	width: 100%;
+    padding: 8px;
+}
+
 
 /* U2. Profile Body */
 .profile-body {
@@ -894,6 +969,7 @@ input::-webkit-input-placeholder {
 .profile-container-header {
 	display: flex;
 	align-items: center;
+	height: 60px; /* maintains header height if not owner view */
 }
 
 .profile-container-body {
@@ -930,8 +1006,20 @@ input::-webkit-input-placeholder {
 }
 
 /* PADDING SPACING */
+.p4 {
+	padding: 4px;
+}
+
+.p5 {
+	padding: 5px;
+}
+
 .pb5 {
 	padding-bottom: 5px;
+}
+
+.p6 {
+	padding: 6px;
 }
 
 .p10-40-10-10 {
@@ -1016,6 +1104,10 @@ input::-webkit-input-placeholder {
 	margin: 20px 0px;
 }
 
+.m0-20 {
+	margin: 0px 20px;
+}
+
 
 /* WIDTH SIZING */
 .w42pct {
@@ -1038,6 +1130,11 @@ input::-webkit-input-placeholder {
 	width: 100%;
 }
 
+/* HEIGHT SIZING */
+.h100pct {
+	height: 100%;
+}
+
 
 /* TEXT CLASSES */
 .nowrap {
@@ -1049,16 +1146,7 @@ input::-webkit-input-placeholder {
 	color: #D2042D;
 }
 
-/* preventing others from editing your profile*/
-
-.is-owner .edit-control {
-  display: block !important; 
-}
-
-.button-box-orange.edit-control {
-  display: none;
-}
-
-.is-owner .button-box-orange.edit-control {
-  display: inline-flex !important; 
+/*  */ 
+.hidden {
+	display: none !important;
 }
