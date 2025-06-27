@@ -50,7 +50,7 @@
 					<!--dropdown content (modular)-->
 					<div class="dropdown-container box-shadow">
 						<!--logout option-->
-						<button class="dropdown-button" id="signOutBtn">
+						<button class="dropdown-button" id="signOutBtn" onclick="window.location.href='login.html'">
 							<span class="dropdown-icon material-symbols-outlined">logout</span>
 							Log Out
 						</button>
@@ -73,13 +73,13 @@
                 <!--intro buttons (edit intro & view calendar)-->
                 <div class="intro-button-group">  
                     <!--TO FIX: MAKE "EDIT INTRO" DISAPPEAR IF VISITOR-->               
-                    <button class="button-box-orange m10" id="openModalBtn">
+                    <button class="button-box-orange m10 edit-control" id="openModalBtn">
                         <span class="button-icon material-symbols-outlined">edit</span>
                         Edit Intro
 				    </button>
 
                     <!--CALENDAR WIP-->
-                    <button class="button-box m10" id="openCalendarModalBtn">
+                    <button class="button-box m10 edit-control" id="openCalendarModalBtn">
                         <span class="button-icon material-symbols-outlined">calendar_today</span>
                         View Calendar
 				    </button>                       
@@ -185,7 +185,7 @@
                                 <h3 class="content-subtitle">About</h3>
                             </div>
                             
-                            <div class="element-edit-container w100pct" id="openAboutModalBtn">
+                            <div class="element-edit-container w100pct edit-control" id="openAboutModalBtn">
                                 <span class="modal-icon material-symbols-outlined">edit</span>
                             </div>
                         </div> 
@@ -241,7 +241,7 @@
                                 <h3 class="content-subtitle">Activity</h3>
                             </div>
 
-                            <div class="element-edit-container w100pct" id="openActivityModalBtn">
+                            <div class="element-edit-container w100pct edit-control" id="openActivityModalBtn">
                                 <span class="modal-icon material-symbols-outlined">edit</span>
                             </div>
                         </div> 
@@ -262,7 +262,7 @@
                                 <h3 class="content-subtitle">Skills</h3>
                             </div>
 
-                            <div class="element-edit-container w100pct" id="openSkillsModalBtn">
+                            <div class="element-edit-container w100pct edit-control" id="openSkillsModalBtn">
                                 <span class="modal-icon material-symbols-outlined">edit</span>
                             </div>
                         </div> 
@@ -283,7 +283,7 @@
                                 <h3 class="content-subtitle">Experience</h3>
                             </div>
 
-                            <div class="element-edit-container w100pct" id="openExpModalBtn">
+                            <div class="element-edit-container w100pct edit-control" id="openExpModalBtn">
                                 <span class="modal-icon material-symbols-outlined">edit</span>
                             </div>
                         </div> 
@@ -404,10 +404,20 @@
 							<textarea class="modal-textarea modal-input" id="blank"></textarea>
 						</div>
 
-                        <div class="multi-select">
-                            <div class="selected-items"></div>
-                            <div class="dropdown-arrow"></div>
-                            <div class="skills-dropdown">
+                        <!--sample only-->
+                        <div class="modal-input-group w100pct">
+                            <label class="modal-input-label">sample</label>
+                            <input class="modal-input" type="text">
+                        </div>
+
+                        <div class="multi-select w100pct" id="skillsMultiSelect">
+                            <div class="selected-items" id="skillsSelectedItems"></div>
+
+                            <div class="dropdown-arrow">
+                                <span class="profile-element-icon material-symbols-outlined">arrow_drop_down</span>
+                            </div>
+                            
+                            <div class="multi-dropdown p10-40-10-10 w100pct" id="skillsDropdown">
                                 <div data-value="HTML & CSS">HTML & CSS</div>
                                 <div data-value="Java">Java</div>
                                 <div data-value="Javascript">Javascript</div>
