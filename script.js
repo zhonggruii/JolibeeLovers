@@ -25,7 +25,9 @@ if (signupForm) {
                     aboutMe:"",
                     photoURL: "",
                     ratings: "", 
-                    modulesTaken: ""
+                    activity: "",
+                    modulesTaken: "",
+                    skills: ""
                 });
                 window.location.href = "login.html";
             })
