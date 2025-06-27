@@ -72,52 +72,48 @@
 			
 			<!--container for group cards-->
 			<div id="group-list">
-				<!--group card template-->
-				<div class="content-container box-shadow p2034 m10-0">
-					<div class="content-header">
-						<h2 class="container-title m10-0">Join My Team!</h2>
+				<!--hard-coded template-->
+				<!--
+					<div class="content-container box-shadow p2034 m10-0">
+						<div class="content-header">
+							<h2 class="container-title m10-0">Join My Team!</h2>
 
-						<!--TO FIX: NEED TO FIX HREF TO USER PROFILE-->
-						<div class="user-group m10-0">
-								<a class="avatar-container" href="profile.html">
-									<!--avatar-->
-									<img class="avatar-icons" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />		
-								</a>
-							
-								<a class="userinfo-container" href="/profile.html?email=${encodeURIComponent(group.creator)}">
-									<div>
-										<h3 class="username-text">${creator.name || group.creator?.split('@')[0] || "User"}</h3>
-									</div>
-								</a>
+							<div class="user-group m10-0">
+									<a class="avatar-container" href="profile.html">
+										<img class="avatar-icons" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />		
+									</a>
+								
+									<a class="userinfo-container" href="/profile.html?email=${encodeURIComponent(group.creator)}">
+										<div>
+											<h3 class="username-text">${creator.name || group.creator?.split('@')[0] || "User"}</h3>
+										</div>
+									</a>
+							</div>
 						</div>
-					</div>
 
-					<div class="content-body">
-						<!--replace with description-->
-						<p class="content-text">
-							Looking for passionate people to join our dynamic group! 
-							Collaborate, share ideas, and grow together in a supportive and friendly 
-							environment. Whether for work, hobbies, or learning, we'd love to have you. 
-							Let's connect, inspire, and achieve great things as a team—join us today!
-						</p>
-
-						<!--WIP-->
-						<div class="content-taglist">
+						<div class="content-body">
 							<p class="content-text">
-								BT2102, Y1, BZA, IS
+								Looking for passionate people to join our dynamic group! 
+								Collaborate, share ideas, and grow together in a supportive and friendly 
+								environment. Whether for work, hobbies, or learning, we'd love to have you. 
+								Let's connect, inspire, and achieve great things as a team—join us today!
 							</p>
-						</div>
-					</div>
 
-					<!--divider-->
-					<hr class="solid-line" />
-									
-					<!--button to join group-->
-					<button class="button-box m10-0" id="openModalBtn">
-						<span class="button-icon material-symbols-outlined">add_circle</span>
-						Request to Join
-					</button>
-				</div>
+							<div class="content-taglist">
+								<p class="content-text">
+									BT2102, Y1, BZA, IS
+								</p>
+							</div>
+						</div>
+
+						<hr class="solid-line" />
+										
+						<button class="button-box m10-0" id="openModalBtn">
+							<span class="button-icon material-symbols-outlined">add_circle</span>
+							Request to Join
+						</button>
+					</div>
+				-->
 			</div>
 
 			<!--popup modal-->
