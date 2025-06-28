@@ -179,7 +179,7 @@
             <div class="profile-body w50lh">
                 <!--body left column-->
                 <div class="profile-left-group mr5 w42pct">
-                    <!--about container-->
+                    <!--about section-->
                     <div class="profile-container box-shadow mb10 w100pct">
                         <!--about header section-->
                         <div class="profile-container-header p20-10-0-30 w100pct">
@@ -250,9 +250,7 @@
 
                         <!--activity body section-->
                         <div class="profile-container-body p0-34-20-34 w100pct">
-                            <p class="content-text">- Project X</p>
-                            <p class="content-text">- BT2102 Project</p>
-                            <p class="content-text">- IS1108 Project</p>
+                            <p class="content-text" id="displayActivity"></p>
                         </div>
                     </div>
 
@@ -271,9 +269,7 @@
 
                         <!--skills body section-->
                         <div class="profile-container-body p0-34-20-34 w100pct">
-                            <p class="content-text">- Python</p>
-                            <p class="content-text">- Java</p>
-                            <p class="content-text">- HTML & CSS</p>
+                            <div class="displayed-items m10-0" id="displaySkills"></div>
                         </div>
                     </div>
 
@@ -358,7 +354,7 @@
             <!--ACTIVITY POP UP MODAL-->
             <div class="modal" id="activityModal">
 				<div class="modal-container">
-                    <!--modal header-->
+                    <!--activity modal header-->
 					<div class="modal-header">
 						<div class="modal-title-container modal-title-area">
 							<h2 class="modal-title">Edit Activity</h2>
@@ -369,9 +365,9 @@
 						</div>
 					</div>
 					
-                    <!--TO FIX (SYNC ID w/ JS): modal body-->
+                    <!--activity modal body-->
 					<form class="modal-body" id="blank">
-                        <!--FIX ID: activity description-->
+                        <!--activity input-->
 						<div class="modal-input-group2 mb15 h100pct">
                             <label class="modal-input-label">Projects Involved With</label>
 							<textarea class="modal-textarea modal-input" id="activityInput"></textarea>
@@ -379,7 +375,7 @@
 					</form>
 
 					<div class="modal-footer">
-						<button class="round-button-box" type="submit" form="add-group-form">Save</button>
+						<button class="round-button-box" type="submit" id="saveActivityBtn">Save</button>
 					</div>
 				</div>
 			</div>
@@ -435,7 +431,8 @@
 					</form>
 
 					<div class="modal-footer">
-						<button class="round-button-box" type="submit" id="skillsShowBtn">Save</button>
+						<button class="round-button-box mr10" type="submit" id="saveSkillsBtn">Save</button>
+                        <button class="red-round-button-box" type="submit" id="resetSkillsBtn">Reset</button>
 					</div>
 				</div>
 			</div>
@@ -459,26 +456,24 @@
                         <!--FIX ID: module dropdown-->
 						<div class="modal-input-group2 mb15">
                             <label class="modal-input-label">Modules</label>
-							<textarea class="modal-textarea modal-input" id="blank"></textarea>
+							<textarea class="modal-textarea modal-input" id="modulesInput"></textarea>
 						</div>
 					</form>
 
 					<div class="modal-footer">
-						<button class="round-button-box" type="submit" form="add-group-form">Save</button>
+						<button class="round-button-box" id="saveModuleBtn" type="submit">Save</button>
 					</div>
 				</div>
-			</div>
-
-            <!--spacing (remove ltr)-->
-            <hr />            
+			</div>       
 
             <!--FIX: INCORPORATE WITH POP UP MODAL-->
-            <div>
-                <!--modules taken-->
-                <label>Modules Taken:</label><br>
-                <input type="text" id="modulesInput" placeholder="e.g. CS1101S"/><br><br>
-                <button id="saveProfileBtn">Save Changes</button>
-            </div>
+            <!--
+                <div>
+                    <label>Modules Taken:</label><br>
+                    <input type="text" id="modulesInput" placeholder="e.g. CS1101S"/><br><br>
+                    <button id="saveProfileBtn">Save Changes</button>
+                </div>
+            -->
         </main>
 
         <footer class="footer">
