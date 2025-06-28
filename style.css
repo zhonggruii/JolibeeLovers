@@ -19,7 +19,8 @@ Green Button-Hover: #00d390
 Orange Button-Box: #D27D2D
 Orange Button-Hover: #F28C28
 
-Red: #D2042D
+Red Button-Box: #D2042D
+Red Button-Hover: 
 
 */
 
@@ -541,6 +542,22 @@ input::-webkit-input-placeholder {
 	border: solid #0061fe 2px;
 }
 
+.red-round-button-box {
+	display: flex;
+	justify-content: center;
+	font-family: "Inter", sans-serif;
+	color: white;
+	background-color: #D2042D;
+	border: solid #D2042D 2px;
+	border-radius: 20px;
+	padding: 8px 14px;
+}
+
+.red-round-button-box:hover {
+	background-color: #FF004F;
+	border: solid #FF004F 2px;
+}
+
 .button-icon {
 	font-size: 16px;
 	color: white;
@@ -834,6 +851,11 @@ input::-webkit-input-placeholder {
 	border-radius: 100px;
 }
 
+#activityInput {
+	height: 25vh;
+}
+
+
 /* U1b. Multi-Select Dropdown */
 .multi-select {
 	border: solid #000000 1px;
@@ -898,6 +920,24 @@ input::-webkit-input-placeholder {
 
 .selected-items i {
 	cursor: pointer;
+}
+
+.displayed-items {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px;
+	min-height: 30px;
+}
+
+.displayed-items span {
+	font-size: 12px;
+	color: white;
+	display: flex;
+	align-items: center;
+	background-color: #003d7c;
+	border-radius: 5px;
+	padding: 5px 10px;
+	gap: 5px;
 }
 
 .multi-dropdown-icon {
@@ -1070,6 +1110,10 @@ input::-webkit-input-placeholder {
 
 .mt10 {
 	margin-top: 10px;
+}
+
+.mr10 {
+	margin-right: 10px;
 }
 
 .mb10 {
