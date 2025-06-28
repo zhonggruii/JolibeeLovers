@@ -20,7 +20,10 @@ Orange Button-Box: #D27D2D
 Orange Button-Hover: #F28C28
 
 Red Button-Box: #D2042D
-Red Button-Hover: 
+Red Button-Hover: #FF004F
+
+Red Button-Box: #f3b60e
+Red Button-Hover: #FEBE10
 
 */
 
@@ -47,6 +50,10 @@ textarea {
     min-height: 100px;
     line-height: 1.5;
 	resize: vertical;
+}
+
+a {
+	text-decoration: none;
 }
 
 .loader {
@@ -524,6 +531,22 @@ input::-webkit-input-placeholder {
 .button-box-orange:hover {
 	background-color: #F28C28;
 	border: solid #F28C28 2px;
+}
+
+.button-box-yellow {
+	display: flex;
+	justify-content: center;
+	font-family: "Inter", sans-serif;
+	color: white;
+	background-color: #f3b60e;
+	border: solid #f3b60e 2px;
+	border-radius: 5px;
+	padding: 8px 18px;
+}
+
+.button-box-yellow:hover {
+	background-color: #FFD700;
+	border: solid #FFD700 2px;
 }
 
 .round-button-box {
