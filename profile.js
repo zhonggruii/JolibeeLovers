@@ -146,6 +146,22 @@ function updateProfileUI(userData, isCurrentUser) {
     document.getElementById('aboutMeText').value = userData.aboutMe || '';
     document.getElementById('displayAboutText').textContent = userData.aboutMe || '';
 
+    // Activity
+    document.getElementById('activityInput').value = userData.activity || '';
+    document.getElementById('displayActivity').textContent = userData.activity || 'No projects';
+
+    // Skills
+    const skills = userData.skills || [];
+    document.getElementById('displaySkills').innerHTML = skills
+    .map(skill => `<span>${skill}</span>`)
+    .join('') || `<p class="content-text m0">None selected</p>`;
+
+    // selected values display in modal
+    selectedValues.clear();
+    skills.forEach(skill => selectedValues.add(skill));
+    skillsOutput.textContent = skills.join(', ') || 'None Selected';
+
+
     // Modules
     document.getElementById('modulesInput').value = userData.modulesTaken || '';
     
@@ -182,7 +198,11 @@ function setupProfileEditing(user) {
     const nameInput = document.getElementById('userNameInput');
     const saveNameBtn = document.getElementById('saveNameBtn');
     const saveAboutMeBtn = document.getElementById('saveAboutBtn');
-    const moduleTakenBtn = document.getElementById('saveProfileBtn');
+    const saveActivityBtn = document.getElementById('saveActivityBtn');
+    const saveSkillsBtn = document.getElementById('saveSkillsBtn');
+    const resetSkillsBtn = document.getElementById('resetSkillsBtn');
+    const moduleTakenBtn = document.getElementById('saveModuleBtn');
+
 
     saveNameBtn.addEventListener('click', async () => {
         const newName = nameInput.value.trim();
@@ -191,6 +211,7 @@ function setupProfileEditing(user) {
         alert('Intro updated!');
         document.getElementById('introModal').classList.remove('open');
     });
+
 
     saveAboutMeBtn.addEventListener('click', async () => {
         const newAboutText = document.getElementById('aboutMeText').value.trim();
@@ -207,6 +228,54 @@ function setupProfileEditing(user) {
         alert('About Section updated!');
         document.getElementById('aboutModal').classList.remove('open');
     });
+
+
+    saveActivityBtn.addEventListener('click', async () => {
+        const newActivity = document.getElementById('activityInput').value.trim();
+
+        await updateDoc(doc(db, 'users', user.uid), { 
+            activity: newActivity
+        });
+        
+        document.getElementById('displayActivity').textContent = newActivity || 'No projects';
+
+        alert('Activity Section updated!');
+        document.getElementById('activityModal').classList.remove('open');
+    });
+
+
+    saveSkillsBtn.addEventListener('click', async () => {
+        const skillsArray = Array.from(selectedValues);
+
+        await updateDoc(doc(db, 'users', user.uid), { 
+            skills: skillsArray 
+        });
+        
+        document.getElementById('displaySkills').innerHTML = skillsArray
+        .map(skill => `<span>${skill}</span>`)
+        .join('');
+
+        skillsOutput.textContent = skillsArray.join(', ') || 'None Selected';
+        skillsSelectedItems.innerHTML = '';
+
+        alert('Skills Section updated!');
+        document.getElementById('skillsModal').classList.remove('open');
+    });
+
+    resetSkillsBtn.addEventListener('click', async (e) => {
+        selectedValues.clear();
+        skillsSelectedItems.innerHTML = '';
+        skillsOutput.textContent = 'None Selected';
+
+        await updateDoc(doc(db, 'users', user.uid), { 
+            skills: [] 
+        });
+
+        document.getElementById('displaySkills').innerHTML = '<p class="content-text m0">None selected</p>';
+
+        alert('Skills Section Has Been Reset!');
+    });
+
 
     moduleTakenBtn.addEventListener('click', async () => {
         const newMod = modulesInput.value.trim();
@@ -339,7 +408,7 @@ const skillsMultiSelect = document.getElementById('skillsMultiSelect');
 const skillsDropdown = document.getElementById('skillsDropdown');
 const skillsSelectedItems = document.getElementById('skillsSelectedItems');
 const skillsOutput = document.getElementById('skillsOutput');
-const skillsShowBtn = document.getElementById('skillsShowBtn');
+// const saveSkillsBtn = document.getElementById('saveSkillsBtn')
 
 const selectedValues = new Set();
 
@@ -377,11 +446,13 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// save button function
-skillsShowBtn.addEventListener('click', () => {
+/*
+// displays selected skills when saved
+saveSkillsBtn.addEventListener('click', () => {
     if (selectedValues.size === 0) {
         skillsOutput.textContent = 'No items selected.';
     } else {
         skillsOutput.textContent = Array.from(selectedValues).join(', ');
     }
 });
+*/
