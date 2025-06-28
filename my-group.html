@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-		<title>Forum Page</title>
+		<title>Groups Page</title>
 		<link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/zhonggruii/JolibeeLovers/refs/heads/main/GroupMeUp%20Icon%20Transparent.png">
 		<script type="module" src="./my-group.js"></script>
 		
@@ -17,19 +17,18 @@
 
 	<body>
         <header class="header">
-            <!--TO FIX: CHANGE LINK WHEN HOMEPAGE UP-->
-            <a class="logo-area-header" href="https://www.ite.edu.sg/">
+            <a class="logo-area-header" href="index.html">
                 <img class="image-logo" src="https://raw.githubusercontent.com/zhonggruii/JolibeeLovers/refs/heads/main/GroupMeUp%20Logo.jpg" alt="GroupMeUp Logo"/>
             </a>
 			
 			<!--navigation icons for user-->
 			<nav class="nav-area-header nav-header">
 				<a class="tooltip" href="index.html">
-					<span class="current-page-icon material-symbols-outlined">home</span>
+					<span class="icons material-symbols-outlined">home</span>
 					<span class="tooltip-text home-spacing">Home</span>
 				</a>
 				<a class="tooltip" href="my-group.html">
-					<span class="icons material-symbols-outlined">group</span>
+					<span class="current-page-icon material-symbols-outlined">group</span>
 					<span class="tooltip-text group-spacing">Groups</span>
 				</a>
 				<a class="tooltip" href="profile.html">
@@ -39,7 +38,7 @@
         	</nav>
 			
 			<!--notification for group requests-->
-			<div class="notification-icon" id = "notificationBell">
+			<div class="notification-icon" id="notificationBell">
 				<span class="material-symbols-outlined">notifications</span>
 				<span class="notification-badge" id="notificationBadge"></span>
 			</div>
@@ -69,8 +68,8 @@
 				<!--divider-->
 				<hr class="solid-line"/>
 				
-				<!--button to open the popup-->
-				<button class="button-box-green m10-0" id="openNotificationsBtn">
+				<!--view notifications button to open the popup-->
+				<button class="button-box-yellow m10-0" id="openNotificationsBtn">
   					<span class="button-icon material-symbols-outlined">notifications</span>
   					View Notifications
 				</button>	
@@ -79,87 +78,94 @@
 			<!--container for group cards-->
 			<div id="group-list">
 				<!--group card template-->
-				<div class="content-container box-shadow p2034">
-					<div class="content-header">
-						<h2 class="container-title m10-0">Join My Team!</h2>
+				<!--
+					<div class="content-container box-shadow p2034">
+						<div class="content-header">
+							<h2 class="container-title m10-0">Join My Team!</h2>
 
-						<!--TO FIX: NEED TO FIX HREF TO USER PROFILE-->
-						<div class="m10-0">
-							<a class="user-group" href="/profile.html">
-								<!--avatar-->
-								<img class="avatar-icons" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />
-								
-								<!--usernames container-->
-								<div class="userinfo-container">
-									<!--replace with userName-->
-									<h3 class="username-text">martin rosales</h3>
-
-									<!--replace with userEmail-->
-									<h3 class="email-text">j.martin3537@gmail.com</h3>
-								</div>
-							</a>	
-						</div>
-					</div>
-
-					<div class="content-body">
-						<!--replace with description-->
-						<p class="content-text">
-							Looking for passionate people to join our dynamic group! 
-							Collaborate, share ideas, and grow together in a supportive and friendly 
-							environment. Whether for work, hobbies, or learning, we'd love to have you. 
-							Let's connect, inspire, and achieve great things as a team—join us today!
-						</p>
-
-						<!--WIP-->
-						<div class="content-taglist">
-							<p class="content-text">
-								BT2102, Y1, BZA, IS
-							</p>
-						</div>
-					</div>
-
-					<!--divider-->
-					<hr class="solid-line" />
+							<div class="m10-0">
+								<a class="user-group" href="/profile.html">
+									<img class="avatar-icons" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />
 									
-					<!--group card management features-->
-					<hr class="solid-line" />
-						<div class="flex-space-between">
-						<button class="button-box m10-0" onclick="manageGroup('${group.id}')">
-							<span class="button-icon material-symbols-outlined">group</span>
-							Manage Group
-						</button>
-						${group.creatorUid === currentUser?.uid ? `
-							<button class="button-box-red m10-0" onclick="deleteGroup('${group.id}')">
-							<span class="button-icon material-symbols-outlined">delete</span>
-							Delete
-							</button>
-						` : `
-							<button class="button-box-red m10-0" onclick="leaveGroup('${group.id}')">
-							<span class="button-icon material-symbols-outlined">exit_to_app</span>
-							Leave
-							</button>
-						`}
+									<div class="userinfo-container">
+										<h3 class="username-text">martin rosales</h3>
+
+										<h3 class="email-text">j.martin3537@gmail.com</h3>
+									</div>
+								</a>	
+							</div>
 						</div>
-				</div>
+
+						<div class="content-body">
+							<p class="content-text">
+								Looking for passionate people to join our dynamic group! 
+								Collaborate, share ideas, and grow together in a supportive and friendly 
+								environment. Whether for work, hobbies, or learning, we'd love to have you. 
+								Let's connect, inspire, and achieve great things as a team—join us today!
+							</p>
+
+							<div class="content-taglist">
+								<p class="content-text">
+									BT2102, Y1, BZA, IS
+								</p>
+							</div>
+						</div>
+
+						<hr class="solid-line" />
+										
+						<hr class="solid-line" />
+							<div class="flex-space-between">
+							<button class="button-box m10-0" onclick="manageGroup('${group.id}')">
+								<span class="button-icon material-symbols-outlined">group</span>
+								Manage Group
+							</button>
+							${group.creatorUid === currentUser?.uid ? `
+								<button class="button-box-red m10-0" onclick="deleteGroup('${group.id}')">
+								<span class="button-icon material-symbols-outlined">delete</span>
+								Delete
+								</button>
+							` : `
+								<button class="button-box-red m10-0" onclick="leaveGroup('${group.id}')">
+								<span class="button-icon material-symbols-outlined">exit_to_app</span>
+								Leave
+								</button>
+							`}
+							</div>
+					</div>
+				-->
 			</div>
 
+			<!--view notifications pop up modal-->
 			<div class="modal" id="notificationsModal">
-				<div class="modal-content">
+				<div class="modal-container">
 					<div class="modal-header">
-						<h2>Join Requests</h2>
-						<span class="close-btn" id="closeNotificationsBtn">&times;</span>
+						<div class="modal-title-container modal-title-area">
+							<h2 class="modal-title">Notifications</h2>
+						</div>
+
+						<div class="modal-exit modal-exit-area">
+							<span class="modal-icon material-symbols-outlined" id="closeNotificationsBtn">close</span>
+						</div>
 					</div>
-					<div class="modal-body" id="notificationList">
-						<p>Loading notifications...</p>
+					
+					<form class="modal-body">
+						<div id="notificationList">
+							<p>Loading notifications...</p>
+						</div>
+					</form>
+
+					<div class="modal-footer">
+						<button class="round-button-box" type="submit" form="add-group-form">Save</button>
 					</div>
 				</div>
 			</div>
-			
 		</main>
 
         <footer class="footer">
             <h4 class="footer-text">Designed by JollibeeLovers</h4>
             <h4 class="footer-text">© 2025 GroupMeUp. All rights reserved</h4>
         </footer>
+
+		<div class="loader"></div>
 	</body>
 </html>
