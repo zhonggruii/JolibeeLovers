@@ -414,7 +414,12 @@ async function loadNotifications(userId) {
             <img src="${request.requesterPhoto || 'https://www.w3schools.com/howto/img_avatar.png'}" 
                  class="notification-avatar" alt="${request.requesterName}">
             <div>
-              <p><strong>${request.requesterName}</strong> wants to join <strong>${request.groupName}</strong></p>
+              <p>
+                <a href="/profile.html?email=${encodeURIComponent(request.requesterEmail)}" class="profile-link">
+                  <strong>${request.requesterName}</strong>
+                </a> 
+                wants to join <strong>${request.groupName}</strong>
+              </p>
               <small>${request.createdAt.toDate().toLocaleString()}</small>
             </div>
           </div>
@@ -422,7 +427,7 @@ async function loadNotifications(userId) {
             <button class="accept-btn" 
                     data-request-id="${doc.id}" 
                     data-group-id="${request.groupId}" 
-                    data-user-email="${request.requesterEmail}"> <!-- Changed to use email -->
+                    data-user-email="${request.requesterEmail}">
               Accept
             </button>
             <button class="decline-btn" data-request-id="${doc.id}">
