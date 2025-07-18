@@ -1,5 +1,5 @@
 import { db } from "./config.js";
-import { collection, getDocs, addDoc, getDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
+import { collection, getDocs, addDoc, getDoc, setDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
 
 // DOM Elements
@@ -128,6 +128,7 @@ async function loadGroups(groups = null) {
           </button>
         ` : ''}
       `;
+
       
       if (!isCreator) {
         card.querySelector(".button-box")?.addEventListener("click", () => {
@@ -170,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       
       try {
-        await addDoc(collection(db, "groups"), {
+        const groupRef = await addDoc(collection(db, "groups"), {
           title: document.getElementById("group-title").value.trim(),
           description: document.getElementById("group-description").value.trim(),
           tags: document.getElementById("group-tags").value
@@ -182,6 +183,14 @@ document.addEventListener("DOMContentLoaded", () => {
           creatorName: user.name || user.email.split('@')[0],
           members: [user.email],
           createdAt: new Date()
+        });
+
+        await setDoc(doc(db, "chats", groupRef.id), {
+          groupId: groupRef.id,
+          groupName: document.getElementById("group-title").value.trim(),
+          createdAt: new Date(),
+          lastActive: new Date(),
+          members: [user.email]
         });
         
         alert("Group created!");

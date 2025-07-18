@@ -65,19 +65,6 @@
 			</div>	
 	
 			<div class="content-container box-shadow p2034">
-				<div class="content-header">
-					<h2 class="container-title m10-0" id="group-title">Group Name</h2>
-					<div id="group-creator" class="m10-0"></div>
-				</div>
-
-				<div class="content-body">
-					<p class="content-text" id="group-description">Loading description...</p>
-					<div class="content-taglist">
-						<p class="content-text" id="group-tags">Tags: Loading...</p>
-					</div>
-				</div>
-
-				<hr class="solid-line" />
 				
 				<h3>Members</h3>
 				<div id="members-list" class="members-grid">
@@ -86,15 +73,18 @@
 				
 				<hr class="solid-line" />
 				
-				<h3>Group Discussion</h3>
-				<div id="group-chat" class="chat-container">
-					<!-- Chat messages will appear here -->
+				<div class="chat-container">
+				<div class="chat-header">
+					<h2>Group Chat</h2>
+					<span class="material-symbols-outlined close-chat">close</span>
 				</div>
-				<div class="message-input">
-					<input type="text" id="message-input" placeholder="Type your message...">
-					<button id="send-message">
-						<span class="material-symbols-outlined">send</span>
+				<div class="chat-messages" id="chatMessages"></div>
+				<div class="chat-input">
+					<input type="text" id="messageInput" placeholder="Type your message...">
+					<button id="sendMessageBtn">
+					<span class="material-symbols-outlined">send</span>
 					</button>
+				</div>
 				</div>
 			</div>
 		</main>

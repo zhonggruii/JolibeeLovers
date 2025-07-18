@@ -145,17 +145,18 @@ async function loadGroups(groups = null) {
         </div>
         <hr class="solid-line" />
         <div class="flex-space-between">
-          <button class="button-box m10-0" data-group-id="${group.id}">
+          <button class="button-box m10-0" 
+                  onclick="window.location.href='group-management.html?groupId=${group.id}'">
             <span class="button-icon material-symbols-outlined">group</span>
             Manage Group
           </button>
           ${group.isCreator ? `
-            <button class="button-box-red m10-0" data-group-id="${group.id}">
+            <button class="button-box-red m10-0" onclick="deleteGroup('${group.id}')">
               <span class="button-icon material-symbols-outlined">delete</span>
               Delete
             </button>
           ` : `
-            <button class="button-box-red m10-0" data-group-id="${group.id}">
+            <button class="button-box-red m10-0" onclick="leaveGroup('${group.id}')">
               <span class="button-icon material-symbols-outlined">exit_to_app</span>
               Leave
             </button>
@@ -190,6 +191,11 @@ async function loadGroups(groups = null) {
     `;
   }
 }
+
+window.manageGroup = function(groupId) {
+  // Use the correct parameter name 'groupId'
+  window.location.href = `group-management.html?groupId=${groupId}`;
+};
 
 // Event Handlers
 function handleSearch(event) {
