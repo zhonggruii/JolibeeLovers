@@ -49,6 +49,12 @@
 					<span class="material-symbols-outlined">menu</span>
 					<!--dropdown content (modular)-->
 					<div class="dropdown-container box-shadow">
+						<!--notification option-->
+						<button class="dropdown-button">
+							<span class="dropdown-icon material-symbols-outlined">notifications</span>
+							Notifications
+						</button>
+						
 						<!--logout option-->
 						<button class="dropdown-button" id="signOutBtn" onclick="window.location.href='login.html'">
 							<span class="dropdown-icon material-symbols-outlined">logout</span>
@@ -74,11 +80,67 @@
   					View Notifications
 				</button>	
 			</div>	
-	
+			
+			
 			<!--container for group cards-->
 			<div id="group-list">
+				<!--horizontal group card template-->
+					<div class="content-container box-shadow p2034 mb20">
+						<div class="content-header">
+							<h2 class="container-title m10-0">Join My Team!</h2>
+
+							<div class="element-group-row m10-0">
+								<div class="user-group">
+									<a class="element-group-row" href="/profile.html">
+										<img class="avatar-icons" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />
+										<h3 class="username-text">martin rosales</h3>
+									</a>
+								</div>
+
+								<div class="displayed-role red-background m0-5">
+									<span>owner</span>
+								</div>
+							</div>
+						</div>
+
+						<div class="element-group-row-mid">
+							<button class="button-box m10-0" onclick="manageGroup('${group.id}')">
+								<span class="button-icon material-symbols-outlined">group</span>
+								View Group
+							</button>
+						</div>
+					</div>
+				
+
+
+					<div class="group-card box-shadow w16lh p2034 mb20">
+						<div class="content-header">
+							<h2 class="container-title m10-0">Join My Team!</h2>
+
+							<div class="element-group-row m10-0">
+								<div class="user-group">
+									<a class="element-group-row" href="/profile.html">
+										<img class="avatar-icons" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />
+										<h3 class="username-text">martin rosales</h3>
+									</a>
+								</div>
+
+								<div class="displayed-role red-background m0-5">
+									<span>owner</span>
+								</div>
+							</div>
+						</div>
+
+						<div class="element-group-row-mid">
+							<button class="button-box m10-0" onclick="manageGroup('${group.id}')">
+								<span class="button-icon material-symbols-outlined">group</span>
+								View Group
+							</button>
+						</div>
+					</div>
+
+				
 				<!--group card template-->
-				<!--
 					<div class="content-container box-shadow p2034">
 						<div class="content-header">
 							<h2 class="container-title m10-0">Join My Team!</h2>
@@ -132,7 +194,6 @@
 							`}
 							</div>
 					</div>
-				-->
 			</div>
 
 			<!--view notifications pop up modal-->
@@ -166,6 +227,7 @@
             <h4 class="footer-text">© 2025 GroupMeUp. All rights reserved</h4>
         </footer>
 
-		<div class="loader"></div>
+	 	<div class="loader"></div>
+		
 	</body>
 </html>
