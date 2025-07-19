@@ -1,5 +1,5 @@
 import { db } from "./config.js";
-import { collection, getDocs, addDoc, getDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
+import { collection, getDocs, addDoc, getDoc, setDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
 
 // DOM Elements
@@ -88,8 +88,12 @@ async function loadGroups(groups = null) {
       return;
     }
 
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+
     groupsToDisplay.forEach(group => {
       const creator = usersMap[group.creator] || {};
+      const isCreator = currentUser && (currentUser.uid === group.creatorUid || currentUser.email === group.creator);
       
       const card = document.createElement("div");
       card.className = "content-container box-shadow p2034 m10-0";
@@ -116,16 +120,21 @@ async function loadGroups(groups = null) {
             <p class="content-text">Tags: ${group.tags?.join(", ") || "No tags"}</p>
           </div>
         </div>
-        <hr class="solid-line" />
-        <button class="button-box m10-0" data-group-id="${group.id}">
-          <span class="button-icon material-symbols-outlined">add_circle</span>
-          Request to Join
-        </button>
+        ${!isCreator ? `
+          <hr class="solid-line" />
+          <button class="button-box m10-0" data-group-id="${group.id}">
+            <span class="button-icon material-symbols-outlined">add_circle</span>
+            Request to Join
+          </button>
+        ` : ''}
       `;
+
       
-      card.querySelector(".button-box").addEventListener("click", () => {
-        requestToJoin(group.id);
-      });
+      if (!isCreator) {
+        card.querySelector(".button-box")?.addEventListener("click", () => {
+          requestToJoin(group.id);
+        });
+      }
       
       groupList.appendChild(card);
     });
@@ -162,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       
       try {
-        await addDoc(collection(db, "groups"), {
+        const groupRef = await addDoc(collection(db, "groups"), {
           title: document.getElementById("group-title").value.trim(),
           description: document.getElementById("group-description").value.trim(),
           tags: document.getElementById("group-tags").value
@@ -174,6 +183,14 @@ document.addEventListener("DOMContentLoaded", () => {
           creatorName: user.name || user.email.split('@')[0],
           members: [user.email],
           createdAt: new Date()
+        });
+
+        await setDoc(doc(db, "chats", groupRef.id), {
+          groupId: groupRef.id,
+          groupName: document.getElementById("group-title").value.trim(),
+          createdAt: new Date(),
+          lastActive: new Date(),
+          members: [user.email]
         });
         
         alert("Group created!");
@@ -206,15 +223,16 @@ window.requestToJoin = async function(groupId) {
     
     const group = groupDoc.data();
     
-    if (!group.creatorUid) {
-      alert("This group cannot accept join requests");
+    // Check if current user is the creator
+    if (user.uid === group.creatorUid) {
+      alert("You cannot join your own group");
       return;
     }
 
-    // Get user data - use the UID as document ID instead of email
+    // Get user data
     const userDoc = await getDoc(doc(db, "users", user.uid));
     let userData = {
-      name: user.email.split('@')[0], // default to email prefix if no name
+      name: user.email.split('@')[0],
       photoURL: 'https://www.w3schools.com/howto/img_avatar.png'
     };
     
@@ -233,8 +251,8 @@ window.requestToJoin = async function(groupId) {
       creatorEmail: group.creator,
       requesterId: user.uid,
       requesterEmail: user.email, 
-      requesterName: userData.name, // Use the proper name field
-      requesterPhoto: userData.photoURL, // Use the proper photoURL
+      requesterName: userData.name,
+      requesterPhoto: userData.photoURL,
       status: "pending",
       createdAt: new Date()
     });

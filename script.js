@@ -27,7 +27,7 @@ if (signupForm) {
                     ratings: "", 
                     activity: "",
                     modulesTaken: "",
-                    skills: ""
+                    skills: "",
                 });
                 window.location.href = "login.html";
             })
