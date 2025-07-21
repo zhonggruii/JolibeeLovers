@@ -17,6 +17,7 @@
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 		<link rel="stylesheet" href="style.css"/>
     </head>
 
@@ -153,7 +154,7 @@
 
             <!--WIP: CALENDAR POP UP MODAL-->
             <div class="modal" id="calendarModal">
-				<div class="modal-container">
+				<div class="calendar-modal">
                     <!--modal header-->
 					<div class="modal-header">
 						<div class="modal-title-container modal-title-area">
@@ -166,9 +167,82 @@
 					</div>
 					
                     <!--TO FIX (SYNC ID w/ JS): modal body-->
-					<form class="modal-body" id="blank">
-                        <!--calendar-->
-					</form>
+					<div class="calendar-body" id="blank">
+                        <div class="container">
+                            <div class="left">
+                                <div class="calendar">
+                                    <div class="month">
+                                        <i class="fas fa-angle-left prev"></i>
+                                        <div class="date">december 2015</div>
+                                        <i class="fas fa-angle-right next"></i>
+                                    </div>
+
+                                    <div class="weekdays">
+                                        <div>Sun</div>
+                                        <div>Mon</div>
+                                        <div>Tue</div>
+                                        <div>Wed</div>
+                                        <div>Thu</div>
+                                        <div>Fri</div>
+                                        <div>Sat</div>
+                                    </div>
+
+                                    <div class="days"></div>
+
+                                    <div class="goto-today">
+                                        <div class="goto">
+                                            <label class="input-label">MM/YYYY</label>
+                                            <input type="text" class="date-input" />
+                                            <button class="goto-btn">Go</button>
+                                        </div>
+
+                                        <button class="today-btn">Today</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="right">
+                                <div class="today-date">
+                                    <div class="event-day">wed</div>
+                                        <div class="event-date">12th december 2022</div>
+                                </div>
+
+                                <div class="events"></div>
+
+                                <div class="add-event-wrapper">
+                                    <div class="add-event-header">
+                                        <div class="title">Add Event</div>
+                                        <i class="fas fa-times close"></i>
+                                    </div>
+
+                                    <div class="add-event-body">
+                                        <div class="add-event-input">
+                                            <label class="event-input-label">Event Name:</label>
+                                            <input type="text" class="event-name" />
+                                        </div>
+
+                                        <div class="add-event-input">
+                                            <label class="event-input-label">Time From:</label>
+                                            <input type="text" class="event-time-from"/>
+                                        </div>
+
+                                        <div class="add-event-input">
+                                            <label class="event-input-label">Time Until:</label>
+                                            <input type="text" class="event-time-to" />
+                                        </div>
+                                    </div>
+
+                                    <div class="add-event-footer">
+                                        <button class="add-event-btn">Add Event</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button class="add-event">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+					</div>
 
 					<div class="modal-footer">
 						<button class="round-button-box" type="submit" form="add-group-form">Save</button>
