@@ -359,12 +359,32 @@ function setUpRemovePhoto(user) {
 }
 
 
-// Star Rating System *TO DO*
+/// Star Rating System
+
+// select all elements with the "i" tag and store them in a Nodelist called "stars"
+const stars = document.querySelectorAll(".stars i");
+
+// Loop
+stars.forEach((star, index1) => {
+
+	// Add event listener that runs a function when "clicked"
+	star.addEventListener("click", () => {
+		console.log(index1);
+		// loop through the "stars" nodeList
+		stars.forEach((star, index2) => {
+			console.log(index2);
+			// add "active" class to clicked star and stars with lower index
+			// remove "active" class from stars with higher index
+			index1 >= index2 ? star.classList.add("active") : star.classList.remove("active");
+		});
+	});
+});
+
+
 function setupRatingSystem(user) {
     const stars = document.querySelectorAll('#ratingStars span');
     const averageRating = document.getElementById('averageRating');
     const ratingCount = document.getElementById('ratingCount');
-
 }
 
 // Sign Out
@@ -457,6 +477,8 @@ saveSkillsBtn.addEventListener('click', () => {
 });
 */
 
+
+// Calendar Related
 const date = document.querySelector(".date"),
 	daysContainer = document.querySelector(".days"),
 	prev = document.querySelector(".prev"),
