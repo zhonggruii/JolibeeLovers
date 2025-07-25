@@ -381,10 +381,116 @@ stars.forEach((star, index1) => {
 });
 
 
-function setupRatingSystem(user) {
-    const stars = document.querySelectorAll('#ratingStars span');
-    const averageRating = document.getElementById('averageRating');
-    const ratingCount = document.getElementById('ratingCount');
+function setupRatingSystem(profileUser) {
+    const stars = document.querySelectorAll(".stars i");
+    const averageRatingEl = document.getElementById('averageRating');
+    const ratingCountEl = document.getElementById('ratingCount');
+    const currentUser = auth.currentUser;
+
+    // Disable rating if not logged in or trying to rate yourself
+    if (!currentUser || profileUser.uid === currentUser.uid) {
+        stars.forEach(star => {
+            star.style.cursor = 'not-allowed';
+            star.style.opacity = '0.5';
+        });
+        document.querySelector('.content-text:last-child').textContent = 
+            profileUser.uid === currentUser?.uid 
+                ? "You can't rate yourself" 
+                : "Please log in to rate";
+        return;
+    }
+
+    // Load existing ratings
+    loadRatings(profileUser.uid);
+
+    // Star click handler
+    stars.forEach((star, index1) => {
+        star.addEventListener("click", async () => {
+            const rating = index1 + 1;
+            
+            try {
+                const userRef = doc(db, 'users', profileUser.uid);
+                const userSnap = await getDoc(userRef);
+                
+                if (userSnap.exists()) {
+                    const userData = userSnap.data();
+                    const ratings = userData.ratings || [];
+                    
+                    // Check if current user already rated
+                    const existingRatingIndex = ratings.findIndex(r => r.userId === currentUser.uid);
+                    
+                    if (existingRatingIndex >= 0) {
+                        // Update existing rating
+                        ratings[existingRatingIndex].rating = rating;
+                        await updateDoc(userRef, {
+                            ratings: ratings,
+                            avgRating: calculateAverage(ratings),
+                            ratingCount: ratings.length
+                        });
+                    } else {
+                        // Add new rating
+                        await updateDoc(userRef, {
+                            ratings: arrayUnion({
+                                userId: currentUser.uid,
+                                rating: rating,
+                                timestamp: new Date()
+                            }),
+                            avgRating: increment((rating - (userData.avgRating || 0)) / ((userData.ratingCount || 0) + 1)),
+                            ratingCount: increment(1)
+                        });
+                    }
+                    
+                    // Update UI
+                    stars.forEach((star, index2) => {
+                        index1 >= index2 
+                            ? star.classList.add("active") 
+                            : star.classList.remove("active");
+                    });
+                    
+                    // Reload ratings
+                    loadRatings(profileUser.uid);
+                }
+            } catch (error) {
+                console.error("Error saving rating:", error);
+                alert("Failed to save rating: " + error.message);
+            }
+        });
+    });
+
+    function calculateAverage(ratings) {
+        if (!ratings || ratings.length === 0) return 0;
+        const total = ratings.reduce((sum, r) => sum + r.rating, 0);
+        return parseFloat((total / ratings.length).toFixed(1));
+    }
+
+    async function loadRatings(userId) {
+        try {
+            const userRef = doc(db, 'users', userId);
+            const userSnap = await getDoc(userRef);
+            
+            if (userSnap.exists()) {
+                const userData = userSnap.data();
+                const avgRating = userData.avgRating || 0;
+                const ratingCount = userData.ratingCount || 0;
+                
+                // Update UI
+                averageRatingEl.textContent = avgRating;
+                ratingCountEl.textContent = ratingCount;
+                
+                // Highlight stars based on average
+                const avgRounded = Math.round(avgRating);
+                stars.forEach((star, index) => {
+                    if (index < avgRounded) {
+                        star.classList.add("active");
+                    } else {
+                        star.classList.remove("active");
+                    }
+                });
+            }
+        } catch (error) {
+            console.error("Error loading ratings:", error);
+        }
+    }
 }
 
 // Sign Out
