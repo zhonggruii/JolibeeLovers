@@ -1,7 +1,7 @@
 import { auth, db, storage } from './config.js';
-import { doc, getDoc, updateDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js';
+import { doc, getDoc, updateDoc, collection, query, where, getDocs, setDoc, serverTimestamp} from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-storage.js';
-import { signOut, updateProfile } from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js';
+import { signOut, updateProfile, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js';
 
 // Intro Modal Pop Up
 const introModal = document.getElementById("introModal");
@@ -104,6 +104,8 @@ async function loadUserProfile() {
             if (currentUser && currentUser.email === profileEmail) {
                 isCurrentUser = true;
             }
+            updateProfileUI(userToDisplay, isCurrentUser);
+            await getEvents();
         } else if (currentUser) {
             // No email parameter, show current user's profile
             const userRef = doc(db, 'users', currentUser.uid);
@@ -393,10 +395,17 @@ function setupRatingSystem(profileUser) {
             star.style.cursor = 'not-allowed';
             star.style.opacity = '0.5';
         });
-        document.querySelector('.content-text:last-child').textContent = 
-            profileUser.uid === currentUser?.uid 
-                ? "You can't rate yourself" 
-                : "Please log in to rate";
+        const aboutSection = document.querySelector('.about-section'); // Adjust this selector to match your HTML
+
+        if (!currentUser) {
+            // For non-logged in users
+            document.querySelector('.content-text:last-child').textContent = "Please log in to rate";
+        } else if (profileUser.uid === currentUser.uid) {
+            // For own profile - show email instead of rating message
+            aboutSection.querySelector('.email-display').textContent = profileUser.email;
+        } else {
+            
+        }
         return;
     }
 
@@ -505,12 +514,18 @@ function setupSignOut() {
 // when user firsts login
 auth.onAuthStateChanged(user => {
     if (user) {
-        loadUserProfile();
-        setupProfileEditing(user);
-        setupPhotoUpload(user);
-        setupRatingSystem(user);
-        setupSignOut();
-        setUpRemovePhoto(user);
+        loadUserProfile().then(() => {
+            // Only setup editing controls for current user
+            if (!window.location.search.includes('email=') || 
+                (window.location.search.includes('email=') && 
+                 window.location.search.includes(user.email))) {
+                setupProfileEditing(user);
+                setupPhotoUpload(user);
+                setUpRemovePhoto(user);
+            }
+            setupRatingSystem(user);
+            setupSignOut();
+        });
     } else {
         window.location.href = 'login.html';
     }
@@ -585,458 +600,561 @@ saveSkillsBtn.addEventListener('click', () => {
 
 
 // Calendar Related
-const date = document.querySelector(".date"),
-	daysContainer = document.querySelector(".days"),
-	prev = document.querySelector(".prev"),
-	next = document.querySelector(".next"),
-	todayBtn = document.querySelector(".today-btn"),
-	gotoBtn = document.querySelector(".goto-btn"),
-	dateInput = document.querySelector(".date-input"),
-	eventDay = document.querySelector(".event-day"),
-	eventDate = document.querySelector(".event-date"),
-	eventsContainer = document.querySelector(".events"),
-	addEventBtn = document.querySelector(".add-event"),
-	addEventWrapper = document.querySelector(".add-event-wrapper "),
-	addEventCloseBtn = document.querySelector(".close "),
-	addEventTitle = document.querySelector(".event-name "),
-	addEventFrom = document.querySelector(".event-time-from "),
-	addEventTo = document.querySelector(".event-time-to "),
-	addEventSubmit = document.querySelector(".add-event-btn ");
+const date = document.querySelector(".date");
+const daysContainer = document.querySelector(".days");
+const prev = document.querySelector(".prev");
+const next = document.querySelector(".next");
+const todayBtn = document.querySelector(".today-btn");
+const eventDay = document.querySelector(".event-day");
+const eventDate = document.querySelector(".event-date");
+const eventsContainer = document.querySelector(".events");
+const addEventBtn = document.querySelector(".add-event");
+const addEventWrapper = document.querySelector(".add-event-wrapper");
+const addEventCloseBtn = document.querySelector(".close");
+const addEventTitle = document.querySelector(".event-name");
+const addEventFrom = document.querySelector(".event-time-from");
+const addEventTo = document.querySelector(".event-time-to");
+const addEventSubmit = document.querySelector(".add-event-btn");
 
+// Calendar State
 let today = new Date();
 let activeDay;
-let month = today.getMonth();
+let month = today.getMonth(); // JavaScript months are 0-11
 let year = today.getFullYear();
+const eventsArr = []; // Stores all calendar events
 
 const months = [
-	"January",
-	"February",
-	"March",
-	"April",
-	"May",
-	"June",
-	"July",
-	"August",
-	"September",
-	"October",
-	"November",
-	"December",
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
 ];
 
-// const eventsArr = [
-//   {
-//     day: 13,
-//     month: 11,
-//     year: 2022,
-//     events: [
-//       {
-//         title: "Event 1 lorem ipsun dolar sit genfa tersd dsad ",
-//         time: "10:00 AM",
-//       },
-//       {
-//         title: "Event 2",
-//         time: "11:00 AM",
-//       },
-//     ],
-//   },
-// ];
-
-const eventsArr = [];
-getEvents();
-console.log(eventsArr);
-
-//function to add days in days with class day and prev-date next-date on previous month and next month days and active on today
-	function initCalendar() {
-	const firstDay = new Date(year, month, 1);
-	const lastDay = new Date(year, month + 1, 0);
-	const prevLastDay = new Date(year, month, 0);
-	const prevDays = prevLastDay.getDate();
-	const lastDate = lastDay.getDate();
-	const day = firstDay.getDay();
-	const nextDays = 7 - lastDay.getDay() - 1;
-
-	date.innerHTML = months[month] + " " + year;
-
-	let days = "";
-
-	for (let x = day; x > 0; x--) {
-		days += `<div class="day prev-date">${prevDays - x + 1}</div>`;
-	}
-
-	for (let i = 1; i <= lastDate; i++) {
-		//check if event is present on that day
-		let event = false;
-		eventsArr.forEach((eventObj) => {
-		if (
-			eventObj.day === i &&
-			eventObj.month === month + 1 &&
-			eventObj.year === year
-		) {
-			event = true;
-		}
-		});
-		if (
-		i === new Date().getDate() &&
-		year === new Date().getFullYear() &&
-		month === new Date().getMonth()
-		) {
-		activeDay = i;
-		getActiveDay(i);
-		updateEvents(i);
-		if (event) {
-			days += `<div class="day today active event">${i}</div>`;
-		} else {
-			days += `<div class="day today active">${i}</div>`;
-		}
-		} else {
-		if (event) {
-			days += `<div class="day event">${i}</div>`;
-		} else {
-			days += `<div class="day ">${i}</div>`;
-		}
-		}
-	}
-
-	for (let j = 1; j <= nextDays; j++) {
-		days += `<div class="day next-date">${j}</div>`;
-	}
-	daysContainer.innerHTML = days;
-	addListner();
-	}
-
-//function to add month and year on prev and next button
-function prevMonth() {
-	month--;
-	if (month < 0) {
-		month = 11;
-		year--;
-	}
-	initCalendar();
+// Initialize calendar
+async function initializeCalendar() {
+    console.log("Initializing calendar...");
+    
+    // Wait for auth state to be ready
+    if (auth.currentUser) {
+        console.log("User already logged in, loading events...");
+        await loadEvents();
+    } else {
+        console.log("No user logged in yet, waiting for auth state...");
+        // Wait for auth state change
+        await new Promise((resolve) => {
+            const unsubscribe = onAuthStateChanged(auth, (user) => {
+                unsubscribe();
+                resolve(user);
+            });
+        });
+        
+        if (auth.currentUser) {
+            console.log("User logged in after waiting, loading events...");
+            await loadEvents();
+        }
+    }
+    
+    renderCalendar(); // Then render the calendar
+    
+    // Set up event listeners
+    setupEventListeners();
+    
+    // Highlight today
+    highlightToday();
 }
 
-function nextMonth() {
-  month++;
-  if (month > 11) {
-    month = 0;
-    year++;
-  }
-  initCalendar();
+// Load events from Firebase
+async function loadEvents() {
+    try {
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+            console.log("No user logged in");
+            return;
+        }
+
+        console.log("Loading events from Firebase for user:", currentUser.uid);
+        
+        const eventsRef = doc(db, 'calendarEvents', currentUser.uid);
+        const docSnap = await getDoc(eventsRef);
+
+        // Clear existing events
+        eventsArr.length = 0;
+
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            console.log("Raw Firebase data:", data);
+            
+            if (data.events && Array.isArray(data.events)) {
+                data.events.forEach(eventGroup => {
+                    // Convert and validate event data
+                    const day = Number(eventGroup.day);
+                    const month = Number(eventGroup.month); // Stored as 1-12 in Firebase
+                    const year = Number(eventGroup.year);
+                    
+                    console.log(`Processing event group: day=${day}, month=${month}, year=${year}`);
+                    
+                    if (!isNaN(day) && !isNaN(month) && !isNaN(year) &&
+                        Array.isArray(eventGroup.events)) {
+                        
+                        eventsArr.push({
+                            day: day,
+                            month: month, // 1-12
+                            year: year,
+                            events: eventGroup.events.map(event => ({
+                                title: event.title,
+                                time: event.time,
+                                creatorEmail: event.creatorEmail,
+                                creatorID: event.creatorID
+                            }))
+                        });
+                        
+                        console.log(`Added event group for ${day}/${month}/${year} with ${eventGroup.events.length} events`);
+                    } else {
+                        console.warn("Invalid event group data:", eventGroup);
+                    }
+                });
+            } else {
+                console.log("No events array found in Firebase data");
+            }
+        } else {
+            console.log("No calendar events document found for user");
+        }
+
+        console.log("Final eventsArr:", eventsArr);
+        
+    } catch (error) {
+        console.error("Error loading events:", error);
+        alert("Failed to load events: " + error.message);
+    }
 }
 
-prev.addEventListener("click", prevMonth);
-next.addEventListener("click", nextMonth);
+// Render the calendar
+function renderCalendar() {
+    console.log(`Rendering calendar for ${months[month]} ${year}`);
+    
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const prevLastDay = new Date(year, month, 0);
+    const prevDays = prevLastDay.getDate();
+    const lastDate = lastDay.getDate();
+    const day = firstDay.getDay();
+    const nextDays = 7 - lastDay.getDay() - 1;
 
-initCalendar();
+    date.innerHTML = `${months[month]} ${year}`;
+    daysContainer.innerHTML = '';
 
-//function to add active on day
-function addListner() {
-	const days = document.querySelectorAll(".day");
-	days.forEach((day) => {
-		day.addEventListener("click", (e) => {
-		getActiveDay(e.target.innerHTML);
-		updateEvents(Number(e.target.innerHTML));
-		activeDay = Number(e.target.innerHTML);
-		//remove active
-		days.forEach((day) => {
-			day.classList.remove("active");
-		});
-		//if clicked prev-date or next-date switch to that month
-		if (e.target.classList.contains("prev-date")) {
-			prevMonth();
-			//add active to clicked day afte month is change
-			setTimeout(() => {
-			//add active where no prev-date or next-date
-			const days = document.querySelectorAll(".day");
-			days.forEach((day) => {
-				if (
-				!day.classList.contains("prev-date") &&
-				day.innerHTML === e.target.innerHTML
-				) {
-				day.classList.add("active");
-				}
-			});
-			}, 100);
-		} else if (e.target.classList.contains("next-date")) {
-			nextMonth();
-			//add active to clicked day afte month is changed
-			setTimeout(() => {
-			const days = document.querySelectorAll(".day");
-			days.forEach((day) => {
-				if (
-				!day.classList.contains("next-date") &&
-				day.innerHTML === e.target.innerHTML
-				) {
-				day.classList.add("active");
-				}
-			});
-			}, 100);
-		} else {
-			e.target.classList.add("active");
-		}
-		});
-	});
+    // Previous month days
+    for (let x = day; x > 0; x--) {
+        daysContainer.innerHTML += `<div class="day prev-date">${prevDays - x + 1}</div>`;
+    }
+
+    // Current month days
+    for (let i = 1; i <= lastDate; i++) {
+        // Check if this day has events (note month + 1 for comparison)
+        const hasEvent = eventsArr.some(event => {
+            const match = event.day === i &&
+                         event.month === month + 1 &&
+                         event.year === year;
+            
+            if (match) {
+                console.log(`Found event for day ${i}: ${event.events.length} events`);
+            }
+            
+            return match;
+        });
+
+        const isToday = i === today.getDate() &&
+                       month === today.getMonth() &&
+                       year === today.getFullYear();
+
+        let dayClass = '';
+        if (isToday) dayClass += 'today ';
+        if (hasEvent) dayClass += 'event';
+
+        daysContainer.innerHTML += `<div class="day ${dayClass.trim()}" data-day="${i}">${i}</div>`;
+    }
+
+    // Next month days
+    for (let j = 1; j <= nextDays; j++) {
+        daysContainer.innerHTML += `<div class="day next-date">${j}</div>`;
+    }
+
+    // Add day click listeners
+    addDayClickListeners();
 }
 
-todayBtn.addEventListener("click", () => {
-	today = new Date();
-	month = today.getMonth();
-	year = today.getFullYear();
-	initCalendar();
-});
-
-dateInput.addEventListener("input", (e) => {
-	dateInput.value = dateInput.value.replace(/[^0-9/]/g, "");
-	if (dateInput.value.length === 2) {
-		dateInput.value += "/";
-	}
-	if (dateInput.value.length > 7) {
-		dateInput.value = dateInput.value.slice(0, 7);
-	}
-	if (e.inputType === "deleteContentBackward") {
-		if (dateInput.value.length === 3) {
-		dateInput.value = dateInput.value.slice(0, 2);
-		}
-	}
-});
-
-gotoBtn.addEventListener("click", gotoDate);
-
-function gotoDate() {
-	console.log("here");
-	const dateArr = dateInput.value.split("/");
-	if (dateArr.length === 2) {
-		if (dateArr[0] > 0 && dateArr[0] < 13 && dateArr[1].length === 4) {
-		month = dateArr[0] - 1;
-		year = dateArr[1];
-		initCalendar();
-		return;
-		}
-	}
-	alert("Invalid Date");
+// Add click listeners to calendar days
+function addDayClickListeners() {
+    const days = document.querySelectorAll(".day:not(.prev-date):not(.next-date)");
+    days.forEach(day => {
+        day.addEventListener("click", () => {
+            const dayNum = parseInt(day.textContent);
+            activeDay = dayNum;
+            
+            console.log(`Clicked on day ${dayNum}`);
+            
+            // Update active day display
+            updateActiveDayDisplay(dayNum);
+            
+            // Show events for this day
+            showEventsForDay(dayNum);
+            
+            // Update active state
+            document.querySelectorAll(".day").forEach(d => d.classList.remove("active"));
+            day.classList.add("active");
+        });
+    });
 }
 
-//function get active day day name and date and update eventday eventdate
-function getActiveDay(date) {
-	const day = new Date(year, month, date);
-	const dayName = day.toString().split(" ")[0];
-	eventDay.innerHTML = dayName;
-	eventDate.innerHTML = date + " " + months[month] + " " + year;
+// Update the active day display
+function updateActiveDayDisplay(date) {
+    const day = new Date(year, month, date);
+    const dayName = day.toString().split(" ")[0];
+    eventDay.innerHTML = dayName;
+    eventDate.innerHTML = `${date} ${months[month]} ${year}`;
 }
 
-//function update events when a day is active
-function updateEvents(date) {
-	let events = "";
-	eventsArr.forEach((event) => {
-		if (
-		date === event.day &&
-		month + 1 === event.month &&
-		year === event.year
-		) {
-		event.events.forEach((event) => {
-			events += `<div class="event">
-				<div class="title">
-				<i class="fas fa-circle"></i>
-				<h3 class="event-title">${event.title}</h3>
-				</div>
-				<div class="event-time">
-				<span class="event-time">${event.time}</span>
-				</div>
-			</div>`;
-		});
-		}
-	});
-	if (events === "") {
-		events = `<div class="no-event">
-				<h3>No Events</h3>
-			</div>`;
-	}
-	eventsContainer.innerHTML = events;
-	saveEvents();
+// Show events for a specific day
+function showEventsForDay(date) {
+    console.log(`Looking for events on ${date}/${month + 1}/${year}`);
+    
+    // Find events for this date 
+    const dayEvents = eventsArr.find(event => {
+        const match = event.day === date &&
+                     event.month === month + 1 &&
+                     event.year === year;
+        
+        console.log(`Checking event: day=${event.day}, month=${event.month}, year=${event.year}, match=${match}`);
+        return match;
+    });
+    
+    console.log("Found dayEvents:", dayEvents);
+    
+    // Update events container
+    if (dayEvents && dayEvents.events.length > 0) {
+        console.log(`Displaying ${dayEvents.events.length} events`);
+        eventsContainer.innerHTML = dayEvents.events.map(event => `
+            <div class="event">
+                <div class="title">
+                    <i class="fas fa-circle"></i>
+                    <h3 class="event-title">${event.title}</h3>
+                </div>
+                <div class="event-time">
+                    <span class="event-time">${event.time}</span>
+                </div>
+            </div>
+        `).join('');
+    } else {
+        console.log("No events found for this day");
+        eventsContainer.innerHTML = '<div class="no-event"><h3>No Events</h3></div>';
+    }
 }
 
-//function to add event
-addEventBtn.addEventListener("click", () => {
-  	addEventWrapper.classList.toggle("active");
-});
-
-addEventCloseBtn.addEventListener("click", () => {
-  	addEventWrapper.classList.remove("active");
-});
-
-document.addEventListener("click", (e) => {
-	if (e.target !== addEventBtn && !addEventWrapper.contains(e.target)) {
-		addEventWrapper.classList.remove("active");
-	}
-});
-
-// allow 50 chars in eventtitle
-addEventTitle.addEventListener("input", (e) => {
-	addEventTitle.value = addEventTitle.value.slice(0, 60);
-});
-
-// allow only time in eventtime from and to
-addEventFrom.addEventListener("input", (e) => {
-	addEventFrom.value = addEventFrom.value.replace(/[^0-9:]/g, "");
-	if (addEventFrom.value.length === 2) {
-		addEventFrom.value += ":";
-	}
-	if (addEventFrom.value.length > 5) {
-		addEventFrom.value = addEventFrom.value.slice(0, 5);
-	}
-});
-
-addEventTo.addEventListener("input", (e) => {
-	addEventTo.value = addEventTo.value.replace(/[^0-9:]/g, "");
-	if (addEventTo.value.length === 2) {
-		addEventTo.value += ":";
-	}
-	if (addEventTo.value.length > 5) {
-		addEventTo.value = addEventTo.value.slice(0, 5);
-	}
-});
-
-// function to add event to eventsArr
-addEventSubmit.addEventListener("click", () => {
-	const eventTitle = addEventTitle.value;
-	const eventTimeFrom = addEventFrom.value;
-	const eventTimeTo = addEventTo.value;
-	if (eventTitle === "" || eventTimeFrom === "" || eventTimeTo === "") {
-		alert("Please fill all the fields");
-		return;
-	}
-
-	// check correct time format 24 hour
-	const timeFromArr = eventTimeFrom.split(":");
-	const timeToArr = eventTimeTo.split(":");
-	if (
-		timeFromArr.length !== 2 ||
-		timeToArr.length !== 2 ||
-		timeFromArr[0] > 23 ||
-		timeFromArr[1] > 59 ||
-		timeToArr[0] > 23 ||
-		timeToArr[1] > 59
-	) {
-		alert("Invalid Time Format");
-		return;
-	}
-
-	const timeFrom = convertTime(eventTimeFrom);
-	const timeTo = convertTime(eventTimeTo);
-
-  	// check if event is already added
-  	let eventExist = false;
-	eventsArr.forEach((event) => {
-		if (
-		event.day === activeDay &&
-		event.month === month + 1 &&
-		event.year === year
-		) {
-		event.events.forEach((event) => {
-			if (event.title === eventTitle) {
-			eventExist = true;
-			}
-		});
-		}
-	});
-	if (eventExist) {
-		alert("Event already added");
-		return;
-	}
-	const newEvent = {
-		title: eventTitle,
-		time: timeFrom + " - " + timeTo,
-	};
-	console.log(newEvent);
-	console.log(activeDay);
-	let eventAdded = false;
-	if (eventsArr.length > 0) {
-		eventsArr.forEach((item) => {
-		if (
-			item.day === activeDay &&
-			item.month === month + 1 &&
-			item.year === year
-		) {
-			item.events.push(newEvent);
-			eventAdded = true;
-		}
-		});
-	}
-
-  	if (!eventAdded) {
-		eventsArr.push({
-		day: activeDay,
-		month: month + 1,
-		year: year,
-		events: [newEvent],
-		});
-	}
-
-	console.log(eventsArr);
-	addEventWrapper.classList.remove("active");
-	addEventTitle.value = "";
-	addEventFrom.value = "";
-	addEventTo.value = "";
-	updateEvents(activeDay);
-	// select active day and add event class if not added
-	const activeDayEl = document.querySelector(".day.active");
-	if (!activeDayEl.classList.contains("event")) {
-		activeDayEl.classList.add("event");
-	}
-});
-
-// function to delete event when clicked on event
-eventsContainer.addEventListener("click", (e) => {
-	if (e.target.classList.contains("event")) {
-		if (confirm("Are you sure you want to delete this event?")) {
-		const eventTitle = e.target.children[0].children[1].innerHTML;
-		eventsArr.forEach((event) => {
-			if (
-			event.day === activeDay &&
-			event.month === month + 1 &&
-			event.year === year
-			) {
-			event.events.forEach((item, index) => {
-				if (item.title === eventTitle) {
-				event.events.splice(index, 1);
-				}
-			});
-			//if no events left in a day then remove that day from eventsArr
-			if (event.events.length === 0) {
-				eventsArr.splice(eventsArr.indexOf(event), 1);
-				//remove event class from day
-				const activeDayEl = document.querySelector(".day.active");
-				if (activeDayEl.classList.contains("event")) {
-				activeDayEl.classList.remove("event");
-				}
-			}
-			}
-		});
-		updateEvents(activeDay);
-		}
-	}
-});
-
-//function to save events in local storage
-function saveEvents() {
-  	localStorage.setItem("events", JSON.stringify(eventsArr));
+// Navigation functions
+function goToPreviousMonth() {
+    month--;
+    if (month < 0) {
+        month = 11;
+        year--;
+    }
+    renderCalendar();
 }
 
-//function to get events from local storage
-function getEvents() {
-	//check if events are already saved in local storage then return event else nothing
-	if (localStorage.getItem("events") === null) {
-		return;
-	}
-	eventsArr.push(...JSON.parse(localStorage.getItem("events")));
+function goToNextMonth() {
+    month++;
+    if (month > 11) {
+        month = 0;
+        year++;
+    }
+    renderCalendar();
 }
+
+function goToToday() {
+    today = new Date();
+    month = today.getMonth();
+    year = today.getFullYear();
+    renderCalendar();
+    highlightToday();
+}
+
+// Highlight today's date
+function highlightToday() {
+    if (month === today.getMonth() && year === today.getFullYear()) {
+        const todayElement = document.querySelector(`.day[data-day="${today.getDate()}"]`);
+        if (todayElement) {
+            todayElement.click(); // Simulate click to select and show events
+        }
+    }
+}
+
+// Save events to Firebase
+async function saveEventsToFirebase() {
+    try {
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+            alert("Please log in to save events");
+            return;
+        }
+
+        console.log("Saving events to Firebase:", eventsArr);
+
+        const eventsRef = doc(db, 'calendarEvents', currentUser.uid);
+        
+        // Prepare events data 
+        const eventsToSave = eventsArr.map(event => ({
+            day: event.day,
+            month: event.month, 
+            year: event.year,
+            events: event.events.map(e => ({
+                title: e.title,
+                time: e.time,
+                creatorEmail: e.creatorEmail,
+                creatorID: e.creatorID,
+                createdAt: e.createdAt || new Date().toISOString()
+            }))
+        }));
+
+        // Save to Firestore
+        await setDoc(eventsRef, {
+            events: eventsToSave,
+            lastUpdated: serverTimestamp(),
+            userEmail: currentUser.email,
+            userId: currentUser.uid
+        }, { merge: true });
+
+        console.log("Events successfully saved to Firebase");
+        
+    } catch (error) {
+        console.error("Error saving events:", error);
+        alert("Failed to save events: " + error.message);
+    }
+}
+
+// Add a new event
+async function addNewEvent() {
+    try {
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+            alert("Please log in to add events");
+            return;
+        }
+
+        const eventTitle = addEventTitle.value.trim();
+        const eventTimeFrom = addEventFrom.value.trim();
+        const eventTimeTo = addEventTo.value.trim();
+
+        if (!eventTitle || !eventTimeFrom || !eventTimeTo) {
+            alert("Please fill all fields");
+            return;
+        }
+
+        // Check if activeDay is set
+        if (!activeDay) {
+            alert("Please select a date first");
+            return;
+        }
+
+        // Validate time format (HH:MM)
+        if (!/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(eventTimeFrom) ||
+            !/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(eventTimeTo)) {
+            alert("Please enter time in HH:MM format");
+            return;
+        }
+
+        // Create new event
+        const newEvent = {
+            title: eventTitle,
+            time: `${convertTime(eventTimeFrom)} - ${convertTime(eventTimeTo)}`,
+            creatorEmail: currentUser.email,
+            creatorID: currentUser.uid,
+            createdAt: new Date().toISOString()
+        };
+
+        console.log(`Adding event for ${activeDay}/${month + 1}/${year}:`, newEvent);
+
+        // Find or create event group for this date
+        const eventGroupIndex = eventsArr.findIndex(
+            e => e.day === activeDay &&
+                 e.month === month + 1 && 
+                 e.year === year
+        );
+
+        if (eventGroupIndex >= 0) {
+            // Add to existing group
+            eventsArr[eventGroupIndex].events.push(newEvent);
+            console.log("Added to existing event group");
+        } else {
+            // Create new group
+            eventsArr.push({
+                day: activeDay,
+                month: month + 1,
+                year: year,
+                events: [newEvent]
+            });
+            console.log("Created new event group");
+        }
+
+        // Save to Firebase
+        await saveEventsToFirebase();
+        
+        // Update UI
+        renderCalendar();
+        showEventsForDay(activeDay);
+        
+        // Close modal and clear inputs
+        addEventWrapper.classList.remove("active");
+        addEventTitle.value = "";
+        addEventFrom.value = "";
+        addEventTo.value = "";
+        
+    } catch (error) {
+        console.error("Error adding event:", error);
+        alert("Failed to add event: " + error.message);
+    }
+}
+
+// Delete an event
+async function deleteEvent(eventElement) {
+    if (confirm("Are you sure you want to delete this event?")) {
+        const eventTitle = eventElement.querySelector('.event-title').textContent;
+        
+        // Find the event group for this date
+        const eventGroupIndex = eventsArr.findIndex(
+            e => e.day === activeDay &&
+                 e.month === month + 1 &&
+                 e.year === year
+        );
+
+        if (eventGroupIndex >= 0) {
+            // Remove the specific event
+            const eventIndex = eventsArr[eventGroupIndex].events.findIndex(
+                e => e.title === eventTitle
+            );
+            
+            if (eventIndex >= 0) {
+                eventsArr[eventGroupIndex].events.splice(eventIndex, 1);
+                
+                // If no more events for this date, remove the entire group
+                if (eventsArr[eventGroupIndex].events.length === 0) {
+                    eventsArr.splice(eventGroupIndex, 1);
+                }
+                
+                // Save to Firebase
+                await saveEventsToFirebase();
+                
+                // Update UI
+                renderCalendar();
+                showEventsForDay(activeDay);
+            }
+        }
+    }
+}
+
+// Helper Functions
 
 function convertTime(time) {
-	//convert time to 24 hour format
-	let timeArr = time.split(":");
-	let timeHour = timeArr[0];
-	let timeMin = timeArr[1];
-	let timeFormat = timeHour >= 12 ? "PM" : "AM";
-	timeHour = timeHour % 12 || 12;
-	time = timeHour + ":" + timeMin + " " + timeFormat;
-	return time;
+    const timeArr = time.split(":");
+    let timeHour = parseInt(timeArr[0]);
+    const timeMin = timeArr[1];
+    const timeFormat = timeHour >= 12 ? "PM" : "AM";
+    timeHour = timeHour % 12 || 12;
+    return `${timeHour}:${timeMin} ${timeFormat}`;
 }
+
+function validateTimeInput(e) {
+    const input = e.target;
+    input.value = input.value.replace(/[^0-9:]/g, "");
+    if (input.value.length === 2 && !input.value.includes(":")) {
+        input.value += ":";
+    }
+    if (input.value.length > 5) {
+        input.value = input.value.slice(0, 5);
+    }
+}
+
+function setupEventListeners() {
+    prev.addEventListener("click", goToPreviousMonth);
+    next.addEventListener("click", goToNextMonth);
+    todayBtn.addEventListener("click", goToToday);
+    addEventBtn.addEventListener("click", () => addEventWrapper.classList.toggle("active"));
+    addEventCloseBtn.addEventListener("click", () => addEventWrapper.classList.remove("active"));
+    addEventSubmit.addEventListener("click", addNewEvent);
+    
+    // Close modal when clicking outside
+    document.addEventListener("click", (e) => {
+        if (e.target !== addEventBtn && !addEventWrapper.contains(e.target)) {
+            addEventWrapper.classList.remove("active");
+        }
+    });
+    
+    // Time input validation
+    addEventFrom.addEventListener("input", validateTimeInput);
+    addEventTo.addEventListener("input", validateTimeInput);
+    
+    // Event deletion
+    eventsContainer.addEventListener("click", (e) => {
+        if (e.target.closest(".event")) {
+            deleteEvent(e.target.closest(".event"));
+        }
+    });
+}
+
+// Debug function to check Firebase connection and data
+async function debugFirebaseData() {
+    try {
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+            console.log("No user logged in");
+            return;
+        }
+
+        console.log("=== FIREBASE DEBUG ===");
+        console.log("User:", currentUser.uid);
+        
+        const eventsRef = doc(db, 'calendarEvents', currentUser.uid);
+        const docSnap = await getDoc(eventsRef);
+        
+        if (docSnap.exists()) {
+            console.log("Firebase document exists");
+            console.log("Raw data:", docSnap.data());
+        } else {
+            console.log("No Firebase document found");
+        }
+        
+        console.log("Current eventsArr:", eventsArr);
+        console.log("Current month/year:", month + 1, year);
+        console.log("======================");
+        
+    } catch (error) {
+        console.error("Debug error:", error);
+    }
+}
+
+// Add debug function to window for manual testing
+window.debugCalendar = debugFirebaseData;
+
+// Add a function to reload events when user logs in
+async function reloadCalendarForUser() {
+    console.log("Reloading calendar for logged in user...");
+    await loadEvents();
+    renderCalendar();
+    if (activeDay) {
+        showEventsForDay(activeDay);
+    } else {
+        highlightToday();
+    }
+}
+
+// Add auth state listener
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        console.log("User logged in:", user.uid);
+        await reloadCalendarForUser();
+    } else {
+        console.log("User logged out");
+        // Clear events when user logs out
+        eventsArr.length = 0;
+        renderCalendar();
+    }
+});
+
+// Initialize the calendar when the page loads
+initializeCalendar();
