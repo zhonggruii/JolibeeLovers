@@ -1,17 +1,26 @@
-# Force initial visits to login 
-# (Covers root and /index)
-^/$                 /login.html    302!
-^/index$            /login.html    302!
-^/index.html$       /login.html    302!
+# Force initial redirects to login
+/           /login.html    302!
+/index      /login.html    302!
 
-# Application routes (after login)
-^/home$             /index.html    200
-^/group-management$ /group-management.html    200
-^/my-group$         /my-group.html    200
-^/profile$          /profile.html    200
-^/register$         /register.html   200
-^/reset$            /reset.html      200
-^/login$            /login.html      200
+# Home page access
+/home       /index.html    200
 
-# Fallback: send everything else to login (if route doesn't match above)
-^/.*$               /login.html    302!
+# Static assets - MUST COME BEFORE FALLBACK
+/assets/*   /assets/:splat  200
+/*.css      /:splat.css     200
+/*.js       /:splat.js      200
+/*.png      /:splat.png     200
+/*.jpg      /:splat.jpg     200
+/*.svg      /:splat.svg     200
+/*.woff2    /:splat.woff2   200
+
+# App routes
+/group-management   200
+/my-group          200
+/profile           200
+/register          200
+/reset             200
+/login             200
+
+# Fallback to login (must be last)
+/*                  /login.html    302
