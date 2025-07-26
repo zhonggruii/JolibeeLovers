@@ -38,15 +38,20 @@
         	</nav>
 			
 			<!--notification for group requests-->
+			<!--
 			<div class="notification-icon" id="notificationBell">
 				<span class="material-symbols-outlined">notifications</span>
 				<span class="notification-badge" id="notificationBadge"></span>
 			</div>
-
+			-->
 			<!--logout & other options-->
 			<div class="options-area-header options-header">
 				<div class="dropdown">
-					<span class="material-symbols-outlined">menu</span>
+					<span class="notification-badge" id="notificationBadge"></span>
+					<span class="material-symbols-outlined">
+						menu
+					</span>
+	
 					<!--dropdown content (modular)-->
 					<div class="dropdown-container box-shadow">
 						<!--notification option-->
@@ -80,120 +85,34 @@
   					View Notifications
 				</button>	
 			</div>	
-			
+
 			
 			<!--container for group cards-->
 			<div id="group-list">
 				<!--horizontal group card template-->
-					<div class="content-container box-shadow p2034 mb20">
-						<div class="content-header">
-							<h2 class="container-title m10-0">Join My Team!</h2>
+				<div class="content-container box-shadow p2034 mb20">
+					<div class="element-group-row w100pct">
+						<div class="element-group-row m10-0 w58pct">
+							<h2 class="container-title m10-0">Teen Titans!</h2>
 
-							<div class="element-group-row m10-0">
-								<div class="user-group">
-									<a class="element-group-row" href="/profile.html">
-										<img class="avatar-icons" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />
-										<h3 class="username-text">martin rosales</h3>
-									</a>
-								</div>
-
-								<div class="displayed-role red-background m0-5">
-									<span>owner</span>
-								</div>
+							<div class="owner-role m0-20">
+								<span>owner</span>
 							</div>
 						</div>
 
-						<div class="element-group-row-mid">
+						<div class="element-group-row-end w42pct">
 							<button class="button-box m10-0" onclick="manageGroup('${group.id}')">
 								<span class="button-icon material-symbols-outlined">group</span>
-								View Group
+								Manage
 							</button>
-						</div>
-					</div>
-				
 
-
-					<div class="group-card box-shadow w16lh p2034 mb20">
-						<div class="content-header">
-							<h2 class="container-title m10-0">Join My Team!</h2>
-
-							<div class="element-group-row m10-0">
-								<div class="user-group">
-									<a class="element-group-row" href="/profile.html">
-										<img class="avatar-icons" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />
-										<h3 class="username-text">martin rosales</h3>
-									</a>
-								</div>
-
-								<div class="displayed-role red-background m0-5">
-									<span>owner</span>
-								</div>
-							</div>
-						</div>
-
-						<div class="element-group-row-mid">
-							<button class="button-box m10-0" onclick="manageGroup('${group.id}')">
-								<span class="button-icon material-symbols-outlined">group</span>
-								View Group
-							</button>
-						</div>
-					</div>
-
-				
-				<!--group card template-->
-					<div class="content-container box-shadow p2034">
-						<div class="content-header">
-							<h2 class="container-title m10-0">Join My Team!</h2>
-
-							<div class="m10-0">
-								<a class="user-group" href="/profile.html">
-									<img class="avatar-icons" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />
-									
-									<div class="userinfo-container">
-										<h3 class="username-text">martin rosales</h3>
-
-										<h3 class="email-text">j.martin3537@gmail.com</h3>
-									</div>
-								</a>	
-							</div>
-						</div>
-
-						<div class="content-body">
-							<p class="content-text">
-								Looking for passionate people to join our dynamic group! 
-								Collaborate, share ideas, and grow together in a supportive and friendly 
-								environment. Whether for work, hobbies, or learning, we'd love to have you. 
-								Let's connect, inspire, and achieve great things as a team—join us today!
-							</p>
-
-							<div class="content-taglist">
-								<p class="content-text">
-									BT2102, Y1, BZA, IS
-								</p>
-							</div>
-						</div>
-
-						<hr class="solid-line" />
-										
-						<hr class="solid-line" />
-							<div class="flex-space-between">
-							<button class="button-box m10-0" onclick="manageGroup('${group.id}')">
-								<span class="button-icon material-symbols-outlined">group</span>
-								Manage Group
-							</button>
-							${group.creatorUid === currentUser?.uid ? `
-								<button class="button-box-red m10-0" onclick="deleteGroup('${group.id}')">
+							<button class="button-box-red m0-0-0-12" onclick="manageGroup('${group.id}')">
 								<span class="button-icon material-symbols-outlined">delete</span>
 								Delete
-								</button>
-							` : `
-								<button class="button-box-red m10-0" onclick="leaveGroup('${group.id}')">
-								<span class="button-icon material-symbols-outlined">exit_to_app</span>
-								Leave
-								</button>
-							`}
-							</div>
+							</button>
+						</div>
 					</div>
+				</div>
 			</div>
 
 			<!--view notifications pop up modal-->
@@ -210,14 +129,30 @@
 					</div>
 					
 					<form class="modal-body">
-						<div id="notificationList">
-							<p>Loading notifications...</p>
+						<div class="element-group-col w100pct" id="notificationList">
+							<div class="element-group-col member-container box-shadow p2034 m10-0 w100pct">
+								<div class="element-group-row w100pct">
+									<p class="content-text-bold mb10">7/26/2025, 7:58:57 PM</p>
+								</div>
+
+								<img class="profile-icon" id="introProfileImage" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />
+								
+								<h3 class="m10-0"><a class="content-subtitle-blue" href="link">john doe</a></h3>
+
+								<p class="content-text m0">wants to join your group</p>
+
+								<div class="element-group-row mt15">
+									<button class="round-button-box mr5">
+										Accept
+									</button>
+
+									<button class="red-round-button-box ml5">
+										Decline
+									</button>
+								</div>
+							</div>
 						</div>
 					</form>
-
-					<div class="modal-footer">
-						<button class="round-button-box" type="submit" form="add-group-form">Save</button>
-					</div>
 				</div>
 			</div>
 		</main>
