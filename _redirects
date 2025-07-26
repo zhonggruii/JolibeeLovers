@@ -8,6 +8,7 @@
 /register           /register.html   200
 /reset              /reset.html    200
 /login              /login.html    200
+/home            /index.html       200
 
 # Fallback - redirect everything else to login
 /*                  /login.html    404
