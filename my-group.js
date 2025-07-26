@@ -93,7 +93,7 @@ async function loadGroups(groups = null) {
       groupList.innerHTML = `
         <div class="content-container box-shadow p2034">
           <p>Cant find any groups. Create a new one or find one!</p>
-          <button class="button-box-green m10-0" id="openModalBtn" onclick="window.location.href='index.html'">
+          <button class="button-box-green m10-0" id="openModalBtn" onclick="window.location.href='home.html'">
             <span class="button-icon material-symbols-outlined">group_add</span>
             Create Your First Group
           </button>
@@ -312,7 +312,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		groupList.innerHTML = `
 			<div class="content-container box-shadow p2034">
 			<p>Please log in to view your groups</p>
-			<button class="button-box m10-0" onclick="window.location.href='login.html'">
+			<button class="button-box m10-0" onclick="window.location.href='index.html'">
 				<span class="button-icon material-symbols-outlined">login</span>
 				Log In
 			</button>

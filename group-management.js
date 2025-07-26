@@ -286,7 +286,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 		if (!user) {
 		console.error("No authenticated user");
 		alert("Please log in to view this group");
-		window.location.href = "login.html";
+		window.location.href = "index.html";
 		return;
 		}
 
