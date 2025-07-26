@@ -1,7 +1,7 @@
 import { auth, db, storage } from './config.js';
-import { doc, getDoc, updateDoc, collection, query, where, getDocs, setDoc, serverTimestamp} from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js';
+import { doc, getDoc, updateDoc, collection, query, where, getDocs, setDoc, serverTimestamp, arrayUnion} from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-storage.js';
-import { signOut, updateProfile, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js';
+import { signOut, updateProfile, onAuthStateChanged, getAuth } from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js';
 
 // Intro Modal Pop Up
 const introModal = document.getElementById("introModal");
@@ -11,7 +11,6 @@ const closeBtn = document.getElementById("closeModalBtn");
 openBtn.addEventListener("click", () => introModal.classList.add("open"));
 closeBtn.addEventListener("click", () => introModal.classList.remove("open"));
 
-
 // Calendar Modal Pop Up
 const calendarModal = document.getElementById("calendarModal");
 const openCalendarBtn = document.getElementById("openCalendarModalBtn");
@@ -19,7 +18,6 @@ const closeCalendarBtn = document.getElementById("closeCalendarModalBtn");
 
 openCalendarBtn.addEventListener("click", () => calendarModal.classList.add("open"));
 closeCalendarBtn.addEventListener("click", () => calendarModal.classList.remove("open"));
-
 
 // About Modal Pop Up
 const aboutModal = document.getElementById("aboutModal");
@@ -29,7 +27,6 @@ const closeAboutBtn = document.getElementById("closeAboutModalBtn");
 openAboutBtn.addEventListener("click", () => aboutModal.classList.add("open"));
 closeAboutBtn.addEventListener("click", () => aboutModal.classList.remove("open"));
 
-
 // Activity Modal Pop Up
 const activityModal = document.getElementById("activityModal");
 const openActivityBtn = document.getElementById("openActivityModalBtn");
@@ -37,7 +34,6 @@ const closeActivityBtn = document.getElementById("closeActivityModalBtn");
 
 openActivityBtn.addEventListener("click", () => activityModal.classList.add("open"));
 closeActivityBtn.addEventListener("click", () => activityModal.classList.remove("open"));
-
 
 // Skills Modal Pop Up
 const skillsModal = document.getElementById("skillsModal");
@@ -47,7 +43,6 @@ const closeSkillsBtn = document.getElementById("closeSkillsModalBtn");
 openSkillsBtn.addEventListener("click", () => skillsModal.classList.add("open"));
 closeSkillsBtn.addEventListener("click", () => skillsModal.classList.remove("open"));
 
-
 // Experience Modal Pop Up
 const expModal = document.getElementById("expModal");
 const openExpBtn = document.getElementById("openExpModalBtn");
@@ -56,12 +51,14 @@ const closeExpBtn = document.getElementById("closeExpModalBtn");
 openExpBtn.addEventListener("click", () => expModal.classList.add("open"));
 closeExpBtn.addEventListener("click", () => expModal.classList.remove("open"));
 
-
 // Load and Display User Profile
 async function loadUserProfile() {
     const urlParams = new URLSearchParams(window.location.search);
     const profileEmail = urlParams.get('email');
     const currentUser = auth.currentUser;
+
+    console.log("Loading profile for email:", profileEmail);
+    console.log("Current user:", currentUser?.email);
 
     // Check if this is the owner's profile
     const isOwner = !profileEmail || (currentUser && profileEmail === currentUser.email);
@@ -81,17 +78,22 @@ async function loadUserProfile() {
 
     try {
         if (profileEmail) {
+            console.log("Fetching profile for:", profileEmail);
+            
             // Fetch the requested user's profile
             const usersRef = collection(db, 'users');
             const q = query(usersRef, where('email', '==', profileEmail));
-            const querySnapshot = await getDocs(q); // Make sure this is defined
+            const querySnapshot = await getDocs(q);
             
             if (!querySnapshot.empty) {
+                const userData = querySnapshot.docs[0].data();
                 userToDisplay = {
                     uid: querySnapshot.docs[0].id,
-                    ...querySnapshot.docs[0].data()
+                    ...userData
                 };
+                console.log("Found user data:", userToDisplay);
             } else {
+                console.log("User not found in database, creating basic info");
                 // If user not found in 'users' collection, create basic info
                 userToDisplay = {
                     email: profileEmail,
@@ -103,10 +105,13 @@ async function loadUserProfile() {
             // Check if this is the current user's profile
             if (currentUser && currentUser.email === profileEmail) {
                 isCurrentUser = true;
+                console.log("This is the current user's profile");
+            } else {
+                console.log("This is someone else's profile");
             }
-            updateProfileUI(userToDisplay, isCurrentUser);
-            await getEvents();
+            
         } else if (currentUser) {
+            console.log("No email parameter, showing current user's profile");
             // No email parameter, show current user's profile
             const userRef = doc(db, 'users', currentUser.uid);
             const userSnap = await getDoc(userRef);
@@ -114,66 +119,133 @@ async function loadUserProfile() {
             userToDisplay = {
                 uid: currentUser.uid,
                 email: currentUser.email,
+                name: currentUser.displayName || currentUser.email.split('@')[0],
+                photoURL: currentUser.photoURL,
                 ...(userSnap.exists() ? userSnap.data() : {})
             };
             isCurrentUser = true;
         } else {
+            console.log("No user logged in, redirecting to login");
             window.location.href = 'login.html';
             return;
         }
 
+        console.log("Final user data to display:", userToDisplay);
+        console.log("Is current user:", isCurrentUser);
+
         // Update the UI
         updateProfileUI(userToDisplay, isCurrentUser);
+        
+        // Initialize calendar for the profile user
+        if (userToDisplay.uid && typeof initializeCalendar === 'function') {
+            console.log("Initializing calendar for user:", userToDisplay.uid);
+            await initializeCalendar(userToDisplay.uid);
+        }
+        
+        // Set up editing if this is the current user
+        if (isCurrentUser && currentUser) {
+            setupProfileEditing(currentUser);
+            setupPhotoUpload(currentUser);
+            setUpRemovePhoto(currentUser);
+        }
+        
     } catch (error) {
         console.error("Error loading profile:", error);
         // Fallback to showing basic info
-        updateProfileUI({
+        const fallbackUser = {
             name: profileEmail ? profileEmail.split('@')[0] : "User",
             email: profileEmail || "No email",
             photoURL: 'https://www.w3schools.com/howto/img_avatar.png'
-        }, false);
+        };
+        console.log("Using fallback user data:", fallbackUser);
+        updateProfileUI(fallbackUser, false);
     }
 }
 
 function updateProfileUI(userData, isCurrentUser) {
+    console.log("Updating UI with data:", userData);
+    console.log("Is current user:", isCurrentUser);
+
     // Email
-    document.getElementById('userEmailInput').value = userData.email || '';
-    document.getElementById('displayUserEmail').textContent = userData.email || '';
+    const emailInput = document.getElementById('userEmailInput');
+    const displayEmail = document.getElementById('displayUserEmail');
+    if (emailInput) emailInput.value = userData.email || '';
+    if (displayEmail) displayEmail.textContent = userData.email || '';
     
     // Username
-    document.getElementById('userNameInput').value = userData.name || '';
-    document.getElementById('displayUserName').textContent = userData.name || `${userData.email?.split('@')[0]}`;
+    const nameInput = document.getElementById('userNameInput');
+    const displayName = document.getElementById('displayUserName');
+    const userName = userData.name || userData.displayName || userData.email?.split('@')[0] || 'Unknown User';
+    
+    if (nameInput) nameInput.value = userName;
+    if (displayName) displayName.textContent = userName;
+    
+    console.log("Setting username to:", userName);
     
     // About
-    document.getElementById('aboutMeText').value = userData.aboutMe || '';
-    document.getElementById('displayAboutText').textContent = userData.aboutMe || '';
+    const aboutInput = document.getElementById('aboutMeText');
+    const displayAbout = document.getElementById('displayAboutText');
+    if (aboutInput) aboutInput.value = userData.aboutMe || '';
+    if (displayAbout) displayAbout.textContent = userData.aboutMe || '';
 
     // Activity
-    document.getElementById('activityInput').value = userData.activity || '';
-    document.getElementById('displayActivity').textContent = userData.activity || 'No projects';
+    const activityInput = document.getElementById('activityInput');
+    const displayActivity = document.getElementById('displayActivity');
+    if (activityInput) activityInput.value = userData.activity || '';
+    if (displayActivity) displayActivity.textContent = userData.activity || 'No projects';
 
     // Skills
     const skills = userData.skills || [];
-    document.getElementById('displaySkills').innerHTML = skills
-    .map(skill => `<span>${skill}</span>`)
-    .join('') || `<p class="content-text m0">None selected</p>`;
+    const displaySkills = document.getElementById('displaySkills');
+    if (displaySkills) {
+        displaySkills.innerHTML = skills.length > 0 
+            ? skills.map(skill => `<span>${skill}</span>`).join('')
+            : `<p class="content-text m0">None selected</p>`;
+    }
 
-    // selected values display in modal
-    selectedValues.clear();
-    skills.forEach(skill => selectedValues.add(skill));
-    skillsOutput.textContent = skills.join(', ') || 'None Selected';
-
+    // Update selected values for skills if they exist
+    if (typeof selectedValues !== 'undefined') {
+        selectedValues.clear();
+        skills.forEach(skill => selectedValues.add(skill));
+    }
+    
+    const skillsOutput = document.getElementById('skillsOutput');
+    if (skillsOutput) {
+        skillsOutput.textContent = skills.join(', ') || 'None Selected';
+    }
 
     // Modules
-    document.getElementById('modulesInput').value = userData.modulesTaken || '';
+    const modulesInput = document.getElementById('modulesInput');
+    if (modulesInput) modulesInput.value = userData.modulesTaken || '';
     
     // Telegram
-    document.getElementById('telegramInput').value = userData.telegram || '';
-    document.getElementById('displayTelegram').textContent = userData.telegram || 'N/A';
+    const telegramInput = document.getElementById('telegramInput');
+    const displayTelegram = document.getElementById('displayTelegram');
+    if (telegramInput) telegramInput.value = userData.telegram || '';
+    if (displayTelegram) displayTelegram.textContent = userData.telegram || 'N/A';
 
     // Profile Image
-    document.getElementById('profileImage').src = userData.photoURL || 'https://www.w3schools.com/howto/img_avatar.png';
-    document.getElementById('introProfileImage').src = userData.photoURL || 'https://www.w3schools.com/howto/img_avatar.png';
+    const profileImage = document.getElementById('profileImage');
+    const introProfileImage = document.getElementById('introProfileImage');
+    const imageUrl = userData.photoURL || 'https://www.w3schools.com/howto/img_avatar.png';
+    
+    console.log("Setting profile image to:", imageUrl);
+    
+    if (profileImage) {
+        profileImage.src = imageUrl;
+        profileImage.onerror = function() {
+            console.log("Profile image failed to load, using default");
+            this.src = 'https://www.w3schools.com/howto/img_avatar.png';
+        };
+    }
+    
+    if (introProfileImage) {
+        introProfileImage.src = imageUrl;
+        introProfileImage.onerror = function() {
+            console.log("Intro profile image failed to load, using default");
+            this.src = 'https://www.w3schools.com/howto/img_avatar.png';
+        };
+    }
 
     // Show/hide edit controls based on ownership
     const editControls = document.querySelectorAll('.edit-control');
@@ -192,6 +264,8 @@ function updateProfileUI(userData, isCurrentUser) {
             element.disabled = !isCurrentUser;
         }
     });
+    
+    console.log("Profile UI update completed");
 }
 
 function setupProfileEditing(user) {
@@ -205,85 +279,107 @@ function setupProfileEditing(user) {
     const resetSkillsBtn = document.getElementById('resetSkillsBtn');
     const moduleTakenBtn = document.getElementById('saveModuleBtn');
 
-
-    saveNameBtn.addEventListener('click', async () => {
-        const newName = nameInput.value.trim();
-        await updateDoc(doc(db, 'users', user.uid), { name: newName });
-        document.getElementById('displayUserName').textContent = newName || `${user.email?.split('@')[0]}`;
-        alert('Intro updated!');
-        document.getElementById('introModal').classList.remove('open');
-    });
-
-
-    saveAboutMeBtn.addEventListener('click', async () => {
-        const newAboutText = document.getElementById('aboutMeText').value.trim();
-        const newTelegram = document.getElementById('telegramInput').value.trim();
-
-        await updateDoc(doc(db, 'users', user.uid), { 
-            aboutMe: newAboutText, 
-            telegram: newTelegram
+    if (saveNameBtn) {
+        saveNameBtn.addEventListener('click', async () => {
+            const newName = nameInput.value.trim();
+            await updateDoc(doc(db, 'users', user.uid), { name: newName });
+            document.getElementById('displayUserName').textContent = newName || `${user.email?.split('@')[0]}`;
+            alert('Intro updated!');
+            document.getElementById('introModal').classList.remove('open');
         });
-        
-        document.getElementById('displayAboutText').textContent = newAboutText;
-        document.getElementById('displayTelegram').textContent = newTelegram || 'N/A';
+    }
 
-        alert('About Section updated!');
-        document.getElementById('aboutModal').classList.remove('open');
-    });
+    if (saveAboutMeBtn) {
+        saveAboutMeBtn.addEventListener('click', async () => {
+            const newAboutText = document.getElementById('aboutMeText').value.trim();
+            const newTelegram = document.getElementById('telegramInput').value.trim();
 
+            await updateDoc(doc(db, 'users', user.uid), { 
+                aboutMe: newAboutText, 
+                telegram: newTelegram
+            });
+            
+            document.getElementById('displayAboutText').textContent = newAboutText;
+            document.getElementById('displayTelegram').textContent = newTelegram || 'N/A';
 
-    saveActivityBtn.addEventListener('click', async () => {
-        const newActivity = document.getElementById('activityInput').value.trim();
-
-        await updateDoc(doc(db, 'users', user.uid), { 
-            activity: newActivity
+            alert('About Section updated!');
+            document.getElementById('aboutModal').classList.remove('open');
         });
-        
-        document.getElementById('displayActivity').textContent = newActivity || 'No projects';
+    }
 
-        alert('Activity Section updated!');
-        document.getElementById('activityModal').classList.remove('open');
-    });
+    if (saveActivityBtn) {
+        saveActivityBtn.addEventListener('click', async () => {
+            const newActivity = document.getElementById('activityInput').value.trim();
 
+            await updateDoc(doc(db, 'users', user.uid), { 
+                activity: newActivity
+            });
+            
+            document.getElementById('displayActivity').textContent = newActivity || 'No projects';
 
-    saveSkillsBtn.addEventListener('click', async () => {
-        const skillsArray = Array.from(selectedValues);
-
-        await updateDoc(doc(db, 'users', user.uid), { 
-            skills: skillsArray 
+            alert('Activity Section updated!');
+            document.getElementById('activityModal').classList.remove('open');
         });
-        
-        document.getElementById('displaySkills').innerHTML = skillsArray
-        .map(skill => `<span>${skill}</span>`)
-        .join('');
+    }
 
-        skillsOutput.textContent = skillsArray.join(', ') || 'None Selected';
-        skillsSelectedItems.innerHTML = '';
+    if (saveSkillsBtn) {
+        saveSkillsBtn.addEventListener('click', async () => {
+            const skillsArray = Array.from(selectedValues);
 
-        alert('Skills Section updated!');
-        document.getElementById('skillsModal').classList.remove('open');
-    });
+            await updateDoc(doc(db, 'users', user.uid), { 
+                skills: skillsArray 
+            });
+            
+            document.getElementById('displaySkills').innerHTML = skillsArray
+            .map(skill => `<span>${skill}</span>`)
+            .join('');
 
-    resetSkillsBtn.addEventListener('click', async (e) => {
-        selectedValues.clear();
-        skillsSelectedItems.innerHTML = '';
-        skillsOutput.textContent = 'None Selected';
+            const skillsOutput = document.getElementById('skillsOutput');
+            if (skillsOutput) {
+                skillsOutput.textContent = skillsArray.join(', ') || 'None Selected';
+            }
+            
+            const skillsSelectedItems = document.getElementById('skillsSelectedItems');
+            if (skillsSelectedItems) {
+                skillsSelectedItems.innerHTML = '';
+            }
 
-        await updateDoc(doc(db, 'users', user.uid), { 
-            skills: [] 
+            alert('Skills Section updated!');
+            document.getElementById('skillsModal').classList.remove('open');
         });
+    }
 
-        document.getElementById('displaySkills').innerHTML = '<p class="content-text m0">None selected</p>';
+    if (resetSkillsBtn) {
+        resetSkillsBtn.addEventListener('click', async (e) => {
+            selectedValues.clear();
+            const skillsSelectedItems = document.getElementById('skillsSelectedItems');
+            if (skillsSelectedItems) {
+                skillsSelectedItems.innerHTML = '';
+            }
+            
+            const skillsOutput = document.getElementById('skillsOutput');
+            if (skillsOutput) {
+                skillsOutput.textContent = 'None Selected';
+            }
 
-        alert('Skills Section Has Been Reset!');
-    });
+            await updateDoc(doc(db, 'users', user.uid), { 
+                skills: [] 
+            });
 
+            document.getElementById('displaySkills').innerHTML = '<p class="content-text m0">None selected</p>';
 
-    moduleTakenBtn.addEventListener('click', async () => {
-        const newMod = modulesInput.value.trim();
-        await updateDoc(doc(db, 'users', user.uid), { modulesTaken: newMod});
-        alert('Modules Updated!');
-    });
+            alert('Skills Section Has Been Reset!');
+        });
+    }
+
+    if (moduleTakenBtn) {
+        moduleTakenBtn.addEventListener('click', async () => {
+            const modulesInput = document.getElementById('modulesInput');
+            const newMod = modulesInput.value.trim();
+            await updateDoc(doc(db, 'users', user.uid), { modulesTaken: newMod});
+            alert('Modules Updated!');
+        });
+    }
 }
 
 // Profile Photo Upload
@@ -322,7 +418,10 @@ function setupPhotoUpload(user) {
             });
             
             profileImage.src = downloadURL;
-            document.getElementById('introProfileImage').src = downloadURL;
+            const introProfileImage = document.getElementById('introProfileImage');
+            if (introProfileImage) {
+                introProfileImage.src = downloadURL;
+            }
             
             await updateProfile(user, {
                 photoURL: downloadURL
@@ -339,6 +438,8 @@ function setupPhotoUpload(user) {
 // remove profile picture button
 function setUpRemovePhoto(user) {
     const remvBtn = document.getElementById("removePhotoBtn");
+    if (!remvBtn) return;
+    
     remvBtn.addEventListener('click', async () => {
         try {
             const photoPath = `profileImages/${user.uid}`;
@@ -353,118 +454,344 @@ function setUpRemovePhoto(user) {
                 photoURL: null
             });
             alert("Photo removed!");
-            loadUserProfile(user);
+            loadUserProfile();
         } catch (error) {
             alert("Failed to remove photo: " + error);
         }
     });
 }
 
-
-/// Star Rating System
-
-// select all elements with the "i" tag and store them in a Nodelist called "stars"
-const stars = document.querySelectorAll(".stars i");
-
-// Loop
-stars.forEach((star, index1) => {
-
-	// Add event listener that runs a function when "clicked"
-	star.addEventListener("click", () => {
-		console.log(index1);
-		// loop through the "stars" nodeList
-		stars.forEach((star, index2) => {
-			console.log(index2);
-			// add "active" class to clicked star and stars with lower index
-			// remove "active" class from stars with higher index
-			index1 >= index2 ? star.classList.add("active") : star.classList.remove("active");
-		});
-	});
+// Initialize profile when page loads
+onAuthStateChanged(auth, (user) => {
+    if (user || new URLSearchParams(window.location.search).get('email')) {
+        loadUserProfile();
+    } else {
+        window.location.href = 'login.html';
+    }
 });
 
 
+/// Star Rating System
+
+// Check if two users are in the same group
+async function areUsersInSameGroup(userEmail1, userEmail2) {
+    try {
+        // Query groups where both users are members
+        const groupsRef = collection(db, "groups");
+        const q1 = query(groupsRef, where("members", "array-contains", userEmail1));
+        const q2 = query(groupsRef, where("members", "array-contains", userEmail2));
+        
+        const [snapshot1, snapshot2] = await Promise.all([
+            getDocs(q1),
+            getDocs(q2)
+        ]);
+        
+        // Get group IDs for each user
+        const user1Groups = new Set();
+        const user2Groups = new Set();
+        
+        snapshot1.forEach(doc => user1Groups.add(doc.id));
+        snapshot2.forEach(doc => user2Groups.add(doc.id));
+        
+        // Check if they share any groups
+        for (let groupId of user1Groups) {
+            if (user2Groups.has(groupId)) {
+                return true;
+            }
+        }
+        
+        return false;
+    } catch (error) {
+        console.error("Error checking group membership:", error);
+        return false;
+    }
+}
+
+// Get user's groups for display purposes
+async function getUserGroups(userEmail) {
+    try {
+        const groupsRef = collection(db, "groups");
+        const q = query(groupsRef, where("members", "array-contains", userEmail));
+        const snapshot = await getDocs(q);
+        
+        const groups = [];
+        snapshot.forEach(doc => {
+            groups.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+        
+        return groups;
+    } catch (error) {
+        console.error("Error fetching user groups:", error);
+        return [];
+    }
+}
+
+// REPLACE your existing setupRatingSystem function with this enhanced version
 function setupRatingSystem(profileUser) {
     const stars = document.querySelectorAll(".stars i");
     const averageRatingEl = document.getElementById('averageRating');
     const ratingCountEl = document.getElementById('ratingCount');
-    const currentUser = auth.currentUser;
+    const currentUser = getAuth().currentUser;
 
-    // Disable rating if not logged in or trying to rate yourself
-    if (!currentUser || profileUser.uid === currentUser.uid) {
-        stars.forEach(star => {
-            star.style.cursor = 'not-allowed';
-            star.style.opacity = '0.5';
-        });
-        const aboutSection = document.querySelector('.about-section'); // Adjust this selector to match your HTML
-
-        if (!currentUser) {
-            // For non-logged in users
-            document.querySelector('.content-text:last-child').textContent = "Please log in to rate";
-        } else if (profileUser.uid === currentUser.uid) {
-            // For own profile - show email instead of rating message
-            aboutSection.querySelector('.email-display').textContent = profileUser.email;
-        } else {
-            
-        }
+    // Check if stars exist before proceeding
+    if (!stars || stars.length === 0) {
+        console.warn('Rating stars not found in DOM. Make sure your HTML has elements with class "stars i"');
         return;
     }
 
-    // Load existing ratings
-    loadRatings(profileUser.uid);
+    // Initialize the rating system
+    initializeRatingSystem();
 
-    // Star click handler
-    stars.forEach((star, index1) => {
-        star.addEventListener("click", async () => {
-            const rating = index1 + 1;
+    async function initializeRatingSystem() {
+        // Case 1: User not logged in
+        if (!currentUser) {
+            disableRating("Please log in to rate users");
+            // Load and display existing ratings for non-logged users
+            loadRatings(profileUser.uid);
+            return;
+        }
+
+        // Case 2: User trying to rate themselves
+        if (profileUser.uid === currentUser.uid) {
+            disableRating("You cannot rate yourself");
+            // Load and display existing ratings even for own profile
+            loadRatings(profileUser.uid);
+            // Show user's own groups instead
+            showUserGroups(profileUser.email);
+            return;
+        }
+
+        // Case 3: Check if users are in the same group
+        const areGroupmates = await areUsersInSameGroup(currentUser.email, profileUser.email);
+        
+        if (!areGroupmates) {
+            disableRating("You can only rate users from your groups");
+            // Load and display existing ratings even for non-groupmates
+            loadRatings(profileUser.uid);
+            return;
+        }
+
+        // Case 4: Users are groupmates - enable rating
+        enableRating();
+        loadRatings(profileUser.uid);
+    }
+
+    function disableRating(message) {
+        stars.forEach(star => {
+            star.style.cursor = 'not-allowed';
+            star.style.opacity = '0.5';
+            // Remove any existing click listeners
+            star.replaceWith(star.cloneNode(true));
+        });
+        
+        // Update the message in the UI
+        const messageEl = document.querySelector('.rating-message') || createMessageElement();
+        messageEl.textContent = message;
+        messageEl.style.color = '#666';
+        messageEl.style.fontStyle = 'italic';
+    }
+
+    function enableRating() {
+        const updatedStars = document.querySelectorAll(".stars i");
+        updatedStars.forEach((star, index) => {
+            star.style.cursor = 'pointer';
+            star.style.opacity = '1';
+            star.addEventListener('click', () => handleStarClick(index));
+        });
+        
+        // Update the message in the UI
+        const messageEl = document.querySelector('.rating-message') || createMessageElement();
+        messageEl.textContent = "Click to rate this groupmate";
+        messageEl.style.color = '#333';
+        messageEl.style.fontStyle = 'normal';
+    }
+
+    function createMessageElement() {
+        const messageEl = document.createElement('p');
+        messageEl.className = 'rating-message content-text';
+        messageEl.style.marginTop = '10px';
+        
+        // Try multiple ways to find where to insert the message
+        let insertTarget = null;
+        
+        // Method 1: Try to find stars container
+        if (stars.length > 0 && stars[0].parentElement) {
+            const starsContainer = stars[0].parentElement;
+            insertTarget = starsContainer.parentNode;
+            if (insertTarget) {
+                insertTarget.insertBefore(messageEl, starsContainer.nextSibling);
+                return messageEl;
+            }
+        }
+        
+        // Method 2: Look for rating-related containers by class
+        const ratingContainers = [
+            document.querySelector('.stars'),
+            document.querySelector('.rating-container'),
+            document.querySelector('.about-section'),
+            document.querySelector('.profile-content')
+        ];
+        
+        for (let container of ratingContainers) {
+            if (container) {
+                container.appendChild(messageEl);
+                return messageEl;
+            }
+        }
+        
+        // Method 3: Fallback - append to body if nothing else works
+        console.warn('Could not find suitable container for rating message, appending to body');
+        document.body.appendChild(messageEl);
+        messageEl.style.position = 'fixed';
+        messageEl.style.top = '100px';
+        messageEl.style.left = '20px';
+        messageEl.style.background = '#f5f5f5';
+        messageEl.style.padding = '10px';
+        messageEl.style.borderRadius = '4px';
+        messageEl.style.zIndex = '1000';
+        
+        return messageEl;
+    }
+
+    async function showUserGroups(userEmail) {
+        try {
+            const groups = await getUserGroups(userEmail);
+            const aboutSection = document.querySelector('.about-section');
             
-            try {
-                const userRef = doc(db, 'users', profileUser.uid);
-                const userSnap = await getDoc(userRef);
+            if (aboutSection && groups.length > 0) {
+                const groupsHtml = groups.map(group => 
+                    `<span class="group-tag">${group.title}</span>`
+                ).join(' ');
                 
-                if (userSnap.exists()) {
-                    const userData = userSnap.data();
-                    const ratings = userData.ratings || [];
-                    
-                    // Check if current user already rated
-                    const existingRatingIndex = ratings.findIndex(r => r.userId === currentUser.uid);
-                    
-                    if (existingRatingIndex >= 0) {
-                        // Update existing rating
-                        ratings[existingRatingIndex].rating = rating;
-                        await updateDoc(userRef, {
-                            ratings: ratings,
-                            avgRating: calculateAverage(ratings),
-                            ratingCount: ratings.length
-                        });
-                    } else {
-                        // Add new rating
-                        await updateDoc(userRef, {
-                            ratings: arrayUnion({
-                                userId: currentUser.uid,
-                                rating: rating,
-                                timestamp: new Date()
-                            }),
-                            avgRating: increment((rating - (userData.avgRating || 0)) / ((userData.ratingCount || 0) + 1)),
-                            ratingCount: increment(1)
-                        });
+                const groupsEl = document.createElement('div');
+                groupsEl.className = 'user-groups';
+                groupsEl.innerHTML = `
+                    <p class="content-text"><strong>Groups:</strong></p>
+                    <div class="groups-container">${groupsHtml}</div>
+                `;
+                
+                // Add some basic styling
+                const style = document.createElement('style');
+                style.textContent = `
+                    .group-tag {
+                        display: inline-block;
+                        background: #e3f2fd;
+                        color: #1976d2;
+                        padding: 4px 8px;
+                        margin: 2px;
+                        border-radius: 12px;
+                        font-size: 12px;
+                        font-weight: 500;
                     }
+                    .groups-container {
+                        margin-top: 8px;
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                aboutSection.appendChild(groupsEl);
+            }
+        } catch (error) {
+            console.error("Error displaying user groups:", error);
+        }
+    }
+
+    async function handleStarClick(index1) {
+        const rating = index1 + 1;
+        
+        try {
+            const userRef = doc(db, 'users', profileUser.uid);
+            const userSnap = await getDoc(userRef);
+            
+            if (userSnap.exists()) {
+                const userData = userSnap.data();
+                const ratings = userData.ratings || [];
+                
+                // Check if current user already rated
+                const existingRatingIndex = ratings.findIndex(r => r.userId === currentUser.uid);
+                
+                if (existingRatingIndex >= 0) {
+                    // Update existing rating
+                    ratings[existingRatingIndex] = {
+                        userId: currentUser.uid,
+                        userEmail: currentUser.email,
+                        rating: rating,
+                        timestamp: new Date()
+                    };
                     
-                    // Update UI
-                    stars.forEach((star, index2) => {
-                        index1 >= index2 
-                            ? star.classList.add("active") 
-                            : star.classList.remove("active");
+                    await updateDoc(userRef, {
+                        ratings: ratings,
+                        avgRating: calculateAverage(ratings),
+                        ratingCount: ratings.length
                     });
+                } else {
+                    // Add new rating
+                    const newRating = {
+                        userId: currentUser.uid,
+                        userEmail: currentUser.email,
+                        rating: rating,
+                        timestamp: new Date()
+                    };
                     
-                    // Reload ratings
-                    loadRatings(profileUser.uid);
+                    await updateDoc(userRef, {
+                        ratings: arrayUnion(newRating),
+                        avgRating: calculateAverage([...ratings, newRating]),
+                        ratingCount: ratings.length + 1
+                    });
                 }
-            } catch (error) {
-                console.error("Error saving rating:", error);
-                alert("Failed to save rating: " + error.message);
+                
+                // Update UI immediately
+                updateStarDisplay(rating);
+                
+                // Reload ratings to get updated average
+                loadRatings(profileUser.uid);
+                
+                // Show success message
+                showRatingFeedback("Rating saved successfully!");
+                
+            }
+        } catch (error) {
+            console.error("Error saving rating:", error);
+            showRatingFeedback("Failed to save rating: " + error.message, true);
+        }
+    }
+
+    function updateStarDisplay(rating) {
+        const updatedStars = document.querySelectorAll(".stars i");
+        updatedStars.forEach((star, index) => {
+            if (index < rating) {
+                star.classList.add("active");
+            } else {
+                star.classList.remove("active");
             }
         });
-    });
+    }
+
+    function showRatingFeedback(message, isError = false) {
+        const feedback = document.createElement('div');
+        feedback.className = 'rating-feedback';
+        feedback.textContent = message;
+        feedback.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 4px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            ${isError ? 'background: #f44336;' : 'background: #4caf50;'}
+        `;
+        
+        document.body.appendChild(feedback);
+        
+        setTimeout(() => {
+            feedback.remove();
+        }, 3000);
+    }
 
     function calculateAverage(ratings) {
         if (!ratings || ratings.length === 0) return 0;
@@ -481,26 +808,84 @@ function setupRatingSystem(profileUser) {
                 const userData = userSnap.data();
                 const avgRating = userData.avgRating || 0;
                 const ratingCount = userData.ratingCount || 0;
+                const ratings = userData.ratings || [];
                 
                 // Update UI
-                averageRatingEl.textContent = avgRating;
-                ratingCountEl.textContent = ratingCount;
+                if (averageRatingEl) averageRatingEl.textContent = avgRating;
+                if (ratingCountEl) ratingCountEl.textContent = ratingCount;
                 
-                // Highlight stars based on average
-                const avgRounded = Math.round(avgRating);
-                stars.forEach((star, index) => {
-                    if (index < avgRounded) {
-                        star.classList.add("active");
+                // Show current user's rating if they've rated this person
+                if (currentUser) {
+                    const userRating = ratings.find(r => r.userId === currentUser.uid);
+                    if (userRating) {
+                        updateStarDisplay(userRating.rating);
                     } else {
-                        star.classList.remove("active");
+                        // Show average rating if user hasn't rated yet
+                        const avgRounded = Math.round(avgRating);
+                        updateStarDisplay(avgRounded);
                     }
-                });
+                } else {
+                    // Show average rating for non-logged in users
+                    const avgRounded = Math.round(avgRating);
+                    updateStarDisplay(avgRounded);
+                }
             }
         } catch (error) {
             console.error("Error loading ratings:", error);
         }
     }
 }
+// Safe initialization function - add this to your profile.js
+function initializeProfileRating() {
+    // Wait for DOM to be fully loaded
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeProfileRating);
+        return;
+    }
+    
+    try {
+        // Get user email from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const profileEmail = urlParams.get('email');
+        
+        if (!profileEmail) {
+            console.error("No profile email specified in URL");
+            return;
+        }
+        
+        // Wait a bit more to ensure all elements are rendered
+        setTimeout(async () => {
+            try {
+                // Get user data from Firestore
+                const usersRef = collection(db, "users");
+                const q = query(usersRef, where("email", "==", profileEmail));
+                const querySnapshot = await getDocs(q);
+                
+                if (!querySnapshot.empty) {
+                    const profileUser = {
+                        uid: querySnapshot.docs[0].id,
+                        email: profileEmail,
+                        ...querySnapshot.docs[0].data()
+                    };
+                    
+                    // Initialize the rating system with group restrictions
+                    setupRatingSystem(profileUser);
+                } else {
+                    console.error("Profile user not found in database");
+                }
+                
+            } catch (error) {
+                console.error("Error loading profile user data:", error);
+            }
+        }, 500); // Wait 500ms for DOM elements to be fully rendered
+        
+    } catch (error) {
+        console.error("Error initializing profile rating:", error);
+    }
+}
+
+// Call the safe initialization function
+initializeProfileRating();
 
 // Sign Out
 function setupSignOut() {
