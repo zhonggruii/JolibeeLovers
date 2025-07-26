@@ -1,26 +1,14 @@
-# Force initial redirects to login
-/           /login.html    302!
-/index      /login.html    302!
+# ONLY redirect initial root URL to login
+/           /login.html    302
 
-# Home page access
-/home       /index.html    200
+# All other files should be accessible directly
+/*.html     /:splat.html   200
 
-# Static assets - MUST COME BEFORE FALLBACK
-/assets/*   /assets/:splat  200
-/*.css      /:splat.css     200
-/*.js       /:splat.js      200
-/*.png      /:splat.png     200
-/*.jpg      /:splat.jpg     200
-/*.svg      /:splat.svg     200
-/*.woff2    /:splat.woff2   200
+# Static assets
+/assets/*   /assets/:splat 200
+/*.css      /:splat.css    200
+/*.js       /:splat.js     200
+/*.png      /:splat.png    200
 
-# App routes
-/group-management   200
-/my-group          200
-/profile           200
-/register          200
-/reset             200
-/login             200
-
-# Fallback to login (must be last)
-/*                  /login.html    302
+# Your home page (accessed via direct link)
+/index.html /index.html    200
