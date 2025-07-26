@@ -1,6 +1,6 @@
 # Force redirect root and index variations to login
 /                   /login.html    302!
-/index.html         /login.html    302!
+
 
 # Handle specific page routes
 /group-management   /group-management.html    200
@@ -11,7 +11,7 @@
 /login              /login.html      200
 
 # Explicit home page 
-/home               /login.html      302!
+/home               /index.html      302!
 
 # Fallback - redirect everything else to login
 /*                  /login.html    302
