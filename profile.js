@@ -126,7 +126,7 @@ async function loadUserProfile() {
             isCurrentUser = true;
         } else {
             console.log("No user logged in, redirecting to login");
-            window.location.href = 'login.html';
+            window.location.href = 'index.html';
             return;
         }
 
@@ -466,7 +466,7 @@ onAuthStateChanged(auth, (user) => {
     if (user || new URLSearchParams(window.location.search).get('email')) {
         loadUserProfile();
     } else {
-        window.location.href = 'login.html';
+        window.location.href = 'index.html';
     }
 });
 
@@ -892,7 +892,7 @@ function setupSignOut() {
     const signOutBtn = document.getElementById('signOutBtn');
     signOutBtn.addEventListener('click', async () => {
         await signOut(auth);
-        window.location.href = 'login.html';
+        window.location.href = 'index.html';
     });
 }
 
@@ -912,7 +912,7 @@ auth.onAuthStateChanged(user => {
             setupSignOut();
         });
     } else {
-        window.location.href = 'login.html';
+        window.location.href = 'index.html';
     }
 });
 
