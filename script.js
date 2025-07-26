@@ -28,6 +28,7 @@ if (signupForm) {
                     activity: "",
                     modulesTaken: "",
                     skills: "",
+                    groups: "",
                 });
                 window.location.href = "login.html";
             })
