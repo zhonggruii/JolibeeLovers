@@ -138,21 +138,7 @@ async function loadGroups(groups = null) {
 				</div>
 			</div>
 		`;
-      
-		card.querySelector(".button-box").addEventListener("click", () => {
-			manageGroup(group.id);
-		});
 		
-		if (group.isCreator) {
-			card.querySelector(".button-box-red").addEventListener("click", () => {
-			deleteGroup(group.id);
-			});
-		} else {
-			card.querySelector(".button-box-red").addEventListener("click", () => {
-			leaveGroup(group.id);
-			});
-		}
-      
       	groupList.appendChild(card);
     });
 
@@ -203,6 +189,100 @@ function handleSearch(event) {
     loadGroups(results);
   }, event.type === "keyup" ? 300 : 0);
 }
+
+// Delete group function (for group creators)
+window.deleteGroup = async function(groupId) {
+  if (!confirm("Are you sure you want to delete this group? This action cannot be undone.")) {
+    return;
+  }
+
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    
+    if (!user) {
+      alert("Please log in to delete a group");
+      return;
+    }
+
+    // Delete the group document
+    await deleteDoc(doc(db, "groups", groupId));
+    
+    // Optional: Clean up related join requests
+    const requestsQuery = query(
+      collection(db, "joinRequests"),
+      where("groupId", "==", groupId)
+    );
+    
+    const requestsSnapshot = await getDocs(requestsQuery);
+    const deletePromises = requestsSnapshot.docs.map(requestDoc => 
+      deleteDoc(requestDoc.ref)
+    );
+    
+    await Promise.all(deletePromises);
+
+    alert("Group deleted successfully!");
+    
+    // Clear cache and reload groups
+    cachedGroups = [];
+    loadGroups();
+    
+  } catch (error) {
+    console.error("Error deleting group:", error);
+    alert("Failed to delete group: " + error.message);
+  }
+};
+
+// Leave group function (for group members)
+window.leaveGroup = async function(groupId) {
+  if (!confirm("Are you sure you want to leave this group?")) {
+    return;
+  }
+
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    
+    if (!user) {
+      alert("Please log in to leave a group");
+      return;
+    }
+
+    // Remove user from group members array
+    await updateDoc(doc(db, "groups", groupId), {
+      members: arrayRemove(user.email)
+    });
+
+    // Optional: Remove group from user's groups array (if you're tracking this)
+    try {
+      const usersQuery = query(
+        collection(db, "users"),
+        where("email", "==", user.email)
+      );
+      
+      const querySnapshot = await getDocs(usersQuery);
+      
+      if (!querySnapshot.empty) {
+        const userDoc = querySnapshot.docs[0];
+        await updateDoc(userDoc.ref, {
+          groups: arrayRemove(groupId)
+        });
+      }
+    } catch (error) {
+      console.log("Optional user update skipped:", error);
+    }
+
+    alert("Successfully left the group!");
+    
+    // Clear cache and reload groups
+    cachedGroups = [];
+    loadGroups();
+    
+  } catch (error) {
+    console.error("Error leaving group:", error);
+    alert("Failed to leave group: " + error.message);
+  }
+};
 
 // Initialize
 document.addEventListener("DOMContentLoaded", () => {
