@@ -1,5 +1,5 @@
 # Initial visit - redirect root and index variations to login
-/                   /login.html    302
+/                   /login.html    302!
 /index              /login.html    302
 /index.html         /login.html    302
 
