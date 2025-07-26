@@ -1,12 +1,15 @@
-# Initial visit - redirect root and index variations to login
+# Force initial visits to login (using ! for hard redirects)
 /                   /login.html    302!
-/index              /login.html    302
-/index.html         /login.html    302
+/index              /login.html    302!
+/index.html         /login.html    302!
 
-# Home page route (after login)
+# Home page access (after login - no redirect)
 /home               /index.html    200
 
-# Other application routes
+# Special case: Direct index.html access should show the actual file
+/index.html         /index.html    200
+
+# Application routes
 /group-management   /group-management.html    200
 /my-group           /my-group.html    200
 /profile            /profile.html    200
@@ -14,5 +17,5 @@
 /reset              /reset.html      200
 /login              /login.html      200
 
-# Fallback - all other URLs to login
-/*                  /login.html    302
+# Fallback
+/*                  /login.html    302!
