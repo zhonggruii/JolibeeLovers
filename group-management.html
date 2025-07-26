@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-		<title>Group Management</title>
+		<title>Group Management page</title>
 		<link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/zhonggruii/JolibeeLovers/refs/heads/main/GroupMeUp%20Icon%20Transparent.png">
 		<script type="module" src="./group-management.js"></script>
 		
@@ -50,41 +50,116 @@
         </header>
 
 		<main class="page">
-			<div class="content-container box-shadow mb16 p2034">
-				<h1 id="group-management-title">Group Management</h1>
-				<hr class="solid-line"/>
-				
-				<div class="flex-space-between">
+			<!--group intro container-->
+			<div class="intro-container-mid box-shadow mb16 p2034">
+				<!--return button-->
+				<div class="element-group-row w20pct">
 					<a href="my-group.html">
 						<button class="button-box m10-0" id="back-to-groups">
 							<span class="button-icon material-symbols-outlined">arrow_back</span>
-							Back to Groups
+							Return
 						</button>
 					</a>
 				</div>
+	
+				<!--group name-->
+				<div class="element-group-row-mid w80pct">
+					<h2 class="container-title-left m10-0" id="group-management-title">group name</h2>
+				</div>
+
+				<!--empty space to center name or can add button-->
+				<div class="element-group-row w20pct"></div>
 			</div>	
 	
-			<div class="content-container box-shadow p2034">
-				
-				<h3>Members</h3>
-				<div id="members-list" class="members-grid">
-					<!-- Members will be loaded here -->
+			<!--group body-->
+			<div class="profile-body w50lh">
+				<!--body left column-->
+				<div class="element-group-col mr5 w42pct">
+
+					<!--member list container-->
+					<div class="basic-container box-shadow mb10 w100pct">
+						<!--members header section-->
+                        <div class="element-group-row-mid p20-34-10-34 w100pct">
+							<h3 class="content-subtitle-blue m4">Participants</h3>
+                        </div> 
+
+                        <!--members container list-->
+                        <div class="element-group-col p0-12-20-12 w100pct" id="members-list">
+							<!--member template-->
+							<div class="element-group-row member-container p5 mt10 w100pct">
+								<a class="element-group-row w58pct" href="/profile.html">
+									<img class="avatar-icons" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />
+									<h3 class="username-text m0-5">martin rosales</h3>
+								</a>
+
+								<div class="element-group-row-end w42pct">
+									<div class="owner-role m0-5">
+										<span>owner</span>
+									</div>
+									
+									<div class="dropdown mr5">
+										<span class="material-symbols-outlined">more_vert</span>
+										<div class="dropdown-container box-shadow">
+											<button class="dropdown-button" id="" onclick="">
+												<span class="dropdown-icon material-symbols-outlined">crown</span>
+												Make Owner
+											</button>
+										
+											<button class="dropdown-button" id="" onclick="">
+												<span class="dropdown-icon material-symbols-outlined">person_remove</span>
+												Remove
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+                        </div>
+					</div>
 				</div>
-				
-				<hr class="solid-line" />
-				
-				<div class="chat-container">
-				<div class="chat-header">
-					<h2>Group Chat</h2>
-					<span class="material-symbols-outlined close-chat">close</span>
-				</div>
-				<div class="chat-messages" id="chatMessages"></div>
-				<div class="chat-input">
-					<input type="text" id="messageInput" placeholder="Type your message...">
-					<button id="sendMessageBtn">
-					<span class="material-symbols-outlined">send</span>
-					</button>
-				</div>
+
+				<!--body right column-->
+				<div class="element-group-col ml5 w58pct">
+
+					<!--group chat-->
+					<div class="basic-container box-shadow mb10 w100pct">
+						<!--gc header-->
+						<div class="element-group-row-mid p2034 w100pct">
+							<h3 class="content-subtitle-blue m4">Group Chat</h3>
+						</div>
+
+						<!--divider-->
+						<hr class="solid-line m0"/>
+
+						<!--gc body-->
+						<div class="element-group-col p20-34-30-34 w100pct">
+							<!--chat container-->
+							<div class="element-group-col-start chat-container w100pct" id="chatMessages">
+								<!--text template-->
+								<div class="element-group-flex chat-member-container p5 mt10">
+									<img class="avatar-icons" src="https://www.w3schools.com/howto/img_avatar.png" alt="default male avatar" />
+									
+									<div class="element-group-col-start">
+										<h3 class="username-text m5">martin rosales</h3>
+										<p class="content-text m0-5">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Enim odio vitae officiis veritatis minima? Nesciunt nulla mollitia alias magnam natus.</p>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!--divider-->
+						<hr class="solid-line m0"/>
+
+						<!--chat input-->
+						<div class="element-group-row-mid p2034 w100pct">
+							<textarea class="modal-textarea modal-input" type="text" id="messageInput" placeholder="Write a message..."></textarea>
+							
+							<div class="element-group-col-start ml7 h100pct">
+								<button class="round-button-box" id="sendMessageBtn">
+									send
+								</button>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</main>
