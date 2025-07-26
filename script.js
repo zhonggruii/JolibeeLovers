@@ -50,7 +50,7 @@ if (loginForm) {
 
         signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-            window.location.href = "index.html";
+            window.location.href = "home.html";
         })
         .catch((error) => {
             alert("Login failed: " + error.message);
