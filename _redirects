@@ -1,14 +1,11 @@
-# ONLY redirect initial root URL to login
-/           /login.html    302
+# ONLY redirect root URL to login (no !)
+/       /login.html    302
 
-# All other files should be accessible directly
+# Allow direct access to ALL HTML files
 /*.html     /:splat.html   200
 
-# Static assets
-/assets/*   /assets/:splat 200
+# Allow ALL assets (CSS/JS/images)
 /*.css      /:splat.css    200
 /*.js       /:splat.js     200
 /*.png      /:splat.png    200
-
-# Your home page (accessed via direct link)
-/index.html /index.html    200
+/*.jpg      /:splat.jpg    200
