@@ -1,8 +1,8 @@
 # Force redirect ONLY the exact root path
-/           /login.html    302!
+/           /login.html    302
 
 # Explicitly allow index.html when accessed directly  
-/index.html /index.html    200!
+/index.html /index.html    200
 
 # Allow everything else
 /*          /:splat        200
