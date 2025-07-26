@@ -15,16 +15,6 @@ const closeNotificationsBtn = document.getElementById("closeNotificationsBtn");
 const notificationList = document.getElementById("notificationList");
 const notificationBadge = document.getElementById("notificationBadge");
 
-
-// Add event delegation for accept/decline buttons
-notificationList.addEventListener("click", (e) => {
-  if (e.target.classList.contains("accept-btn")) {
-    handleAcceptRequest(e);
-  } else if (e.target.classList.contains("decline-btn")) {
-    handleDeclineRequest(e);
-  }
-});
-
 // Cache
 let cachedGroups = [];
 let searchTimeout;
@@ -113,83 +103,68 @@ async function loadGroups(groups = null) {
     }
 
     groupsToDisplay.forEach(group => {
-      const creator = usersMap[group.creator] || {};
+		const creator = usersMap[group.creator] || {};
+		
+		const card = document.createElement("div");
+		card.className = "content-container box-shadow p2034 m10-0";
+		card.innerHTML = `
+			<div class="element-group-row w100pct">
+				<div class="element-group-row m10-0 w58pct">
+					<h2 class="container-title m10-0">${group.title}</h2>
+
+					${group.isCreator ? 
+						'<div class="owner-role m0-20"><span>owner</span></div>' : 
+						'<div class="member-role m0-20"><span>member</span></div>'
+					}
+				</div>
+
+				<div class="element-group-row-end w42pct">
+					<button class="button-box m10-0" onclick="window.location.href='group-management.html?groupId=${group.id}'">
+						<span class="button-icon material-symbols-outlined">group</span>
+						View
+					</button>
+
+					${group.isCreator ? `
+						<button class="button-box-red m0-0-0-12" onclick="deleteGroup('${group.id}')">
+							<span class="button-icon material-symbols-outlined">delete</span>
+							Delete
+						</button>
+					` : `
+						<button class="button-box-red m0-0-0-12" onclick="leaveGroup('${group.id}')">
+							<span class="button-icon material-symbols-outlined">exit_to_app</span>
+							Leave
+						</button>
+					`}
+				</div>
+			</div>
+		`;
       
-      const card = document.createElement("div");
-      card.className = "content-container box-shadow p2034 m10-0";
-      card.innerHTML = `
-        <div class="content-header">
-          <div class="flex-space-between">
-            <h2 class="container-title m10-0">${group.title}</h2>
-            ${group.isCreator ? '<span class="creator-badge">Created by you</span>' : ''}
-          </div>
-          <div class="user-group m10-0">
-            <a class="avatar-container" href="/profile.html?email=${encodeURIComponent(group.creator)}">
-              <img class="avatar-icons" 
-                src="${creator.photoURL || 'https://www.w3schools.com/howto/img_avatar.png'}" 
-                alt="Profile Picture">
-            </a>
-            <a class="userinfo-container" href="/profile.html?email=${encodeURIComponent(group.creator)}">
-              <div>
-                <h3 class="username-text">${creator.name || group.creator?.split('@')[0] || "User"}</h3>
-              </div>  
-            </a>
-          </div>
-        </div>
-        
-        <div class="content-body">
-          <p class="content-text">${group.description || "No description"}</p>
-          <div class="content-taglist">
-            <p class="content-text">Tags: ${group.tags?.join(", ") || "No tags"}</p>
-          </div>
-        </div>
-        <hr class="solid-line" />
-        <div class="flex-space-between">
-          <button class="button-box m10-0" 
-                  onclick="window.location.href='group-management.html?groupId=${group.id}'">
-            <span class="button-icon material-symbols-outlined">group</span>
-            Manage Group
-          </button>
-          ${group.isCreator ? `
-            <button class="button-box-red m10-0" onclick="deleteGroup('${group.id}')">
-              <span class="button-icon material-symbols-outlined">delete</span>
-              Delete
-            </button>
-          ` : `
-            <button class="button-box-red m10-0" onclick="leaveGroup('${group.id}')">
-              <span class="button-icon material-symbols-outlined">exit_to_app</span>
-              Leave
-            </button>
-          `}
-        </div>
-      `;
+		card.querySelector(".button-box").addEventListener("click", () => {
+			manageGroup(group.id);
+		});
+		
+		if (group.isCreator) {
+			card.querySelector(".button-box-red").addEventListener("click", () => {
+			deleteGroup(group.id);
+			});
+		} else {
+			card.querySelector(".button-box-red").addEventListener("click", () => {
+			leaveGroup(group.id);
+			});
+		}
       
-      card.querySelector(".button-box").addEventListener("click", () => {
-        manageGroup(group.id);
-      });
-      
-      if (group.isCreator) {
-        card.querySelector(".button-box-red").addEventListener("click", () => {
-          deleteGroup(group.id);
-        });
-      } else {
-        card.querySelector(".button-box-red").addEventListener("click", () => {
-          leaveGroup(group.id);
-        });
-      }
-      
-      groupList.appendChild(card);
+      	groupList.appendChild(card);
     });
 
-  } catch (error) {
-    console.error("Error:", error);
-    groupList.innerHTML = `
-      <div class="error">
-        <p>Failed to load your groups</p>
-        <button onclick="loadGroups()">Retry</button>
-      </div>
-    `;
-  }
+	} catch (error) {
+		console.error("Error:", error);
+		groupList.innerHTML = `
+		<div class="error">
+			<p>Failed to load your groups</p>
+			<button onclick="loadGroups()">Retry</button>
+		</div>
+		`;
+	}
 }
 
 window.manageGroup = function(groupId) {
@@ -231,147 +206,100 @@ function handleSearch(event) {
 
 // Initialize
 document.addEventListener("DOMContentLoaded", () => {
-  const auth = getAuth();
-  
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      loadGroups();
-    } else {
-      groupList.innerHTML = `
-        <div class="content-container box-shadow p2034">
-          <p>Please log in to view your groups</p>
-          <button class="button-box m10-0" onclick="window.location.href='login.html'">
-            <span class="button-icon material-symbols-outlined">login</span>
-            Log In
-          </button>
-        </div>
-      `;
-    }
-  });
-  
-  if (searchBar) {
-    searchBar.addEventListener("input", handleSearch);
-    searchBar.addEventListener("keyup", handleSearch);
-  }
+	const auth = getAuth();
+	
+	onAuthStateChanged(auth, (user) => {
+		if (user) {
+		// Load groups
+		loadGroups();
+		
+		// Load and setup notifications
+		loadNotifications(user.uid);
+		setupNotificationListener(user.uid);
+		
+		// Notification modal handlers
+		if (openNotificationsBtn && closeNotificationsBtn && notificationsModal) {
+			openNotificationsBtn.addEventListener("click", () => {
+			notificationsModal.classList.add("open");
+			});
+			
+			closeNotificationsBtn.addEventListener("click", () => {
+			notificationsModal.classList.remove("open");
+			});
+		}
+		} else {
+		// Handle non-authenticated state
+		groupList.innerHTML = `
+			<div class="content-container box-shadow p2034">
+			<p>Please log in to view your groups</p>
+			<button class="button-box m10-0" onclick="window.location.href='login.html'">
+				<span class="button-icon material-symbols-outlined">login</span>
+				Log In
+			</button>
+			</div>
+		`;
+		}
+	});
+	
+	// Search functionality
+	if (searchBar) {
+		searchBar.addEventListener("input", handleSearch);
+		searchBar.addEventListener("keyup", handleSearch);
+	}
 
-  if (openBtn && closeBtn && modal) {
-    openBtn.addEventListener("click", () => modal.classList.add("open"));
-    closeBtn.addEventListener("click", () => modal.classList.remove("open"));
-  }
+	// Modal handlers (if you have them)
+	if (openBtn && closeBtn && modal) {
+		openBtn.addEventListener("click", () => modal.classList.add("open"));
+		closeBtn.addEventListener("click", () => modal.classList.remove("open"));
+	}
 
-  form?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const user = auth.currentUser;
-    if (!user) return;
-    
-    try {
-        await addDoc(collection(db, "groups"), {
-            title: document.getElementById("group-title").value.trim(),
-            description: document.getElementById("group-description").value.trim(),
-            tags: document.getElementById("group-tags").value
-                .split(",")
-                .map(tag => tag.trim())
-                .filter(tag => tag),
-            creator: user.email,
-            creatorUid: user.uid,
-            creatorName: user.name || user.email.split('@')[0],
-            members: [user.email],
-            createdAt: new Date()
-        });
-      
-      alert("Group created successfully!");
-      form.reset();
-      modal.classList.remove("open");
-      cachedGroups = []; // Reset cache
-      loadGroups();
-    } catch (err) {
-      alert("Error creating group: " + err.message);
-    }
-  });
-});
+	// Form submission (if you have it)
+	form?.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		const user = auth.currentUser;
+		if (!user) return;
+		
+		try {
+			await addDoc(collection(db, "groups"), {
+				title: document.getElementById("group-title").value.trim(),
+				description: document.getElementById("group-description").value.trim(),
+				tags: document.getElementById("group-tags").value
+					.split(",")
+					.map(tag => tag.trim())
+					.filter(tag => tag),
+				creator: user.email,
+				creatorUid: user.uid,
+				creatorName: user.name || user.email.split('@')[0],
+				members: [user.email],
+				createdAt: new Date()
+			});
+		
+		alert("Group created successfully!");
+		form.reset();
+		modal.classList.remove("open");
+		cachedGroups = []; // Reset cache
+		loadGroups();
+		} catch (err) {
+		alert("Error creating group: " + err.message);
+		}
+	});
 
-// Group Management Functions
-window.manageGroup = function(groupId) {
-  // Redirect to group management page or show modal
-  window.location.href = `group-management.html?id=${groupId}`;
-};
-
-window.deleteGroup = async function(groupId) {
-  if (!confirm("Are you sure you want to delete this group?")) return;
-  
-  try {
-    await deleteDoc(doc(db, "groups", groupId));
-    alert("Group deleted successfully");
-    cachedGroups = [];
-    loadGroups();
-  } catch (error) {
-    alert("Error deleting group: " + error.message);
-  }
-};
-
-window.leaveGroup = async function(groupId) {
-  if (!confirm("Are you sure you want to leave this group?")) return;
-  
-  try {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    if (!user) return;
-    
-    await updateDoc(doc(db, "groups", groupId), {
-      members: arrayRemove(user.email)
-    });
-    
-    alert("You have left the group");
-    cachedGroups = [];
-    loadGroups();
-  } catch (error) {
-    alert("Error leaving group: " + error.message);
-  }
-};
-
-
-// Initialize
-document.addEventListener("DOMContentLoaded", () => {
-  const auth = getAuth();
-  
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      // Load groups
-      loadGroups();
-      
-      // Load and setup notifications
-      loadNotifications(user.uid);
-      setupNotificationListener(user.uid);
-      
-      // Notification modal handlers
-      if (openNotificationsBtn && closeNotificationsBtn && notificationsModal) {
-        openNotificationsBtn.addEventListener("click", () => {
-          notificationsModal.classList.add("open");
-        });
-        
-        closeNotificationsBtn.addEventListener("click", () => {
-          notificationsModal.classList.remove("open");
-        });
-      }
-    } else {
-      // Handle non-authenticated state
-      groupList.innerHTML = `
-        <div class="content-container box-shadow p2034">
-          <p>Please log in to view your groups</p>
-          <button class="button-box m10-0" onclick="window.location.href='login.html'">
-            <span class="button-icon material-symbols-outlined">login</span>
-            Log In
-          </button>
-        </div>
-      `;
-    }
-  });
-  
-  // Search functionality
-  if (searchBar) {
-    searchBar.addEventListener("input", handleSearch);
-    searchBar.addEventListener("keyup", handleSearch);
-  }
+  	// Add event delegation for notification buttons
+	const notificationList = document.getElementById("notificationList");
+	if (notificationList) {
+		notificationList.addEventListener("click", (e) => {
+		console.log("Button clicked:", e.target);
+		console.log("Button classes:", e.target.classList);
+		
+		if (e.target.classList.contains("accept-btn")) {
+			console.log("Accept button clicked");
+			handleAcceptRequest(e);
+		} else if (e.target.classList.contains("decline-btn")) {
+			console.log("Decline button clicked");
+			handleDeclineRequest(e);
+		}
+		});
+	}
 });
 
 //updates the notification badge with current amount of requests
@@ -395,63 +323,59 @@ function updateBadge(count) {
 }
 
 async function loadNotifications(userId) {
-  try {
-    const requestsQuery = query(
-      collection(db, "joinRequests"),
-      where("creatorId", "==", userId),
-      where("status", "==", "pending")
-    );
+  	try {
+		const requestsQuery = query(
+			collection(db, "joinRequests"),
+			where("creatorId", "==", userId),
+			where("status", "==", "pending")
+		);
 
-    const unsubscribe = onSnapshot(requestsQuery, (snapshot) => {
-      notificationList.innerHTML = "";
-      
-      if (snapshot.empty) {
-        notificationList.innerHTML = "<p>No pending requests</p>";
-        updateBadge(0);
-        return;
-      }
+		const unsubscribe = onSnapshot(requestsQuery, (snapshot) => {
+			notificationList.innerHTML = "";
+			
+			if (snapshot.empty) {
+				notificationList.innerHTML = "<p>No pending requests</p>";
+				updateBadge(0);
+				return;
+			}
 
-      snapshot.forEach(doc => {
-        const request = doc.data();
-        const notificationItem = document.createElement("div");
-        notificationItem.className = "notification-item";
-        notificationItem.innerHTML = `
-          <div class="notification-content">
-            <img src="${request.requesterPhoto || 'https://www.w3schools.com/howto/img_avatar.png'}" 
-                 class="notification-avatar" alt="${request.requesterName}">
-            <div>
-              <p>
-                <a href="/profile.html?email=${encodeURIComponent(request.requesterEmail)}" class="profile-link">
-                  <strong>${request.requesterName}</strong>
-                </a> 
-                wants to join <strong>${request.groupName}</strong>
-              </p>
-              <small>${request.createdAt.toDate().toLocaleString()}</small>
-            </div>
-          </div>
-          <div class="notification-actions">
-            <button class="accept-btn" 
-                    data-request-id="${doc.id}" 
-                    data-group-id="${request.groupId}" 
-                    data-user-email="${request.requesterEmail}">
-              Accept
-            </button>
-            <button class="decline-btn" data-request-id="${doc.id}">
-              Decline
-            </button>
-          </div>
-        `;
-        notificationList.appendChild(notificationItem);
-      });
+			snapshot.forEach(doc => {
+				const request = doc.data();
+				const notificationItem = document.createElement("div");
+				notificationItem.className = "element-group-col member-container box-shadow p2034 m10-0 w100pct";
+				notificationItem.innerHTML = `
 
-      updateBadge(snapshot.size);
-    });
+					<div class="element-group-row w100pct">
+						<p class="content-text-bold mb10">${request.createdAt.toDate().toLocaleString()}</p>
+					</div>
 
-    window.notificationUnsubscribe = unsubscribe;
-  } catch (error) {
-    console.error("Error loading notifications:", error);
-    notificationList.innerHTML = "<p>Error loading notifications</p>";
-  }
+					<img class="profile-icon" id="introProfileImage" src="${request.requesterPhoto || 'https://www.w3schools.com/howto/img_avatar.png'}" alt="${request.requesterName}"/>
+					
+					<h3 class="m10-0"><a class="content-subtitle-blue" href="/profile.html?email=${encodeURIComponent(request.requesterEmail)}">${request.requesterName}</a></h3>
+
+					<p class="content-text m0">wants to join <strong>${request.groupName}</strong></p>
+
+					<div class="element-group-row mt15">
+						<button class="round-button-box mr5 accept-btn" data-request-id="${doc.id}" data-group-id="${request.groupId}" data-user-email="${request.requesterEmail}">
+							Accept
+						</button>
+
+						<button class="red-round-button-box ml5 decline-btn" data-request-id="${doc.id}">
+							Decline
+						</button>
+					</div>
+				`;
+				notificationList.appendChild(notificationItem);
+			});
+
+			updateBadge(snapshot.size);
+		});
+
+		window.notificationUnsubscribe = unsubscribe;
+  	} catch (error) {
+		console.error("Error loading notifications:", error);
+		notificationList.innerHTML = "<p>Error loading notifications</p>";
+  	}
 }
 
 async function handleAcceptRequest(e) {
@@ -459,7 +383,18 @@ async function handleAcceptRequest(e) {
   const groupId = e.target.getAttribute('data-group-id');
   const userEmail = e.target.getAttribute('data-user-email');
 
+  console.log("Accept request data:", { requestId, groupId, userEmail }); // Debug line
+
+  if (!requestId || !groupId || !userEmail) {
+    alert("Missing request data. Please try again.");
+    return;
+  }
+
   try {
+    // Disable the button to prevent double-clicks
+    e.target.disabled = true;
+    e.target.textContent = "Processing...";
+
     // 1. Update request status
     await updateDoc(doc(db, "joinRequests", requestId), {
       status: "accepted",
@@ -473,43 +408,58 @@ async function handleAcceptRequest(e) {
 
     // 3. Find user UID by email and add group to their document
     try {
-      // Query users collection by email to find the UID
-      const usersQuery = query(
-        collection(db, "users"),
-        where("email", "==", userEmail)
-      );
-      
-      const querySnapshot = await getDocs(usersQuery);
-      
-      if (!querySnapshot.empty) {
-        // Get the first matching user document
-        const userDoc = querySnapshot.docs[0];
-        await updateDoc(userDoc.ref, {
-          groups: arrayUnion(groupId)
-        });
-      }
+		// Query users collection by email to find the UID
+		const usersQuery = query(
+			collection(db, "users"),
+			where("email", "==", userEmail)
+		);
+		
+		const querySnapshot = await getDocs(usersQuery);
+		
+		if (!querySnapshot.empty) {
+			// Get the first matching user document
+			const userDoc = querySnapshot.docs[0];
+			await updateDoc(userDoc.ref, {
+			groups: arrayUnion(groupId)
+			});
+		}
     } catch (error) {
-      console.log("Optional user update skipped:", error);
+      	console.log("Optional user update skipped:", error);
     }
 
-    // 4. Reload notifications
-    loadNotifications(getAuth().currentUser.uid);
-    
-    alert("User successfully added to group!");
-  } catch (error) {
+	// 4. Reload notifications
+	loadNotifications(getAuth().currentUser.uid);
+	
+	alert("User successfully added to group!");
+  	} catch (error) {
     console.error("Error accepting request:", error);
     alert(`Failed to accept request: ${error.message}`);
-  }
+    
+		// Re-enable the button on error
+		e.target.disabled = false;
+		e.target.textContent = "Accept";
+	}
 }
 
 async function handleDeclineRequest(e) {
   const requestId = e.target.getAttribute('data-request-id');
   
+  console.log("Decline request data:", { requestId }); // Debug line
+
+  if (!requestId) {
+    alert("Missing request data. Please try again.");
+    return;
+  }
+
   if (!confirm("Are you sure you want to decline this request?")) {
     return;
   }
 
   try {
+    // Disable the button to prevent double-clicks
+    e.target.disabled = true;
+    e.target.textContent = "Processing...";
+
     // Update the request status to "declined"
     await updateDoc(doc(db, "joinRequests", requestId), {
       status: "declined",
@@ -527,6 +477,10 @@ async function handleDeclineRequest(e) {
   } catch (error) {
     console.error("Error declining request:", error);
     alert(`Failed to decline request: ${error.message}`);
+    
+    // Re-enable the button on error
+    e.target.disabled = false;
+    e.target.textContent = "Decline";
   }
 }
 
