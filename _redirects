@@ -1,5 +1,8 @@
-# ONLY redirect the root URL to login (first visit)
-/           /login.html    302
+# Force redirect ONLY the exact root path
+/           /login.html    302!
 
-# Allow direct access to ALL files including index.html
+# Explicitly allow index.html when accessed directly  
+/index.html /index.html    200!
+
+# Allow everything else
 /*          /:splat        200
