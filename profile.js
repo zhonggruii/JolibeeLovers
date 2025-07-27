@@ -216,7 +216,9 @@ function updateProfileUI(userData, isCurrentUser) {
 
     // Modules
     const modulesInput = document.getElementById('modulesInput');
+    const displayModules = document.getElementById('displayModules');
     if (modulesInput) modulesInput.value = userData.modulesTaken || '';
+    if (displayModules) displayModules.textContent = userData.modulesTaken || 'No experience';
     
     // Telegram
     const telegramInput = document.getElementById('telegramInput');
@@ -277,10 +279,14 @@ function setupProfileEditing(user) {
     const saveActivityBtn = document.getElementById('saveActivityBtn');
     const saveSkillsBtn = document.getElementById('saveSkillsBtn');
     const resetSkillsBtn = document.getElementById('resetSkillsBtn');
-    const moduleTakenBtn = document.getElementById('saveModuleBtn');
+    const saveModuleBtn = document.getElementById('saveModuleBtn');
 
     if (saveNameBtn) {
-        saveNameBtn.addEventListener('click', async () => {
+        const newSaveNameBtn = saveNameBtn.cloneNode(true);
+        saveNameBtn.parentNode.replaceChild(newSaveNameBtn, saveNameBtn);
+        
+        newSaveNameBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
             const newName = nameInput.value.trim();
             await updateDoc(doc(db, 'users', user.uid), { name: newName });
             document.getElementById('displayUserName').textContent = newName || `${user.email?.split('@')[0]}`;
@@ -290,7 +296,11 @@ function setupProfileEditing(user) {
     }
 
     if (saveAboutMeBtn) {
-        saveAboutMeBtn.addEventListener('click', async () => {
+        const newSaveAboutBtn = saveAboutMeBtn.cloneNode(true);
+        saveAboutMeBtn.parentNode.replaceChild(newSaveAboutBtn, saveAboutMeBtn);
+        
+        newSaveAboutBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
             const newAboutText = document.getElementById('aboutMeText').value.trim();
             const newTelegram = document.getElementById('telegramInput').value.trim();
 
@@ -308,7 +318,11 @@ function setupProfileEditing(user) {
     }
 
     if (saveActivityBtn) {
-        saveActivityBtn.addEventListener('click', async () => {
+        const newSaveActivityBtn = saveActivityBtn.cloneNode(true);
+        saveActivityBtn.parentNode.replaceChild(newSaveActivityBtn, saveActivityBtn);
+        
+        newSaveActivityBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
             const newActivity = document.getElementById('activityInput').value.trim();
 
             await updateDoc(doc(db, 'users', user.uid), { 
@@ -323,7 +337,11 @@ function setupProfileEditing(user) {
     }
 
     if (saveSkillsBtn) {
-        saveSkillsBtn.addEventListener('click', async () => {
+        const newSaveSkillsBtn = saveSkillsBtn.cloneNode(true);
+        saveSkillsBtn.parentNode.replaceChild(newSaveSkillsBtn, saveSkillsBtn);
+        
+        newSaveSkillsBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
             const skillsArray = Array.from(selectedValues);
 
             await updateDoc(doc(db, 'users', user.uid), { 
@@ -350,7 +368,11 @@ function setupProfileEditing(user) {
     }
 
     if (resetSkillsBtn) {
-        resetSkillsBtn.addEventListener('click', async (e) => {
+        const newResetSkillsBtn = resetSkillsBtn.cloneNode(true);
+        resetSkillsBtn.parentNode.replaceChild(newResetSkillsBtn, resetSkillsBtn);
+        
+        newResetSkillsBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
             selectedValues.clear();
             const skillsSelectedItems = document.getElementById('skillsSelectedItems');
             if (skillsSelectedItems) {
@@ -372,12 +394,22 @@ function setupProfileEditing(user) {
         });
     }
 
-    if (moduleTakenBtn) {
-        moduleTakenBtn.addEventListener('click', async () => {
-            const modulesInput = document.getElementById('modulesInput');
-            const newMod = modulesInput.value.trim();
-            await updateDoc(doc(db, 'users', user.uid), { modulesTaken: newMod});
-            alert('Modules Updated!');
+    if (saveModuleBtn) {
+        const newModuleTakenBtn = saveModuleBtn.cloneNode(true);
+        saveModuleBtn.parentNode.replaceChild(newModuleTakenBtn, saveModuleBtn);
+        
+        newModuleTakenBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const newModules = document.getElementById('modulesInput').value.trim();
+
+            await updateDoc(doc(db, 'users', user.uid), { 
+                modulesTaken: newModules
+            });
+            
+            document.getElementById('displayModules').textContent = newModules || 'No experience';
+
+            alert('Experience Section updated!');
+            document.getElementById('expModal').classList.remove('open');
         });
     }
 }
