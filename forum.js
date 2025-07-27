@@ -160,7 +160,7 @@ function getActionButton(isCreator, isMember, groupId) {
     // User is the creator - show manage button
     return `
       <hr class="solid-line" />
-      <button class="button-box m10-0" data-action="manage" data-group-id="${groupId}">
+      <button class="button-box-owner m10-0" data-action="manage" data-group-id="${groupId}">
         <span class="button-icon material-symbols-outlined">settings</span>
         Manage Group
       </button>
@@ -169,7 +169,7 @@ function getActionButton(isCreator, isMember, groupId) {
     // User is already a member - show view/enter button
     return `
       <hr class="solid-line" />
-      <button class="button-box m10-0" data-action="manage" data-group-id="${groupId}" style="background: #4caf50;">
+      <button class="button-box-member m10-0" data-action="manage" data-group-id="${groupId}">
         <span class="button-icon material-symbols-outlined">group</span>
         View Group
       </button>
