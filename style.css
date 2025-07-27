@@ -932,6 +932,10 @@ input::-webkit-input-placeholder {
 	height: 25vh;
 }
 
+#modulesInput {
+	height: 25vh;
+}
+
 
 /* U1b. Multi-Select Dropdown */
 .multi-select {
@@ -1850,6 +1854,13 @@ input::-webkit-input-placeholder {
 	overflow-y: auto;
 }
 
+.notification-badge {
+	color: white;
+	background-color: #FF004F;
+	border-radius: 50px;
+	padding: 4px 11px 4px 11px;
+}
+
 
 /* PADDING SPACING */
 .p4 {
@@ -1962,6 +1973,10 @@ input::-webkit-input-placeholder {
 	margin-top: 10px;
 }
 
+.ml10 {
+	margin-left: 10px;
+}
+
 .mr10 {
 	margin-right: 10px;
 }
@@ -1984,6 +1999,10 @@ input::-webkit-input-placeholder {
 
 .mt15 {
 	margin-top: 15px;
+}
+
+.ml15 {
+	margin-left: 15px;
 }
 
 .mb15 {
