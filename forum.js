@@ -68,6 +68,7 @@ function handleSearch() {
 }
 
 
+// Updated loadGroups function with member checking
 async function loadGroups(groups = null) {
   try {
     groupList.innerHTML = "<p>Loading groups...</p>";
@@ -95,6 +96,9 @@ async function loadGroups(groups = null) {
       const creator = usersMap[group.creator] || {};
       const isCreator = currentUser && (currentUser.uid === group.creatorUid || currentUser.email === group.creator);
       
+      // Check if current user is already a member
+      const isMember = currentUser && group.members && group.members.includes(currentUser.email);
+      
       const card = document.createElement("div");
       card.className = "content-container box-shadow p2034 m10-0";
       card.innerHTML = `
@@ -120,20 +124,20 @@ async function loadGroups(groups = null) {
             <p class="content-text">Tags: ${group.tags?.join(", ") || "No tags"}</p>
           </div>
         </div>
-        ${!isCreator ? `
-          <hr class="solid-line" />
-          <button class="button-box m10-0" data-group-id="${group.id}">
-            <span class="button-icon material-symbols-outlined">add_circle</span>
-            Request to Join
-          </button>
-        ` : ''}
+        
+        ${getActionButton(isCreator, isMember, group.id)}
       `;
 
-      
-      if (!isCreator) {
-        card.querySelector(".button-box")?.addEventListener("click", () => {
-          requestToJoin(group.id);
-        });
+      // Add event listener only if there's a button to click
+      const button = card.querySelector(".button-box");
+      if (button) {
+        if (button.dataset.action === "join") {
+          button.addEventListener("click", () => requestToJoin(group.id));
+        } else if (button.dataset.action === "manage") {
+          button.addEventListener("click", () => {
+            window.location.href = `/group-management.html?groupId=${group.id}`;
+          });
+        }
       }
       
       groupList.appendChild(card);
@@ -149,6 +153,123 @@ async function loadGroups(groups = null) {
     `;
   }
 }
+
+// Helper function to determine which button to show
+function getActionButton(isCreator, isMember, groupId) {
+  if (isCreator) {
+    // User is the creator - show manage button
+    return `
+      <hr class="solid-line" />
+      <button class="button-box m10-0" data-action="manage" data-group-id="${groupId}">
+        <span class="button-icon material-symbols-outlined">settings</span>
+        Manage Group
+      </button>
+    `;
+  } else if (isMember) {
+    // User is already a member - show view/enter button
+    return `
+      <hr class="solid-line" />
+      <button class="button-box m10-0" data-action="manage" data-group-id="${groupId}" style="background: #4caf50;">
+        <span class="button-icon material-symbols-outlined">group</span>
+        View Group
+      </button>
+    `;
+  } else {
+    // User is not a member - show join request button
+    return `
+      <hr class="solid-line" />
+      <button class="button-box m10-0" data-action="join" data-group-id="${groupId}">
+        <span class="button-icon material-symbols-outlined">add_circle</span>
+        Request to Join
+      </button>
+    `;
+  }
+}
+
+// Updated requestToJoin function with additional checks
+window.requestToJoin = async function(groupId) {
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    
+    if (!user) {
+      alert("Please log in to join groups");
+      return;
+    }
+
+    const groupDoc = await getDoc(doc(db, "groups", groupId));
+    if (!groupDoc.exists()) {
+      alert("Group not found");
+      return;
+    }
+    
+    const group = groupDoc.data();
+    
+    // Check if current user is the creator
+    if (user.uid === group.creatorUid) {
+      alert("You cannot join your own group");
+      return;
+    }
+
+    // Check if user is already a member
+    if (group.members && group.members.includes(user.email)) {
+      alert("You are already a member of this group");
+      return;
+    }
+
+    // Check if there's already a pending request
+    const existingRequestQuery = query(
+      collection(db, "joinRequests"), 
+      where("groupId", "==", groupId),
+      where("requesterId", "==", user.uid),
+      where("status", "==", "pending")
+    );
+    
+    const existingRequests = await getDocs(existingRequestQuery);
+    if (!existingRequests.empty) {
+      alert("You already have a pending request for this group");
+      return;
+    }
+
+    // Get user data
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    let userData = {
+      name: user.email.split('@')[0],
+      photoURL: 'https://www.w3schools.com/howto/img_avatar.png'
+    };
+    
+    if (userDoc.exists()) {
+      userData = {
+        name: userDoc.data().name || user.email.split('@')[0],
+        photoURL: userDoc.data().photoURL || userData.photoURL
+      };
+    }
+
+    // Create the join request
+    await addDoc(collection(db, "joinRequests"), {
+      groupId: groupId,
+      groupName: group.title,
+      creatorId: group.creatorUid,
+      creatorEmail: group.creator,
+      requesterId: user.uid,
+      requesterEmail: user.email, 
+      requesterName: userData.name,
+      requesterPhoto: userData.photoURL,
+      status: "pending",
+      createdAt: new Date()
+    });
+
+    alert("Join request sent successfully!");
+    
+    // Refresh the groups to update the UI
+    cachedGroups = [];
+    loadGroups();
+    
+  } catch (error) {
+    console.error("Error sending request:", error);
+    alert("Failed to send join request: " + error.message);
+  }
+};
 
 // Initialize
 document.addEventListener("DOMContentLoaded", () => {
