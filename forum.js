@@ -129,12 +129,17 @@ async function loadGroups(groups = null) {
       `;
 
       // Add event listener only if there's a button to click
-      const button = card.querySelector(".button-box");
+      const button = card.querySelector(".button-box, .button-box-owner, .button-box-member");
       if (button) {
         if (button.dataset.action === "join") {
           button.addEventListener("click", () => requestToJoin(group.id));
         } else if (button.dataset.action === "manage") {
           button.addEventListener("click", () => {
+            window.location.href = `/group-management.html?groupId=${group.id}`;
+          });
+        } else if (button.dataset.action === "view") {
+          button.addEventListener("click", () => {
+            // Replace with your actual group view/chat page
             window.location.href = `/group-management.html?groupId=${group.id}`;
           });
         }
@@ -169,7 +174,7 @@ function getActionButton(isCreator, isMember, groupId) {
     // User is already a member - show view/enter button
     return `
       <hr class="solid-line" />
-      <button class="button-box-member m10-0" data-action="manage" data-group-id="${groupId}">
+      <button class="button-box-member m10-0" data-action="view" data-group-id="${groupId}">
         <span class="button-icon material-symbols-outlined">group</span>
         View Group
       </button>
