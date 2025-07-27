@@ -586,6 +586,38 @@ input::-webkit-input-placeholder {
 	border: solid #FF004F 2px;
 }
 
+.button-box-member {
+	display: flex;
+	justify-content: center;
+	font-family: "Inter", sans-serif;
+	color: white;
+	background-color: rgb(0, 106, 163);
+	border: solid rgb(0, 106, 163) 2px;
+	border-radius: 5px;
+	padding: 8px 18px;
+}
+
+.button-box-member:hover {
+	background-color: rgb(51, 129, 255);
+	border: solid rgb(51, 129, 255) 2px;
+}
+
+.button-box-owner {
+	display: flex;
+	justify-content: center;
+	font-family: "Inter", sans-serif;
+	color: white;
+	background-color: purple;
+	border: solid purple 2px;
+	border-radius: 5px;
+	padding: 8px 18px;
+}
+
+.button-box-owner:hover {
+	background-color: #d363ff;
+	border: solid #d363ff 2px;
+}
+
 .round-button-box {
 	display: flex;
 	justify-content: center;
