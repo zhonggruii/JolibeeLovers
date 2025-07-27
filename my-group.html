@@ -47,19 +47,12 @@
 			<!--logout & other options-->
 			<div class="options-area-header options-header">
 				<div class="dropdown">
-					<span class="notification-badge" id="notificationBadge"></span>
 					<span class="material-symbols-outlined">
 						menu
 					</span>
 	
 					<!--dropdown content (modular)-->
-					<div class="dropdown-container box-shadow">
-						<!--notification option-->
-						<button class="dropdown-button">
-							<span class="dropdown-icon material-symbols-outlined">notifications</span>
-							Notifications
-						</button>
-						
+					<div class="dropdown-container box-shadow">						
 						<!--logout option-->
 						<button class="dropdown-button" id="signOutBtn" onclick="window.location.href='login.html'">
 							<span class="dropdown-icon material-symbols-outlined">logout</span>
@@ -80,10 +73,13 @@
 				<hr class="solid-line"/>
 				
 				<!--view notifications button to open the popup-->
-				<button class="button-box-yellow m10-0" id="openNotificationsBtn">
-  					<span class="button-icon material-symbols-outlined">notifications</span>
-  					View Notifications
-				</button>	
+				<div class="element-group-row-mid">
+					<button class="button-box-yellow m10-0" id="openNotificationsBtn">
+						<span class="button-icon material-symbols-outlined">notifications</span>
+						View Notifications
+					</button>
+					<span class="notification-badge ml10" id="notificationBadge"></span>
+				</div>
 			</div>	
 
 			
